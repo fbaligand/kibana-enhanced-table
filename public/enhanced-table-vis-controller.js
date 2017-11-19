@@ -17,22 +17,19 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
 
   const createExpressionsParams = (formula, row) => {
     let regex = /col\[(\d+)\]/g;
-    let myArray;
+    let myArray, colIndex, colValue;
     let output = {};
     while ((myArray = regex.exec(formula)) !== null) {
-      output[`x${myArray[1]}`] = (typeof row[myArray[1]].value === 'number') ?
-        numeral(row[myArray[1]].value).value() : row[myArray[1]].value;
+      colIndex = myArray[1];
+      colValue = row[colIndex].value;
+      output[`x${colIndex}`] = (typeof colValue === 'number') ? numeral(colValue).value() : colValue;
     }
     return output;
   };
 
   const createParser = (computedColumn) => {
-    let expression = computedColumn.formula.replace(/col\[\d+\]/g, (value) => {
-      let cleanValue = /(\d+)/.exec(value)[1];
-      return `x${cleanValue}`;
-    });
+    let expression = computedColumn.formula.replace(/col\[(\d+)\]/g, 'x$1');
     return Parser.parse(expression);
-
   };
 
   const createColumn = (computedColumn, index) => {
@@ -70,20 +67,32 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
   };
 
   const hideColumns = (tables, hiddenColumns) => {
-    if (!hiddenColumns) {
-      return;
-    }
-
     let removedCounter = 0;
-    _.forEach(hiddenColumns.split(','), (item) => {
-      let index = item * 1;
-      _.forEach(tables, (table) => {
+    _.forEach(tables, (table) => {
+      if (table.tables) {
+        hideColumns(table.tables, hiddenColumns);
+        return;
+      }
+
+      _.forEach(hiddenColumns, (item) => {
+        let index = item * 1;
         table.columns.splice(index - removedCounter, 1);
         _.forEach(table.rows, (row) => {
           row.splice(index - removedCounter, 1);
         });
       });
       removedCounter++;
+    });
+  };
+
+  const shouldShowPagination = (tables, perPage) => {
+    return tables.some(function(table) {
+      if (table.tables) {
+        return shouldShowPagination(table.tables, perPage);
+      }
+      else {
+    	  return table.rows.length > perPage;
+      }
     });
   };
 
@@ -115,7 +124,9 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
     	}
       });
 
-      hideColumns(tableGroups.tables, hiddenColumns);
+      if (hiddenColumns) {
+        hideColumns(tableGroups.tables, hiddenColumns.split(','));
+      }
 
       hasSomeRows = tableGroups.tables.some(function haveRows(table) {
         if (table.tables) {
@@ -124,9 +135,7 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
         return table.rows.length > 0;
       });
 
-      const showPagination = hasSomeRows && params.perPage && tableGroups.tables.some(function(table) {
-        return table.rows.length > params.perPage;
-      });
+      const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
       $scope.tableVisContainerClass = {
         "hide-pagination": !showPagination,
         "hide-export-links": params.hideExportLinks
