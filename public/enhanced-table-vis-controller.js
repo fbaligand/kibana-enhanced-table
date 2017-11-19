@@ -39,8 +39,7 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
     return newColumn;
   };
 
-  const createRows = (column, rows, computedColumn) => {
-    let parser = createParser(computedColumn);
+  const createRows = (column, rows, computedColumn, parser) => {
     return _.map(rows, (row) => {
       let expressionParams = createExpressionsParams(computedColumn.formula, row);
       let value = parser.evaluate(expressionParams);
@@ -53,16 +52,15 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
     });
   };
 
-  const createTables = (tables, computedColumn, index) => {
+  const createTables = (tables, computedColumn, index, parser, newColumn) => {
     _.forEach(tables, (table) => {
       if (table.tables) {
-        createTables(table.tables, computedColumn, index);
+        createTables(table.tables, computedColumn, index, parser, newColumn);
         return;
       }
 
-      let newColumn = createColumn(computedColumn, index);
       table.columns.push(newColumn);
-      table.rows = createRows(newColumn, table.rows, computedColumn);
+      table.rows = createRows(newColumn, table.rows, computedColumn, parser);
     });
   };
 
@@ -120,7 +118,9 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
 
       _.forEach(computedColumns, (computedColumn, index) => {
         if (computedColumn.enabled) {
-          createTables(tableGroups.tables, computedColumn, index);
+          let parser = createParser(computedColumn);
+          let newColumn = createColumn(computedColumn, index);
+          createTables(tableGroups.tables, computedColumn, index, parser, newColumn);
     	}
       });
 
@@ -137,8 +137,8 @@ module.controller('EnhancedTableVisController', ($scope, $element, Private) => {
 
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
       $scope.tableVisContainerClass = {
-        "hide-pagination": !showPagination,
-        "hide-export-links": params.hideExportLinks
+        'hide-pagination': !showPagination,
+        'hide-export-links': params.hideExportLinks
       };
 
       $element.trigger('renderComplete');
