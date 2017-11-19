@@ -1,0 +1,28 @@
+{
+  "name": "enhanced-table",
+  "version": "0.1.0",
+  "description": "This visualization plugin is like a Data Table, but with enhanced features like computed columns and filter bar",
+  "main": "index.js",
+  "kibana": {
+    "version": "5.5.0"
+  },
+  "scripts": {
+    "lint": "eslint",
+    "start": "plugin-helpers start",
+    "test:server": "plugin-helpers test:server",
+    "test:browser": "plugin-helpers test:browser",
+    "build": "plugin-helpers build",
+    "postinstall": "plugin-helpers postinstall"
+  },
+  "devDependencies": {
+    "@elastic/eslint-config-kibana": "0.0.2",
+    "@elastic/plugin-helpers": "^6.0.0",
+    "babel-eslint": "4.1.8",
+    "chai": "^3.5.0",
+    "eslint": "1.10.3",
+    "eslint-plugin-mocha": "1.1.0"
+  },
+  "dependencies": {
+    "expr-eval": "^1.0.0"
+  }
+}

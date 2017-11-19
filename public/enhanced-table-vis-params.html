@@ -1,0 +1,166 @@
+<div class="form-group">
+	
+  <div class="kuiSideBarSectionTitle">
+    <div class="kuiSideBarSectionTitle__text">
+      Computed Columns
+    </div>
+  </div>
+  
+  <div draggable-container="$parent.vis.params.computedColumns" style="width: 100%;">
+    <div ng-repeat="output in $parent.vis.params.computedColumns"
+         draggable-item="output"
+         style="width: 100%;">
+        <div class="vis-editor-agg-header output" style="width: 100%;">
+            <!-- open/close editor -->
+            <button aria-label="{{editorOpen ? 'Close' : 'Open'}} Editor"
+                  ng-click="editorOpen = !editorOpen"
+                  type="button"
+                  class="btn btn-primary btn-xs vis-editor-agg-header-toggle">
+                <i aria-hidden="true" ng-class="{ 'fa-caret-down': editorOpen, 'fa-caret-right': !editorOpen }" class="fa"></i>
+            </button>
+
+            <!-- title -->
+            <span class="vis-editor-agg-header-title">
+                Computed Column
+            </span>
+
+            <!-- description -->
+            <span ng-if="!editorOpen" class="vis-editor-agg-header-description">
+                {{output.label || output.formula}}
+            </span>
+
+            <!-- buttons -->
+            <div class="vis-editor-agg-header-controls btn-group">
+                <!-- disable column -->
+                <button
+                    ng-if="output.enabled"
+                    ng-click="output.enabled = false"
+                    aria-label="Disable Column"
+                    tooltip="Disable Column"
+                    tooltip-append-to-body="true"
+                    type="button" 
+                    class="btn btn-xs kuiButton--basic">
+                  <i aria-hidden="true"
+                     class="fa fa-toggle-on"></i>
+                </button>
+
+                <!-- enable column -->
+                <button
+                    ng-if="!output.enabled"
+                    ng-click="output.enabled = true"
+                    aria-label="Enable Column"
+                    tooltip="Enable Column"
+                    tooltip-append-to-body="true"
+                    type="button" 
+                    class="btn btn-xs kuiButton--basic">
+                  <i aria-hidden="true"
+                     class="fa fa-toggle-off"></i>
+                </button>
+
+                <button draggable-handle
+                    ng-show="vis.params.computedColumns.length > 1" 
+                    aria-label="Modify Order by Dragging"
+                    tooltip="Modify Order by Dragging"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    class="btn btn-xs gu-handle kuiButton--basic">
+                  <i aria-hidden="true" class="fa fa-arrows-v"></i>
+                </button>
+
+                <button
+                    aria-label="Remove Column" ng-click="removeComputedColumn(output, $parent.vis.params.computedColumns)"
+                    tooltip="Remove Column"
+                    tooltip-append-to-body="true"
+                    type="button" class="btn btn-xs btn-danger kuiButton--basic">
+                  <i aria-hidden="true" class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- editor -->
+        <div ng-if="editorOpen">
+            <div class="form-group">
+              <label>Formula</label>
+              <input type="text" ng-model="output.formula" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Label</label>
+              <input type="text" ng-model="output.label" class="form-control ng-pristine ng-untouched ng-valid">
+            </div>
+            <div class="form-group">
+              <label>Format</label>
+              <input type="text" ng-model="output.format" class="form-control">
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div ng-click="addComputedColumn($parent.vis.params.computedColumns)" class="vis-editor-agg-wide-btn">
+    <div>
+      <div class="kuiButton kuiButton--primary kuiButton--small">
+        Add computed column
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Hidden Columns</label>
+    <input type="text" ng-model="vis.params.hiddenColumns" class="form-control" placeholder="0,1,..." />
+  </div>
+
+  <div class="kuiSideBarSectionTitle">
+    <div class="kuiSideBarSectionTitle__text">
+      Basic Settings
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label>Per Page</label>
+    <input type="number" ng-model="vis.params.perPage" class="form-control">
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vis.params.hideExportLinks">
+      Hide export links
+    </label>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vis.params.showMeticsAtAllLevels">
+      Show metrics for every bucket/level
+    </label>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vis.params.showPartialRows">
+      Show partial rows
+    </label>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="metricsAtAllLevels" disabled>
+      Calculate metrics for every bucket/level
+    </label>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vis.params.showTotal">
+      Show total
+    </label>
+  </div>
+
+  <div>
+    <label>Total function</label>
+    <select ng-disabled="!vis.params.showTotal"
+            class="form-control"
+            ng-model="vis.params.totalFunc"
+            ng-options="x for x in totalAggregations">
+    </select>
+  </div>
+
+</div>
