@@ -23,10 +23,9 @@ function EnhancedTableVisProvider(Private) {
   return new TemplateVisType({
     name: 'enhanced-table',
     title: 'Enhanced Table',
-    description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
-    category: VisType.CATEGORY ? VisType.CATEGORY.DATA : undefined,
     image,
-    icon: 'fa-table',
+    description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
+    category: VisType.CATEGORY.DATA,
     template: visTemplate,
     params: {
       defaults: {
@@ -44,24 +43,32 @@ function EnhancedTableVisProvider(Private) {
       },
       editor: '<enhanced-table-vis-params></enhanced-table-vis-params>'
     },
-    schemas: new Schemas([{
-      group: 'metrics',
-      name: 'metric',
-      title: 'Metric',
-      min: 1,
-      defaults: [{
-        type: 'count',
-        schema: 'metric'
-      }]
-    }, {
-      group: 'buckets',
-      name: 'bucket',
-      title: 'Split Rows'
-    }, {
-      group: 'buckets',
-      name: 'split',
-      title: 'Split Table'
-    }])
+    implementsRenderComplete: true,
+    hierarchicalData: function (vis) {
+      return Boolean(vis.params.showPartialRows || vis.params.showMeticsAtAllLevels);
+    },
+    schemas: new Schemas([
+      {
+        group: 'metrics',
+        name: 'metric',
+        title: 'Metric',
+        aggFilter: '!geo_centroid',
+        min: 1,
+        defaults: [
+          { type: 'count', schema: 'metric' }
+        ]
+      },
+      {
+        group: 'buckets',
+        name: 'bucket',
+        title: 'Split Rows'
+      },
+      {
+        group: 'buckets',
+        name: 'split',
+        title: 'Split Table'
+      }
+    ])
   });
 }
 

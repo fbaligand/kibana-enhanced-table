@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { uiModules } from 'ui/modules';
 import enhancedTableVisParamsTemplate from 'plugins/enhanced-table/enhanced-table-vis-params.html';
 
