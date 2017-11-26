@@ -5,6 +5,25 @@
   </div>
 
   <div ng-if="tableGroups" class="table-vis-container" ng-class="tableVisContainerClass">
+
+    <div ng-show="vis.params.showFilterBar">
+      <div ng-hide="showFilterInput()" class="width: 100%;" align="right">
+        <a ng-click="enableFilterInput()" class="filterText">Filter</a>
+      </div>
+
+      <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{vis.params.filterBarWidth}}">
+        <div class="kuiLocalSearchAssistedInput" style="width:100%">
+          <input ng-model="vis.filterInput" ng-keyup="$event.keyCode == 13 && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput ng-touched filterInput" autocomplete="off" type="text">
+        </div>
+        <button ng-click="doFilter()" aria-label="Filter" class="kuiLocalSearchButton filterButton">
+          <span aria-hidden="true" class="kuiIcon fa-search"></span>
+        </button>
+        <button ng-click="disableFilterInput()" ng-show="vis.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
+          <span aria-hidden="true" class="kuiIcon fa-times"></span>
+        </button>
+      </div>
+    </div>
+
     <kbn-agg-table-group
       group="tableGroups"
       export-title="vis.title"

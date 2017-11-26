@@ -104,9 +104,43 @@
   </div>
 
   <div class="form-group">
-    <label>Hidden Columns</label>
+    <label>Hidden columns</label>
     <input type="text" ng-model="vis.params.hiddenColumns" class="form-control" placeholder="0,1,..." />
   </div>
+
+
+  <div class="kuiSideBarSectionTitle">
+    <div class="kuiSideBarSectionTitle__text">
+      Filter Bar
+    </div>
+  </div>
+  
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vis.params.showFilterBar">
+      Show filter bar
+    </label>
+  </div>
+
+  <div class="checkbox" ng-show="vis.params.showFilterBar">
+    <label>
+      <input type="checkbox" ng-model="vis.params.filterCaseSensitive">
+      Case sensitive filter
+    </label>
+  </div>
+
+  <div class="checkbox" ng-show="vis.params.showFilterBar">
+    <label>
+      <input type="checkbox" ng-model="vis.params.filterBarHideable">
+      Filter bar hideable
+    </label>
+  </div>
+
+  <div class="form-group" ng-show="vis.params.showFilterBar">
+    <label>Filter bar width</label>
+    <input type="text" ng-model="vis.params.filterBarWidth" class="form-control">
+  </div>
+
 
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">

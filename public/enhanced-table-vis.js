@@ -39,7 +39,11 @@ function EnhancedTableVisProvider(Private) {
         showTotal: false,
         totalFunc: 'sum',
         computedColumns: [],
-        hideExportLinks: false
+        hideExportLinks: false,
+        showFilterBar: false,
+        filterCaseSensitive: false,
+        filterBarHideable: false,
+        filterBarWidth: '25%'
       },
       editor: '<enhanced-table-vis-params></enhanced-table-vis-params>'
     },
