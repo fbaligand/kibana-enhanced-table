@@ -87,41 +87,41 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         return shouldShowPagination(table.tables, perPage);
       }
       else {
-    	  return table.rows.length > perPage;
+        return table.rows.length > perPage;
       }
     });
   };
 
-  const filterTableRows = function (tables, filterInput, filterCaseSensitive) {
-    return tables.some(function (table) {
+  const filterTableRows = function (tables, activeFilter, filterCaseSensitive) {
+    return _.filter(tables, function (table) {
       if (table.tables) {
-        return filterTableRows(table.tables, filterInput, filterCaseSensitive);
+        table.tables = filterTableRows(table.tables, activeFilter, filterCaseSensitive);
+        return table.tables.length > 0;
       }
       else {
-        let filterTerm = filterCaseSensitive ? filterInput : filterInput.toLowerCase();
-        var newrows = [];
-        for (var i = 0; i < table.rows.length; i++) {
-          for (var j = 0; j < table.rows[i].length; j++) {
-            if (typeof table.rows[i][j].key === 'string') {
-              let key = table.rows[i][j].key;
-              if (!filterCaseSensitive) {
-                  key = key.toLowerCase();
-              }
-              if (key.includes(filterTerm)) {
-                newrows.push(table.rows[i]);
-                break;
-              }
-            }
-          }
+        if (!filterCaseSensitive) {
+          activeFilter = activeFilter.toLowerCase();
         }
-        table.rows = newrows;
+        table.rows = _.filter(table.rows, function (row) {
+          return row.some(function (col) {
+            let key = col.key;
+            if (typeof key === 'string') {
+              if (!filterCaseSensitive) {
+                key = key.toLowerCase();
+              }
+              return key.includes(activeFilter);
+            }
+            return false;
+          });
+        });
+        return table.rows.length > 0;
       }
     });
   };
 
   // filter scope methods
   $scope.doFilter = function () {
-    $scope.filterSubmitted = $scope.vis.filterInput;
+    $scope.activeFilter = $scope.vis.filterInput;
   };
 
   $scope.enableFilterInput = function () {
@@ -130,7 +130,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
   $scope.disableFilterInput = function () {
     $scope.filterInputEnabled = false;
-    $scope.filterSubmitted = $scope.vis.filterInput = '';
+    $scope.activeFilter = $scope.vis.filterInput = '';
   };
 
   $scope.showFilterInput = function () {
@@ -138,7 +138,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   };
 
   // init controller state
-  $scope.vis.filterInput = '';
+  $scope.activeFilter = $scope.vis.filterInput = '';
   
   const uiStateSort = ($scope.uiState) ? $scope.uiState.get('vis.params.sort') : {};
   _.assign($scope.vis.params.sort, uiStateSort);
@@ -153,9 +153,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
    * Recreate the entire table when:
    * - the underlying data changes (esResponse)
    * - one of the view options changes (vis.params)
-   * - user submits a filter to apply on results (filterSubmitted)
+   * - user submits a new filter to apply on results (activeFilter)
    */
-  $scope.$watchMulti(['esResponse', 'vis.params', 'filterSubmitted'], function ([resp]) {
+  $scope.$watchMulti(['esResponse', 'vis.params', 'activeFilter'], function ([resp]) {
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
@@ -164,29 +164,19 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       const vis = $scope.vis;
       const params = vis.params;
 
+      // compute tableGroups
       tableGroups = tabifyAggResponse(vis, resp, {
         partialRows: params.showPartialRows,
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
 
-      // manage computed columns
-      let computedColumns = params.computedColumns;
-      let hiddenColumns = params.hiddenColumns;
-
-      _.forEach(computedColumns, function (computedColumn, index) {
-        if (computedColumn.enabled) {
-          let parser = createParser(computedColumn);
-          let newColumn = createColumn(computedColumn, index);
-          createTables(tableGroups.tables, computedColumn, index, parser, newColumn);
-    	}
-      });
-
-      // manage hidden columns
-      if (hiddenColumns) {
-        hideColumns(tableGroups.tables, hiddenColumns.split(','));
+      // manage filter bar
+      if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== '') {
+        tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
       }
 
+      // check if there are rows to display
       hasSomeRows = tableGroups.tables.some(function haveRows(table) {
         if (table.tables) {
           return table.tables.some(haveRows);
@@ -194,17 +184,28 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         return table.rows.length > 0;
       });
 
+      // manage computed columns
+      if (hasSomeRows) {
+        _.forEach(params.computedColumns, function (computedColumn, index) {
+          if (computedColumn.enabled) {
+            let parser = createParser(computedColumn);
+            let newColumn = createColumn(computedColumn, index);
+            createTables(tableGroups.tables, computedColumn, index, parser, newColumn);
+          }
+        });
+      }
+
+      // manage hidden columns
+      if (hasSomeRows && params.hiddenColumns) {
+        hideColumns(tableGroups.tables, params.hiddenColumns.split(','));
+      }
+
       // optimize space under table
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
       $scope.tableVisContainerClass = {
         'hide-pagination': !showPagination,
         'hide-export-links': params.hideExportLinks
       };
-
-      // manage filter bar
-      if (hasSomeRows && params.showFilterBar && $scope.showFilterInput() && vis.filterInput !== '') {
-    	  filterTableRows(tableGroups.tables, vis.filterInput, params.filterCaseSensitive);
-      }
 
       $element.trigger('renderComplete');
     }
