@@ -171,6 +171,20 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         asAggConfigResults: true
       });
 
+      // manage computed columns
+      _.forEach(params.computedColumns, function (computedColumn, index) {
+        if (computedColumn.enabled) {
+          let parser = createParser(computedColumn);
+          let newColumn = createColumn(computedColumn, index);
+          createTables(tableGroups.tables, computedColumn, index, parser, newColumn);
+        }
+      });
+
+      // manage hidden columns
+      if (params.hiddenColumns) {
+        hideColumns(tableGroups.tables, params.hiddenColumns.split(','));
+      }
+
       // manage filter bar
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== '') {
         tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
@@ -183,22 +197,6 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         }
         return table.rows.length > 0;
       });
-
-      // manage computed columns
-      if (hasSomeRows) {
-        _.forEach(params.computedColumns, function (computedColumn, index) {
-          if (computedColumn.enabled) {
-            let parser = createParser(computedColumn);
-            let newColumn = createColumn(computedColumn, index);
-            createTables(tableGroups.tables, computedColumn, index, parser, newColumn);
-          }
-        });
-      }
-
-      // manage hidden columns
-      if (hasSomeRows && params.hiddenColumns) {
-        hideColumns(tableGroups.tables, params.hiddenColumns.split(','));
-      }
 
       // optimize space under table
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
