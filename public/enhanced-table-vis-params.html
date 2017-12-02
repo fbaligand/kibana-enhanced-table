@@ -1,5 +1,5 @@
 <div class="form-group">
-	
+
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">
       Computed Columns
@@ -84,12 +84,19 @@
               <input type="text" ng-model="output.formula" class="form-control" />
             </div>
             <div class="form-group">
-              <label>Label</label>
-              <input type="text" ng-model="output.label" class="form-control ng-pristine ng-untouched ng-valid">
+              <label>Format</label>
+              <select ng-model="output.format" class="form-control">
+                <option label="Number" value="number">Number</option>
+                <option label="String" value="string">String</option>
+              </select>
+            </div>
+            <div class="form-group" ng-show="output.format === 'number'">
+              <label>Numeral.js format pattern</label>
+              <input type="text" ng-model="output.pattern" class="form-control">
             </div>
             <div class="form-group">
-              <label>Format</label>
-              <input type="text" ng-model="output.format" class="form-control">
+              <label>Label</label>
+              <input type="text" ng-model="output.label" class="form-control">
             </div>
         </div>
     </div>
@@ -109,6 +116,7 @@
   </div>
 
 
+  <div>&nbsp;</div>
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">
       Filter Bar
@@ -142,6 +150,7 @@
   </div>
 
 
+  <div>&nbsp;</div>
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">
       Basic Settings

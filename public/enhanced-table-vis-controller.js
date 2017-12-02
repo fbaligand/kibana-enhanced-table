@@ -1,16 +1,17 @@
 import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
+import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 import { VisAggConfigProvider } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
 import { Parser } from 'expr-eval';
-import numeral from 'numeral';
 
 const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 module.controller('EnhancedTableVisController', function ($scope, $element, Private) {
 
   const tabifyAggResponse = Private(AggResponseTabifyProvider);
   const AggConfig = Private(VisAggConfigProvider);
+  const fieldFormats = Private(RegistryFieldFormatsProvider);
 
   // controller methods
   const createExpressionsParams = function (formula, row) {
@@ -20,7 +21,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     while ((myArray = regex.exec(formula)) !== null) {
       colIndex = myArray[1];
       colValue = row[colIndex].value;
-      output[`x${colIndex}`] = (typeof colValue === 'number') ? numeral(colValue).value() : colValue;
+      output[`x${colIndex}`] = colValue;
     }
     return output;
   };
@@ -31,22 +32,31 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   };
 
   const createColumn = function (computedColumn, index) {
-    let newColumn = {aggConfig: new AggConfig($scope.vis, {schema: 'metric', type: 'count'}), title: computedColumn.label};
+    const FieldFormat = fieldFormats.getType(computedColumn.format);
+    const fieldFormatParams = computedColumn.format === 'number' ? {pattern: computedColumn.pattern} : {};
+    let newColumn = {
+      aggConfig: new AggConfig($scope.vis, {schema: 'metric', type: 'count'}),
+      title: computedColumn.label,
+      fieldFormatter: new FieldFormat(fieldFormatParams)
+    };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
     return newColumn;
   };
+  
+  const formatCell = function () {
+    return this.column.fieldFormatter.convert(this.value);
+  };
 
-  const createRows = function (column, rows, computedColumn, parser) {
-    return _.map(rows, function (row) {
+  const createComputedCells = function (column, rows, computedColumn, parser) {
+    _.forEach(rows, function (row) {
       let expressionParams = createExpressionsParams(computedColumn.formula, row);
       let value = parser.evaluate(expressionParams);
-      let newCell = new AggConfigResult(column.aggConfig, void 0, value, value);
-      newCell.toString = function () {
-        return (typeof value === 'number') ? numeral(value).format(computedColumn.format) : value;
-      };
+      let parent = row.length > 0 && row[row.length-1];
+      let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
+      newCell.column = column;
+      newCell.toString = formatCell;
       row.push(newCell);
-      return row;
     });
   };
 
@@ -58,26 +68,26 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       }
 
       table.columns.push(newColumn);
-      table.rows = createRows(newColumn, table.rows, computedColumn, parser);
+      createComputedCells(newColumn, table.rows, computedColumn, parser);
     });
   };
 
   const hideColumns = function (tables, hiddenColumns) {
-    let removedCounter = 0;
     _.forEach(tables, function (table) {
       if (table.tables) {
         hideColumns(table.tables, hiddenColumns);
         return;
       }
 
+      let removedCounter = 0;
       _.forEach(hiddenColumns, function (item) {
         let index = item * 1;
         table.columns.splice(index - removedCounter, 1);
         _.forEach(table.rows, function (row) {
           row.splice(index - removedCounter, 1);
         });
+        removedCounter++;
       });
-      removedCounter++;
     });
   };
 
@@ -148,7 +158,6 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     $scope.uiState.set('vis.params.sort', newSort);
   });
   
-  
   /**
    * Recreate the entire table when:
    * - the underlying data changes (esResponse)
@@ -170,8 +179,8 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
-
-      // manage computed columns
+      
+      // process computed columns
       _.forEach(params.computedColumns, function (computedColumn, index) {
         if (computedColumn.enabled) {
           let parser = createParser(computedColumn);
@@ -180,12 +189,12 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         }
       });
 
-      // manage hidden columns
+      // process hidden columns
       if (params.hiddenColumns) {
         hideColumns(tableGroups.tables, params.hiddenColumns.split(','));
       }
 
-      // manage filter bar
+      // process filter bar
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== '') {
         tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
       }
@@ -214,4 +223,3 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     }
   });
 });
-
