@@ -1,13 +1,27 @@
-# Enhanced Datatable
+# Kibana Enhanced Table
 
-This visualization plugin is like a Data Table, but with enhanced features like computed columns and filter bar.
+This Kibana visualization plugin is like a Data Table, but with enhanced features like computed columns and filter bar.
+
+## Features
+
+- Add computed columns, based on other columns (ex: col[0] * col[1])
+  - Support for number and string formats
+- Hide some table columns (ex: "0,1" hides columns 0 and 1)
+- Add a filter bar (ex: "cat" will display only rows that contain "cat")
+- Hide export links (ex: when enabled, will hide "Raw" and "Formatted" export links)
+
 
 ## Install
 
-Every release includes plugins version (x.y.z) and Kibana version (a.b.c).
+Every release includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
 #### From Kibana CLI:
-`./bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/x.y.z/kibana-enhanced-table-x.y.z-a.b.c.zip`
+`./bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/kibana-enhanced-table-X.Y.Z_A.B.C.zip`
+
+## Credits
+
+This plugin is inspired from [computed-columns](https://github.com/seadiaz/computed-columns) and [kbn_searchtables](https://github.com/dlumbrer/kbn_searchtables) plugins.  
+Thanks for their great work !
 
 ## Development
 
