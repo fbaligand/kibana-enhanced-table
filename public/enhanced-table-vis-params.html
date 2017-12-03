@@ -81,7 +81,7 @@
         <!-- editor -->
         <div ng-if="editorOpen">
             <div class="form-group">
-              <label>Formula</label>
+              <label>Formula (<a ng-href="https://github.com/silentmatt/expr-eval#expression-syntax" target="_blank">expr-eval</a> syntax)</label>
               <input type="text" ng-model="computedColumn.formula" class="form-control" />
             </div>
             <div class="form-group">
@@ -92,7 +92,7 @@
               </select>
             </div>
             <div class="form-group" ng-show="computedColumn.format === 'number'">
-              <label>Numeral.js format pattern</label>
+              <label>Pattern (<a ng-href="http://numeraljs.com/#format" target="_blank">Numeral.js</a> syntax)</label>
               <input type="text" ng-model="computedColumn.pattern" class="form-control">
             </div>
             <div class="form-group">
