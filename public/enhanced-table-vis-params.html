@@ -7,10 +7,11 @@
   </div>
   
   <div draggable-container="$parent.vis.params.computedColumns" style="width: 100%;">
-    <div ng-repeat="output in $parent.vis.params.computedColumns"
-         draggable-item="output"
+    <div ng-repeat="computedColumn in $parent.vis.params.computedColumns"
+         ng-init="editorOpen = initEditorOpen(computedColumn)"
+         draggable-item="computedColumn"
          style="width: 100%;">
-        <div class="vis-editor-agg-header output" style="width: 100%;">
+        <div class="vis-editor-agg-header" style="width: 100%;">
             <!-- open/close editor -->
             <button aria-label="{{editorOpen ? 'Close' : 'Open'}} Editor"
                   ng-click="editorOpen = !editorOpen"
@@ -26,15 +27,15 @@
 
             <!-- description -->
             <span ng-if="!editorOpen" class="vis-editor-agg-header-description">
-                {{output.label || output.formula}}
+                {{computedColumn.label || computedColumn.formula}}
             </span>
 
             <!-- buttons -->
             <div class="vis-editor-agg-header-controls btn-group">
                 <!-- disable column -->
                 <button
-                    ng-if="output.enabled"
-                    ng-click="output.enabled = false"
+                    ng-if="computedColumn.enabled"
+                    ng-click="computedColumn.enabled = false"
                     aria-label="Disable Column"
                     tooltip="Disable Column"
                     tooltip-append-to-body="true"
@@ -46,8 +47,8 @@
 
                 <!-- enable column -->
                 <button
-                    ng-if="!output.enabled"
-                    ng-click="output.enabled = true"
+                    ng-if="!computedColumn.enabled"
+                    ng-click="computedColumn.enabled = true"
                     aria-label="Enable Column"
                     tooltip="Enable Column"
                     tooltip-append-to-body="true"
@@ -68,7 +69,7 @@
                 </button>
 
                 <button
-                    aria-label="Remove Column" ng-click="removeComputedColumn(output, $parent.vis.params.computedColumns)"
+                    aria-label="Remove Column" ng-click="removeComputedColumn(computedColumn, $parent.vis.params.computedColumns)"
                     tooltip="Remove Column"
                     tooltip-append-to-body="true"
                     type="button" class="btn btn-xs btn-danger kuiButton--basic">
@@ -81,22 +82,22 @@
         <div ng-if="editorOpen">
             <div class="form-group">
               <label>Formula</label>
-              <input type="text" ng-model="output.formula" class="form-control" />
+              <input type="text" ng-model="computedColumn.formula" class="form-control" />
             </div>
             <div class="form-group">
               <label>Format</label>
-              <select ng-model="output.format" class="form-control">
+              <select ng-model="computedColumn.format" class="form-control">
                 <option label="Number" value="number">Number</option>
                 <option label="String" value="string">String</option>
               </select>
             </div>
-            <div class="form-group" ng-show="output.format === 'number'">
+            <div class="form-group" ng-show="computedColumn.format === 'number'">
               <label>Numeral.js format pattern</label>
-              <input type="text" ng-model="output.pattern" class="form-control">
+              <input type="text" ng-model="computedColumn.pattern" class="form-control">
             </div>
             <div class="form-group">
               <label>Label</label>
-              <input type="text" ng-model="output.label" class="form-control">
+              <input type="text" ng-model="computedColumn.label" class="form-control">
             </div>
         </div>
     </div>

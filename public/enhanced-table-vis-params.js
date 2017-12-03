@@ -23,7 +23,8 @@ uiModules.get('kibana/enhanced-table', ['kibana'])
         }
       });
 
-      $scope.addComputedColumn = (computedColumns) => {
+      $scope.addComputedColumn = function (computedColumns) {
+        $scope.newComputedColumn = true;
         computedColumns.push({
           formula: 'col[0] * col[0]',
           format: 'number',
@@ -33,8 +34,8 @@ uiModules.get('kibana/enhanced-table', ['kibana'])
         });
       };
 
-      $scope.removeComputedColumn = (output, computedColumns) => {
-        const index = computedColumns.indexOf(output);
+      $scope.removeComputedColumn = function (computedColumnToDelete, computedColumns) {
+        const index = computedColumns.indexOf(computedColumnToDelete);
         if (index >= 0) {
           computedColumns.splice(index, 1);
         }
@@ -42,7 +43,17 @@ uiModules.get('kibana/enhanced-table', ['kibana'])
         if (computedColumns.length === 1) {
           computedColumns[0].enabled = true;
         }
-      }
+      };
+
+      $scope.initEditorOpen = function (computedColumn) {
+        if ($scope.newComputedColumn) {
+          $scope.newComputedColumn = false;
+          return true;
+        }
+        else {
+          return false;
+        }
+      };
 
     }
   };
