@@ -15,19 +15,19 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
   // controller methods
   const createExpressionsParams = function (formula, row) {
-    let regex = /col\[(\d+)\]/g;
+    let regex = /col\[?(\d+)\]?/g;
     let myArray, colIndex, colValue;
     let output = {};
     while ((myArray = regex.exec(formula)) !== null) {
       colIndex = myArray[1];
       colValue = row[colIndex].value;
-      output[`x${colIndex}`] = colValue;
+      output[`col${colIndex}`] = colValue;
     }
     return output;
   };
 
   const createParser = function (computedColumn) {
-    let expression = computedColumn.formula.replace(/col\[(\d+)\]/g, 'x$1');
+    let expression = computedColumn.formula.replace(/col\[(\d+)\]/g, 'col$1');
     return Parser.parse(expression);
   };
 
