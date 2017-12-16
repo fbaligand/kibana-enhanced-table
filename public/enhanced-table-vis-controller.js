@@ -14,16 +14,13 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   const fieldFormats = Private(RegistryFieldFormatsProvider);
 
   // controller methods
-  const createExpressionsParams = function (formula, row) {
-    let regex = /col\[?(\d+)\]?/g;
-    let myArray, colIndex, colValue;
-    let output = {};
-    while ((myArray = regex.exec(formula)) !== null) {
-      colIndex = myArray[1];
-      colValue = row[colIndex].value;
-      output[`col${colIndex}`] = colValue;
-    }
-    return output;
+
+  const createExpressionParams = function (column, row) {
+    let expressionParams = {};
+    _.forEach(column.expressionParamsCols, function (expressionParamCol) {
+      expressionParams[`col${expressionParamCol}`] = row[expressionParamCol].value;
+    });
+    return expressionParams;
   };
 
   const createParser = function (computedColumn) {
@@ -37,20 +34,26 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     let newColumn = {
       aggConfig: new AggConfig($scope.vis, {schema: 'metric', type: 'count'}),
       title: computedColumn.label,
-      fieldFormatter: new FieldFormat(fieldFormatParams)
+      fieldFormatter: new FieldFormat(fieldFormatParams),
+      expressionParamsCols: []
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
+    let regex = /col\[?(\d+)\]?/g;
+    let regexResult;
+    while ((regexResult = regex.exec(computedColumn.formula)) !== null) {
+      newColumn.expressionParamsCols.push(regexResult[1]);
+    }
     return newColumn;
   };
-  
+
   const formatCell = function () {
     return this.column.fieldFormatter.convert(this.value);
   };
 
   const createComputedCells = function (column, rows, computedColumn, parser) {
     _.forEach(rows, function (row) {
-      let expressionParams = createExpressionsParams(computedColumn.formula, row);
+      let expressionParams = createExpressionParams(column, row);
       let value = parser.evaluate(expressionParams);
       let parent = row.length > 0 && row[row.length-1];
       let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
@@ -149,7 +152,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
   // init controller state
   $scope.activeFilter = $scope.vis.filterInput = '';
-  
+
   const uiStateSort = ($scope.uiState) ? $scope.uiState.get('vis.params.sort') : {};
   _.assign($scope.vis.params.sort, uiStateSort);
 
@@ -157,7 +160,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   $scope.$watchCollection('sort', function (newSort) {
     $scope.uiState.set('vis.params.sort', newSort);
   });
-  
+
   /**
    * Recreate the entire table when:
    * - the underlying data changes (esResponse)
@@ -179,7 +182,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
-      
+
       // process computed columns
       _.forEach(params.computedColumns, function (computedColumn, index) {
         if (computedColumn.enabled) {
