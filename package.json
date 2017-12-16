@@ -23,6 +23,6 @@
     "eslint-plugin-mocha": "1.1.0"
   },
   "dependencies": {
-    "expr-eval": "^1.0.0"
+    "expr-eval": "^1.2.0"
   }
 }
