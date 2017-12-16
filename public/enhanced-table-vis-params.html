@@ -81,6 +81,10 @@
         <!-- editor -->
         <div ng-if="editorOpen">
             <div class="form-group">
+              <label>Label</label>
+              <input type="text" ng-model="computedColumn.label" class="form-control">
+            </div>
+            <div class="form-group">
               <label>Formula (<a ng-href="https://github.com/silentmatt/expr-eval#expression-syntax" target="_blank">expr-eval</a> syntax)</label>
               <input type="text" ng-model="computedColumn.formula" class="form-control" />
             </div>
@@ -91,13 +95,9 @@
                 <option label="String" value="string">String</option>
               </select>
             </div>
-            <div class="form-group" ng-show="computedColumn.format === 'number'">
+            <div class="form-group" ng-if="computedColumn.format === 'number'">
               <label>Pattern (<a ng-href="http://numeraljs.com/#format" target="_blank">Numeral.js</a> syntax)</label>
               <input type="text" ng-model="computedColumn.pattern" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Label</label>
-              <input type="text" ng-model="computedColumn.label" class="form-control">
             </div>
             <div class="form-group">
               <label>Alignment</label>
@@ -105,7 +105,18 @@
                 <option>left</option>
                 <option>center</option>
                 <option>right</option>
+                <option>justify</option>
               </select>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="computedColumn.applyTemplate">
+                Apply Template
+              </label>
+            </div>
+            <div class="form-group" ng-if="computedColumn.applyTemplate">
+              <label>Template (<a ng-href="http://handlebarsjs.com/expressions.html" target="_blank">Handlebars</a> syntax)</label>
+              <input type="text" ng-model="computedColumn.template" class="form-control">
             </div>
         </div>
     </div>

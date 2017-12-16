@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { VisAggConfigProvider } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
 import { Parser } from 'expr-eval';
+import handlebars from 'handlebars/dist/handlebars';
 
 const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 module.controller('EnhancedTableVisController', function ($scope, $element, Private) {
@@ -45,12 +46,19 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     while ((regexResult = regex.exec(computedColumn.formula)) !== null) {
       newColumn.expressionParamsCols.push(regexResult[1]);
     }
+    if (computedColumn.applyTemplate) {
+      newColumn.template = handlebars.compile(computedColumn.template);
+    }
     return newColumn;
   };
 
   const formatCell = function () {
     let result = this.column.fieldFormatter.convert(this.value);
-    if (this.column.alignment === 'center' || this.column.alignment === 'right') {
+    if (this.column.template !== undefined) {
+      let context = { value: result, col: this.row };
+      result = this.column.template(context);
+    }
+    if (this.column.alignment !== undefined && this.column.alignment !== 'left') {
       result = `<div align="${this.column.alignment}">${result}</div>`;
     }
     return result;
@@ -63,6 +71,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       let parent = row.length > 0 && row[row.length-1];
       let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
       newCell.column = column;
+      newCell.row = row;
       newCell.toString = formatCell;
       row.push(newCell);
     });

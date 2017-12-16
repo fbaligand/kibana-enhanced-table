@@ -26,11 +26,13 @@ uiModules.get('kibana/enhanced-table', ['kibana'])
       $scope.addComputedColumn = function (computedColumns) {
         $scope.newComputedColumn = true;
         computedColumns.push({
+          label: 'Value squared',
           formula: 'col[0] * col[0]',
           format: 'number',
           pattern: '0,0',
-          label: 'Value squared',
           alignment: 'left',
+          applyTemplate: false,
+          template: '{{value}}',
           enabled: true
         });
       };
