@@ -1,4 +1,7 @@
+node_modules/
+build/
+local/
 npm-debug.log*
-node_modules
-/build/
+package-lock.json
 .project
+*.zip
