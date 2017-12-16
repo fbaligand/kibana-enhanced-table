@@ -35,6 +35,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       aggConfig: new AggConfig($scope.vis, {schema: 'metric', type: 'count'}),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams),
+      alignment: computedColumn.alignment,
       expressionParamsCols: []
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
@@ -48,7 +49,11 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   };
 
   const formatCell = function () {
-    return this.column.fieldFormatter.convert(this.value);
+    let result = this.column.fieldFormatter.convert(this.value);
+    if (this.column.alignment === 'center' || this.column.alignment === 'right') {
+      result = `<div align="${this.column.alignment}">${result}</div>`;
+    }
+    return result;
   };
 
   const createComputedCells = function (column, rows, computedColumn, parser) {

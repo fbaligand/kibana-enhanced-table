@@ -30,6 +30,7 @@ uiModules.get('kibana/enhanced-table', ['kibana'])
           format: 'number',
           pattern: '0,0',
           label: 'Value squared',
+          alignment: 'left',
           enabled: true
         });
       };
