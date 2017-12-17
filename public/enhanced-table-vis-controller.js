@@ -46,13 +46,14 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     while ((regexResult = regex.exec(computedColumn.formula)) !== null) {
       newColumn.expressionParamsCols.push(regexResult[1]);
     }
-    if (computedColumn.applyTemplate) {
+    if (computedColumn.applyTemplate && computedColumn.template !== undefined) {
       newColumn.template = handlebars.compile(computedColumn.template);
+      newColumn.copyRowForTemplate = (computedColumn.template.indexOf('{{col.') != -1);
     }
     return newColumn;
   };
 
-  const formatCell = function () {
+  const renderCell = function (contentType) {
     let result = this.column.fieldFormatter.convert(this.value);
     if (this.column.template !== undefined) {
       let context = { value: result, col: this.row };
@@ -60,6 +61,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     }
     if (this.column.alignment !== undefined && this.column.alignment !== 'left') {
       result = `<div align="${this.column.alignment}">${result}</div>`;
+    }
+    if (contentType !== 'html') {
+      result = result.replace(/<(?:.|\n)*?>/gm, '');
     }
     return result;
   };
@@ -71,8 +75,10 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       let parent = row.length > 0 && row[row.length-1];
       let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
       newCell.column = column;
-      newCell.row = row;
-      newCell.toString = formatCell;
+      if (column.copyRowForTemplate) {
+        newCell.row = _.clone(row);
+      }
+      newCell.toString = renderCell;
       row.push(newCell);
     });
   };
