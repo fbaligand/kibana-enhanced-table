@@ -1,13 +1,18 @@
 import { uiModules } from 'ui/modules';
 import enhancedTableVisParamsTemplate from 'plugins/enhanced-table/enhanced-table-vis-params.html';
+import _ from 'lodash';
 
-uiModules.get('kibana/enhanced-table', ['kibana'])
+uiModules.get('kibana/enhanced-table')
 .directive('enhancedTableVisParams', function () {
   return {
     restrict: 'E',
     template: enhancedTableVisParamsTemplate,
     link: function ($scope) {
       $scope.totalAggregations = ['sum', 'avg', 'min', 'max', 'count'];
+      
+      if ($scope.vis.params.perPage === undefined) {
+    	_.extend($scope.vis.params, $scope.vis.type.params.defaults);
+      }
 
       $scope.$watchMulti([
         'vis.params.showPartialRows',
