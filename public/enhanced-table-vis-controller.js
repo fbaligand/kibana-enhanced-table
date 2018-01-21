@@ -1,14 +1,21 @@
-import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
-import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
+
+import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
+import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import { VisAggConfigProvider } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
+
+// third-party dependencies
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
+// get the kibana/enhanced-table module, and make sure that it requires the "kibana" module if it didn't already
 const module = uiModules.get('kibana/enhanced-table', ['kibana']);
-module.controller('EnhancedTableVisController', function ($scope, $element, Private) {
+
+// add a controller to tha module, which will transform the esResponse into a
+// tabular format that we can pass to the table directive
+module.controller('EnhancedTableVisController', function ($scope, Private) {
 
   const tabifyAggResponse = Private(AggResponseTabifyProvider);
   const AggConfig = Private(VisAggConfigProvider);
@@ -218,15 +225,16 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       }
 
       // process filter bar
-      if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== '') {
+      if ($scope.vis.filterInput === undefined) {
+        $scope.vis.filterInput = $scope.activeFilter;
+      }
+      if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
         tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
       }
 
       // check if there are rows to display
       hasSomeRows = tableGroups.tables.some(function haveRows(table) {
-        if (table.tables) {
-          return table.tables.some(haveRows);
-        }
+        if (table.tables) return table.tables.some(haveRows);
         return table.rows.length > 0;
       });
 
@@ -237,7 +245,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         'hide-export-links': params.hideExportLinks
       };
 
-      $element.trigger('renderComplete');
+      $scope.renderComplete();
     }
 
     $scope.hasSomeRows = hasSomeRows;
