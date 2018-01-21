@@ -15,14 +15,25 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: `cat` filter will display only rows that contain "cat")
 - Hide export links (ex: when enabled, it will hide "Raw" and "Formatted" export links)
+- Compatible with Kibana 5.5, 5.6, 6.0 and 6.1
+
+
+## Demo
+
+![Demo](docs/demo.gif)
 
 
 ## Install
 
 Every release includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
-#### From Kibana CLI:
-`./bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/kibana-enhanced-table-X.Y.Z_A.B.C.zip`
+- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases "Go to releases!") and choose the right one for your Kibana
+- launch a command shell and go to $KIBANA_HOME/bin folder
+- use Kibana CLI to install : 
+  - directly from Internet URL :
+`$KIBANA_HOME/bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/kibana-enhanced-table-X.Y.Z_A.B.C.zip`
+  - locally after manual download :
+`$KIBANA_HOME/bin/kibana-plugin install file:///path/to/kibana-enhanced-table-X.Y.Z_A.B.C.zip`
 
 
 ## Change Log
