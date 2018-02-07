@@ -1,10 +1,10 @@
 {
   "name": "enhanced-table",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "This visualization plugin is like a Data Table, but with enhanced features like computed columns and filter bar",
   "main": "index.js",
   "kibana": {
-    "version": "6.0.0"
+    "version": "kibana"
   },
   "scripts": {
     "lint": "eslint",
