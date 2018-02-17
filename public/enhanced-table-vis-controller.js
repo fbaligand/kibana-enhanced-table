@@ -23,12 +23,23 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
 
   // controller methods
 
-  const createFormulaParams = function (column, row) {
-    let formulaParams = {};
+  const createFormulaParams = function (column, row, totalHits) {
+    let formulaParams = { 'total': totalHits };
     _.forEach(column.formulaParamsCols, function (formulaParamCol) {
       formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
     });
     return formulaParams;
+  };
+
+  const createTemplateContext = function (column, row, totalHits) {
+    let templateContext = { 'total': totalHits };
+    if (column.copyRowForTemplate) {
+      templateContext.col = _.clone(row);
+    }
+    _.forEach(column.templateParamsCols, function (templateParamCol) {
+      templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
+    });
+    return templateContext;
   };
 
   const createParser = function (computedColumn) {
@@ -79,36 +90,30 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
     return result;
   };
 
-  const createComputedCells = function (column, rows, computedColumn, parser) {
+  const createComputedCells = function (column, rows, computedColumn, parser, totalHits) {
     _.forEach(rows, function (row) {
-      let formulaParams = createFormulaParams(column, row);
+      let formulaParams = createFormulaParams(column, row, totalHits);
       let value = parser.evaluate(formulaParams);
       let parent = row.length > 0 && row[row.length-1];
       let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
       newCell.column = column;
       if (column.template !== undefined) {
-        newCell.templateContext = {};
-        if (column.copyRowForTemplate) {
-          newCell.templateContext.col = _.clone(row);
-        }
-        _.forEach(column.templateParamsCols, function (templateParamCol) {
-          newCell.templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
-        });
+        newCell.templateContext = createTemplateContext(column, row, totalHits);
       }
       newCell.toString = renderCell;
       row.push(newCell);
     });
   };
 
-  const createTables = function (tables, computedColumn, index, parser, newColumn) {
+  const createTables = function (tables, computedColumn, index, parser, newColumn, totalHits) {
     _.forEach(tables, function (table) {
       if (table.tables) {
-        createTables(table.tables, computedColumn, index, parser, newColumn);
+        createTables(table.tables, computedColumn, index, parser, newColumn, totalHits);
         return;
       }
 
       table.columns.push(newColumn);
-      createComputedCells(newColumn, table.rows, computedColumn, parser);
+      createComputedCells(newColumn, table.rows, computedColumn, parser, totalHits);
     });
   };
 
@@ -213,28 +218,28 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
       const vis = $scope.vis;
       const params = vis.params;
 
-      // compute tableGroups
+      // create tableGroups
       tableGroups = tabifyAggResponse(vis, resp, {
         partialRows: params.showPartialRows,
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
 
-      // process computed columns
+      // add computed columns
       _.forEach(params.computedColumns, function (computedColumn, index) {
         if (computedColumn.enabled) {
           let parser = createParser(computedColumn);
           let newColumn = createColumn(computedColumn, index);
-          createTables(tableGroups.tables, computedColumn, index, parser, newColumn);
+          createTables(tableGroups.tables, computedColumn, index, parser, newColumn, resp.hits.total);
         }
       });
 
-      // process hidden columns
+      // remove hidden columns
       if (params.hiddenColumns) {
         hideColumns(tableGroups.tables, params.hiddenColumns.split(','));
       }
 
-      // process filter bar
+      // add filter bar
       if ($scope.vis.filterInput === undefined) {
         $scope.vis.filterInput = $scope.activeFilter;
       }
