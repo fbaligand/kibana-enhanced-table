@@ -32,7 +32,7 @@ uiModules.get('kibana/enhanced-table')
         $scope.newComputedColumn = true;
         computedColumns.push({
           label: 'Value squared',
-          formula: 'col[0] * col[0]',
+          formula: 'col0 * col0',
           format: 'number',
           pattern: '0,0',
           alignment: 'left',
