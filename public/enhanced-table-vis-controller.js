@@ -23,17 +23,17 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
 
   // controller methods
 
-  const createExpressionParams = function (column, row) {
-    let expressionParams = {};
-    _.forEach(column.expressionParamsCols, function (expressionParamCol) {
-      expressionParams[`col${expressionParamCol}`] = row[expressionParamCol].value;
+  const createFormulaParams = function (column, row) {
+    let formulaParams = {};
+    _.forEach(column.formulaParamsCols, function (formulaParamCol) {
+      formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
     });
-    return expressionParams;
+    return formulaParams;
   };
 
   const createParser = function (computedColumn) {
-    let expression = computedColumn.formula.replace(/col\[(\d+)\]/g, 'col$1');
-    return Parser.parse(expression);
+    let formula = computedColumn.formula.replace(/col\[(\d+)\]/g, 'col$1');
+    return Parser.parse(formula);
   };
 
   const createColumn = function (computedColumn, index) {
@@ -44,14 +44,14 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams),
       alignment: computedColumn.alignment,
-      expressionParamsCols: []
+      formulaParamsCols: []
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
     let regex = /col\[?(\d+)\]?/g;
     let regexResult;
     while ((regexResult = regex.exec(computedColumn.formula)) !== null) {
-      newColumn.expressionParamsCols.push(regexResult[1]);
+      newColumn.formulaParamsCols.push(regexResult[1]);
     }
     if (computedColumn.applyTemplate && computedColumn.template !== undefined) {
       newColumn.template = handlebars.compile(computedColumn.template);
@@ -77,8 +77,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
 
   const createComputedCells = function (column, rows, computedColumn, parser) {
     _.forEach(rows, function (row) {
-      let expressionParams = createExpressionParams(column, row);
-      let value = parser.evaluate(expressionParams);
+      let formulaParams = createFormulaParams(column, row);
+      let value = parser.evaluate(formulaParams);
       let parent = row.length > 0 && row[row.length-1];
       let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
       newCell.column = column;
