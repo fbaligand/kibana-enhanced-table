@@ -44,18 +44,22 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams),
       alignment: computedColumn.alignment,
-      formulaParamsCols: []
+      formulaParamsCols: [],
+      templateParamsCols: []
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
-    let regex = /col\[?(\d+)\]?/g;
-    let regexResult;
-    while ((regexResult = regex.exec(computedColumn.formula)) !== null) {
-      newColumn.formulaParamsCols.push(regexResult[1]);
+    let colArrayRegex = /col\[?(\d+)\]?/g;
+    let regexMatch;
+    while ((regexMatch = colArrayRegex.exec(computedColumn.formula)) !== null) {
+      newColumn.formulaParamsCols.push(regexMatch[1]);
     }
     if (computedColumn.applyTemplate && computedColumn.template !== undefined) {
       newColumn.template = handlebars.compile(computedColumn.template);
       newColumn.copyRowForTemplate = (computedColumn.template.indexOf('{{col.') != -1);
+      while ((regexMatch = colArrayRegex.exec(computedColumn.template)) !== null) {
+        newColumn.templateParamsCols.push(regexMatch[1]);
+      }
     }
     return newColumn;
   };
@@ -63,8 +67,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
   const renderCell = function (contentType) {
     let result = this.column.fieldFormatter.convert(this.value);
     if (this.column.template !== undefined) {
-      let context = { value: result, col: this.row };
-      result = this.column.template(context);
+      this.templateContext.value = result;
+      result = this.column.template(this.templateContext);
     }
     if (this.column.alignment !== undefined && this.column.alignment !== 'left') {
       result = `<div align="${this.column.alignment}">${result}</div>`;
@@ -82,8 +86,14 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
       let parent = row.length > 0 && row[row.length-1];
       let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
       newCell.column = column;
-      if (column.copyRowForTemplate) {
-        newCell.row = _.clone(row);
+      if (column.template !== undefined) {
+        newCell.templateContext = {};
+        if (column.copyRowForTemplate) {
+          newCell.templateContext.col = _.clone(row);
+        }
+        _.forEach(column.templateParamsCols, function (templateParamCol) {
+          newCell.templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
+        });
       }
       newCell.toString = renderCell;
       row.push(newCell);
