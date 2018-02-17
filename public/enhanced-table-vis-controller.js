@@ -144,12 +144,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
         }
         table.rows = _.filter(table.rows, function (row) {
           return row.some(function (col) {
-            let key = col.key;
-            if (typeof key === 'string') {
+            let colValue = col.toString();
+            if (typeof colValue === 'string') {
               if (!filterCaseSensitive) {
-                key = key.toLowerCase();
+                colValue = colValue.toLowerCase();
               }
-              return key.includes(activeFilter);
+              return colValue.includes(activeFilter);
             }
             return false;
           });
