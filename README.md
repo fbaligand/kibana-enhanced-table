@@ -4,16 +4,17 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 
 ## Features
 
-- Add computed columns, based on other columns
+- Add computed columns, based on other columns :
   - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
-  - Support for numeric columns (ex: `col[0] * col[1]`)
-  - Support for string columns, including HTML (ex: `col[0] > 0 ? 'OK' : 'KO'`)
+  - Support for numeric columns (ex: `col0 + col1`)
+  - Support for string columns, including HTML (ex: `col0 > 0 ? 'OK' : 'KO'`)
+  - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](http://handlebarsjs.com/expressions.html) (ex: `<b>{{value}}</b>`)
-  - Template can reference other columns using :`{{col.0.value}}`
+  - Template can reference other columns using :`{{col0}}`
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
-- Add a filter bar (ex: `cat` filter will display only rows that contain "cat")
+- Add a filter bar (ex: `cat` filter will display only rows that contain "cat"). Works also with numeric and date columns.
 - Hide export links (ex: when enabled, it will hide "Raw" and "Formatted" export links)
 - Compatible with Kibana 5.5, 5.6, 6.0 and 6.1
 
