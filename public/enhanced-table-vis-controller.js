@@ -15,11 +15,12 @@ const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 
 // add a controller to tha module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
-module.controller('EnhancedTableVisController', function ($scope, Private) {
+module.controller('EnhancedTableVisController', function ($scope, Private, config) {
 
   const tabifyAggResponse = Private(AggResponseTabifyProvider);
   const AggConfig = Private(VisAggConfigProvider);
   const fieldFormats = Private(RegistryFieldFormatsProvider);
+  const getConfig = (...args) => config.get(...args);
 
   // controller methods
 
@@ -53,7 +54,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private) {
     let newColumn = {
       aggConfig: new AggConfig($scope.vis, {schema: 'metric', type: 'count'}),
       title: computedColumn.label,
-      fieldFormatter: new FieldFormat(fieldFormatParams),
+      fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       alignment: computedColumn.alignment,
       formulaParamsCols: [],
       templateParamsCols: []
