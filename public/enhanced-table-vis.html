@@ -1,17 +1,17 @@
 <div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis">
 
-  <div ng-show="vis.params.showFilterBar && (hasSomeRows || activeFilter !== '')">
+  <div ng-show="showFilterBar && (hasSomeRows || activeFilter !== '')">
     <div ng-hide="showFilterInput()" class="width: 100%;" align="right">
       <a ng-click="enableFilterInput()" class="filterText">Filter</a>
     </div>
-    <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{vis.params.filterBarWidth}}">
+    <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{filterBarWidth}}">
       <div class="kuiLocalSearchAssistedInput" style="width:100%">
         <input ng-model="vis.filterInput" ng-keyup="$event.keyCode == 13 && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput ng-touched filterInput" autocomplete="off" type="text">
       </div>
       <button ng-click="doFilter()" aria-label="Filter" class="kuiLocalSearchButton filterButton">
         <span aria-hidden="true" class="kuiIcon fa-search"></span>
       </button>
-      <button ng-click="disableFilterInput()" ng-show="vis.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
+      <button ng-click="disableFilterInput()" ng-show="filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
         <span aria-hidden="true" class="kuiIcon fa-times"></span>
       </button>
     </div>

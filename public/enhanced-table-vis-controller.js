@@ -190,7 +190,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   $scope.showFilterInput = function () {
-    return !$scope.vis.params.filterBarHideable || $scope.filterInputEnabled;
+    return !$scope.filterBarHideable || $scope.filterInputEnabled;
   };
 
   // init controller state
@@ -207,10 +207,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   /**
    * Recreate the entire table when:
    * - the underlying data changes (esResponse)
-   * - one of the view options changes (vis.params)
    * - user submits a new filter to apply on results (activeFilter)
    */
-  $scope.$watchMulti(['esResponse', 'vis.params', 'activeFilter'], function ([resp]) {
+  $scope.$watchMulti(['esResponse', 'activeFilter'], function ([resp]) {
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
@@ -247,6 +246,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
         tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
       }
+      $scope.showFilterBar = params.showFilterBar;
+      $scope.filterBarWidth = params.filterBarWidth;
+      $scope.filterBarHideable = params.filterBarHideable;
 
       // check if there are rows to display
       hasSomeRows = tableGroups.tables.some(function haveRows(table) {
