@@ -16,7 +16,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: `cat` filter will display only rows that contain "cat"). Works also with numeric and date columns.
 - Hide export links (ex: when enabled, it will hide "Raw" and "Formatted" export links)
-- Compatible with Kibana 5.5, 5.6, 6.0 and 6.1
+- Kibana supported versions : 5.5, 5.6, 6.0, 6.1 and 6.2
 
 
 ## Demo
