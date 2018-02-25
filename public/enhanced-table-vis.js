@@ -37,8 +37,7 @@ function EnhancedTableVisProvider(Private) {
     image,
     description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
     category: CATEGORY.DATA,
-    template: tableVisTemplate,
-    params: {
+    visConfig: {
       defaults: {
         perPage: 10,
         showPartialRows: false,
@@ -56,6 +55,7 @@ function EnhancedTableVisProvider(Private) {
         filterBarHideable: false,
         filterBarWidth: '25%'
       },
+      template: tableVisTemplate
     },
     editorConfig: {
       optionsTemplate: '<enhanced-table-vis-params></enhanced-table-vis-params>',

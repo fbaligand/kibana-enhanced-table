@@ -206,20 +206,21 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   /**
    * Recreate the entire table when:
-   * - the underlying data changes (esResponse)
+   * - table 'renderComplete' event (renderComplete)
    * - user submits a new filter to apply on results (activeFilter)
    */
-  $scope.$watchMulti(['esResponse', 'activeFilter'], function ([resp]) {
+  $scope.$watchMulti(['renderComplete', 'activeFilter'], function () {
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
+    let esResponse = $scope.esResponse;
 
-    if (resp) {
+    if (esResponse) {
       const vis = $scope.vis;
       const params = vis.params;
 
       // create tableGroups
-      tableGroups = tabifyAggResponse(vis, resp, {
+      tableGroups = tabifyAggResponse(vis, esResponse, {
         partialRows: params.showPartialRows,
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
@@ -230,7 +231,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         if (computedColumn.enabled) {
           let parser = createParser(computedColumn);
           let newColumn = createColumn(computedColumn, index);
-          createTables(tableGroups.tables, computedColumn, index, parser, newColumn, resp.hits.total);
+          createTables(tableGroups.tables, computedColumn, index, parser, newColumn, esResponse.hits.total);
         }
       });
 
@@ -262,13 +263,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         'hide-pagination': !showPagination,
         'hide-export-links': params.hideExportLinks
       };
-
-      $scope.renderComplete();
     }
 
     $scope.hasSomeRows = hasSomeRows;
     if (hasSomeRows) {
       $scope.tableGroups = tableGroups;
     }
+    $scope.renderComplete();
   });
 });
