@@ -72,15 +72,23 @@ function EnhancedTableVisProvider(Private) {
         },
         {
           group: 'buckets',
+          name: 'split',
+          title: 'Split Table',
+          aggFilter: ['!filter']
+        },
+        {
+          group: 'buckets',
           name: 'bucket',
           title: 'Split Rows',
           aggFilter: ['!filter']
         },
         {
           group: 'buckets',
-          name: 'split',
-          title: 'Split Table',
-          aggFilter: ['!filter']
+          name: 'splitcols',
+          title: 'Split Cols',
+          aggFilter: ['!filter'],
+          max: 1,
+          editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
         }
       ])
     },

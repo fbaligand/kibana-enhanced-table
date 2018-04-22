@@ -5,6 +5,7 @@ import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
 import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import { VisAggConfigProvider } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
+import { Notifier } from 'ui/notify/notifier';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
@@ -21,11 +22,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   const AggConfig = Private(VisAggConfigProvider);
   const fieldFormats = Private(RegistryFieldFormatsProvider);
   const getConfig = (...args) => config.get(...args);
+  const notifier = new Notifier();
 
   // controller methods
 
   const createFormulaParams = function (column, row, totalHits) {
-    let formulaParams = { 'total': totalHits };
+    let formulaParams = { total: totalHits };
     _.forEach(column.formulaParamsCols, function (formulaParamCol) {
       formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
     });
@@ -33,7 +35,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const createTemplateContext = function (column, row, totalHits) {
-    let templateContext = { 'total': totalHits };
+    let templateContext = { total: totalHits };
     if (column.copyRowForTemplate) {
       templateContext.col = _.clone(row);
     }
@@ -175,6 +177,89 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     });
   };
 
+  const findFirstDataTable = function (table) {
+    if (table.tables) {
+      if (table.tables.length > 0) {
+        return findFirstDataTable(table.tables[0]);
+      }
+      else {
+        return null;
+      }
+    }
+    else {
+      return table;
+    }
+  };
+
+  const DEFAULT_METRIC_VALUE = 0;
+
+  const splitCols = function (table, splitColIndex) {
+    if (table.tables) {
+      _.forEach(table.tables, function (table) {
+        splitCols(table, splitColIndex);
+      });
+      return;
+    }
+
+    let newRows = [];
+    let newRow = null;
+    let newColNamePrefixes = [];
+    let newColDefaultMetrics = [];
+    const metricsCount = table.columns.length - 1 - splitColIndex;
+
+    _.forEach(table.rows, function (row) {
+      // create a new row
+      if (newRow === null || (splitColIndex > 0 && row[splitColIndex-1].value != newRow[splitColIndex-1].value)) {
+        newRow = [];
+        for (let i = 0; i < splitColIndex; i++) {
+          newRow.push(row[i]);
+        }
+        newRows.push(newRow);
+      }
+      // split col
+      let rowSplitColValue = row[splitColIndex].toString();
+      let newColIndex = _.indexOf(newColNamePrefixes, rowSplitColValue);
+      // create new col
+      if (newColIndex === -1) {
+        newColNamePrefixes.push(rowSplitColValue);
+        newColIndex = newColNamePrefixes.length - 1;
+        for (let i = splitColIndex+1; i < row.length; i++) {
+          let newColDefaultMetric = new AggConfigResult(row[i].aggConfig, null, DEFAULT_METRIC_VALUE, DEFAULT_METRIC_VALUE, row[i].filters);
+          newColDefaultMetrics.push(newColDefaultMetric);
+          for (let j = 0; j < newRows.length - 1; j++) {
+            newRows[j].push(newColDefaultMetric);
+          }
+        }
+      }
+      // add new col metrics
+      for (let i = 0; i < metricsCount; i++) {
+        newRow[splitColIndex + (newColIndex * metricsCount) + i] = row[splitColIndex + 1 + i];
+      }
+      for (let i = 0; i < newColDefaultMetrics.length; i++) {
+        let targetCol = splitColIndex + i;
+        if (newRow[targetCol] === undefined) {
+          newRow[targetCol] = newColDefaultMetrics[i];
+        }
+      }
+    });
+    // update rows
+    table.rows = newRows;
+
+    // add new column headers
+    let newCols = [];
+    for (let i = 0; i < splitColIndex; i++) {
+      newCols.push(table.columns[i]);
+    }
+    _.forEach(newColNamePrefixes, function(newColNamePrefix) {
+      for (let i = splitColIndex + 1; i < table.columns.length; i++) {
+        let newCol = _.clone(table.columns[i]);
+        newCol.title = metricsCount > 1 ? newColNamePrefix + ' - ' + newCol.title : newColNamePrefix;
+        newCols.push(newCol);
+      }
+    });
+    table.columns = newCols;
+  };
+
   // filter scope methods
   $scope.doFilter = function () {
     $scope.activeFilter = $scope.vis.filterInput;
@@ -190,7 +275,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   $scope.showFilterInput = function () {
-    return !$scope.vis.params.filterBarHideable || $scope.filterInputEnabled;
+    return !$scope.filterBarHideable || $scope.filterInputEnabled;
   };
 
   // init controller state
@@ -225,6 +310,25 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
+
+      // process 'Split Cols' bucket: transform rows to cols
+      const firstTable = findFirstDataTable(tableGroups);
+      const splitColIndex = firstTable !== null ? _.findIndex(firstTable.columns, col => col.aggConfig.schema.name === 'splitcols') : -1;
+      if (splitColIndex != -1) {
+        const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
+        // check that 'Split Cols' is the last bucket
+        if (splitColIndex !== lastBucketIndex) {
+          if ($scope.splitColsBucketError === undefined) {
+            $scope.splitColsBucketError = true;
+            notifier.error(`'Split Cols' bucket must be the last one`);
+          }
+          else {
+            $scope.splitColsBucketError = undefined;
+          }
+          return;
+        }
+        splitCols(tableGroups, splitColIndex);
+      }
 
       // add computed columns
       _.forEach(params.computedColumns, function (computedColumn, index) {
