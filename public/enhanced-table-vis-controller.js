@@ -275,7 +275,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   $scope.showFilterInput = function () {
-    return !$scope.filterBarHideable || $scope.filterInputEnabled;
+    return !$scope.visState.params.filterBarHideable || $scope.filterInputEnabled;
   };
 
   // init controller state
@@ -352,9 +352,6 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
         tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
       }
-      $scope.showFilterBar = params.showFilterBar;
-      $scope.filterBarWidth = params.filterBarWidth;
-      $scope.filterBarHideable = params.filterBarHideable;
 
       // check if there are rows to display
       hasSomeRows = tableGroups.tables.some(function haveRows(table) {

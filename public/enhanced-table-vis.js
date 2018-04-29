@@ -53,6 +53,7 @@ function EnhancedTableVisProvider(Private) {
         showFilterBar: false,
         filterCaseSensitive: false,
         filterBarHideable: false,
+        filterAsYouType: false,
         filterBarWidth: '25%'
       },
       template: tableVisTemplate
