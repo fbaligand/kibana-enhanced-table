@@ -36,6 +36,8 @@ uiModules.get('kibana/enhanced-table')
           format: 'number',
           pattern: '0,0',
           alignment: 'left',
+          applyAlignmentOnTitle: true,
+          applyAlignmentOnTotal: true,
           applyTemplate: false,
           template: '{{value}}',
           enabled: true
