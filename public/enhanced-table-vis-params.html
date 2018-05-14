@@ -108,6 +108,18 @@
                 <option>justify</option>
               </select>
             </div>
+            <div class="checkbox" ng-if="computedColumn.alignment != 'left'">
+              <label>
+                <input type="checkbox" ng-model="computedColumn.applyAlignmentOnTitle">
+                Apply alignment on title
+              </label>
+            </div>
+            <div class="checkbox" ng-if="computedColumn.alignment != 'left'">
+              <label>
+                <input type="checkbox" ng-model="computedColumn.applyAlignmentOnTotal">
+                Apply alignment on total
+              </label>
+            </div>
             <div class="checkbox">
               <label>
                 <input type="checkbox" ng-model="computedColumn.applyTemplate">

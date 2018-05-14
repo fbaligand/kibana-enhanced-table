@@ -59,14 +59,25 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       aggConfig: new AggConfig($scope.vis, {schema: aggSchema, type: aggType}),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
-      alignment: computedColumn.alignment,
+      dataAlignmentClass: `text-${computedColumn.alignment}`,
       formulaParamsCols: [],
       templateParamsCols: []
     };
-    // Function to format "total" in footer
-    newColumn.aggConfig.fieldFormatter = (contentType) => newColumn.fieldFormatter.getConverterFor(contentType);
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
+    if (computedColumn.applyAlignmentOnTotal) {
+      newColumn.totalAlignmentClass = newColumn.dataAlignmentClass;
+    }
+    if (computedColumn.applyAlignmentOnTitle) {
+      newColumn.titleAlignmentClass = newColumn.dataAlignmentClass;
+    }
+    // Function to format "total" in footer
+    newColumn.aggConfig.fieldFormatter = function (contentType) {
+      return function (value) {
+        const self = { value: value, column: newColumn };
+        return renderCell.call(self, contentType);
+      };
+    };
     let colArrayRegex = /col\[?(\d+)\]?/g;
     let regexMatch;
     while ((regexMatch = colArrayRegex.exec(computedColumn.formula)) !== null) {
@@ -84,15 +95,15 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const renderCell = function (contentType) {
     let result = this.column.fieldFormatter.convert(this.value);
-    if (this.column.template !== undefined) {
+    if (this.templateContext !== undefined) {
       this.templateContext.value = result;
       result = this.column.template(this.templateContext);
     }
-    if (this.column.alignment !== undefined && this.column.alignment !== 'left') {
-      result = `<div align="${this.column.alignment}">${result}</div>`;
-    }
     if (contentType !== 'html') {
       result = result.replace(/<(?:.|\n)*?>/gm, '');
+    }
+    else {
+      result = { 'markup': result, 'class': this.column.dataAlignmentClass };
     }
     return result;
   };
