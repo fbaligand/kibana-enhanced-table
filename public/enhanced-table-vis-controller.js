@@ -63,6 +63,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       formulaParamsCols: [],
       templateParamsCols: []
     };
+    // Function to format "total" in footer
+    newColumn.aggConfig.fieldFormatter = (contentType) => newColumn.fieldFormatter.getConverterFor(contentType);
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
     let colArrayRegex = /col\[?(\d+)\]?/g;
