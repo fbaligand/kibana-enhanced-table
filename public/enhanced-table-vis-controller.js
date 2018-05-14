@@ -52,9 +52,11 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const createColumn = function (computedColumn, index) {
     const FieldFormat = fieldFormats.getType(computedColumn.format);
-    const fieldFormatParams = computedColumn.format === 'number' ? {pattern: computedColumn.pattern} : {};
+    const fieldFormatParams = (computedColumn.format === 'number') ? {pattern: computedColumn.pattern} : {};
+    const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
+    const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
     let newColumn = {
-      aggConfig: new AggConfig($scope.vis, {schema: 'metric', type: 'count'}),
+      aggConfig: new AggConfig($scope.vis, {schema: aggSchema, type: aggType}),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       alignment: computedColumn.alignment,
