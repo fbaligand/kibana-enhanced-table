@@ -33,9 +33,9 @@ Every release includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 - launch a command shell and go to $KIBANA_HOME/bin folder
 - use Kibana CLI to install : 
   - directly from Internet URL :
-`$KIBANA_HOME/bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/kibana-enhanced-table-X.Y.Z_A.B.C.zip`
+`$KIBANA_HOME/bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/enhanced-table-X.Y.Z_A.B.C.zip`
   - locally after manual download :
-`$KIBANA_HOME/bin/kibana-plugin install file:///path/to/kibana-enhanced-table-X.Y.Z_A.B.C.zip`
+`$KIBANA_HOME/bin/kibana-plugin install file:///path/to/enhanced-table-X.Y.Z_A.B.C.zip`
 
 
 ## Change Log
