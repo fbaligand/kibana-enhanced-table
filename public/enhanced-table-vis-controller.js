@@ -50,7 +50,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     return Parser.parse(formula);
   };
 
-  const createColumn = function (computedColumn, index) {
+  const createColumn = function (computedColumn, index, totalHits) {
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParams = (computedColumn.format === 'number') ? {pattern: computedColumn.pattern} : {};
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
@@ -75,6 +75,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     newColumn.aggConfig.fieldFormatter = function (contentType) {
       return function (value) {
         const self = { value: value, column: newColumn };
+        if (computedColumn.applyTemplate && computedColumn.template !== undefined && computedColumn.applyTemplateOnTotal) {
+          self.templateContext = { total: totalHits };
+        }
         return renderCell.call(self, contentType);
       };
     };
@@ -349,7 +352,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       _.forEach(params.computedColumns, function (computedColumn, index) {
         if (computedColumn.enabled) {
           let parser = createParser(computedColumn);
-          let newColumn = createColumn(computedColumn, index);
+          let newColumn = createColumn(computedColumn, index, resp.hits.total);
           createTables(tableGroups.tables, computedColumn, index, parser, newColumn, resp.hits.total);
         }
       });
