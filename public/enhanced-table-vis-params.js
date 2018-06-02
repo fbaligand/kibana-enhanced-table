@@ -9,9 +9,9 @@ uiModules.get('kibana/enhanced-table')
     template: enhancedTableVisParamsTemplate,
     link: function ($scope) {
       $scope.totalAggregations = ['sum', 'avg', 'min', 'max', 'count'];
-      
+
       if ($scope.vis.params.perPage === undefined) {
-    	_.extend($scope.vis.params, $scope.vis.type.params.defaults);
+        _.extend($scope.vis.params, $scope.vis.type.params.defaults);
       }
 
       $scope.$watchMulti([
@@ -39,6 +39,7 @@ uiModules.get('kibana/enhanced-table')
           applyAlignmentOnTitle: true,
           applyAlignmentOnTotal: true,
           applyTemplate: false,
+          applyTemplateOnTotal: true,
           template: '{{value}}',
           enabled: true
         });
@@ -49,7 +50,7 @@ uiModules.get('kibana/enhanced-table')
         if (index >= 0) {
           computedColumns.splice(index, 1);
         }
-    
+
         if (computedColumns.length === 1) {
           computedColumns[0].enabled = true;
         }
