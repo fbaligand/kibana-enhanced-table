@@ -7,7 +7,7 @@ export default function (kibana) {
         'plugins/enhanced-table/enhanced-table-vis'
       ],
       hacks: [
-        'plugins/enhanced-table/enhanced-table-hack'
+        'plugins/enhanced-table/enhanced-table-vis-hack'
       ]
     }
   });
