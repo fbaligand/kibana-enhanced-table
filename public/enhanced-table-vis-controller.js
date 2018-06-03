@@ -371,6 +371,16 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
       }
 
+      // add total label
+      if (params.showTotal && params.totalLabel !== '') {
+        tableGroups.tables.forEach(function setTotalLabel(table) {
+          if (table.tables)
+            table.tables.forEach(setTotalLabel);
+          else
+            table.totalLabel = params.totalLabel;
+        });
+      }
+
       // check if there are rows to display
       hasSomeRows = tableGroups.tables.some(function haveRows(table) {
         if (table.tables) return table.tables.some(haveRows);
