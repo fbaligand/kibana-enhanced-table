@@ -409,14 +409,15 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
+    let esResponse = $scope.esResponse;
 
-    if (resp) {
+    if (esResponse) {
       const vis = $scope.vis;
       const params = vis.params;
-      const totalHits = resp.hits.total;
+      const totalHits = esResponse.hits.total;
 
       // create tableGroups
-      tableGroups = tabifyAggResponse(vis, resp, {
+      tableGroups = tabifyAggResponse(vis, esResponse, {
         partialRows: params.showPartialRows,
         minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true

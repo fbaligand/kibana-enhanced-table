@@ -4,6 +4,7 @@
     <div ng-hide="showFilterInput()" align="right">
       <a ng-click="enableFilterInput()" class="filterText">Filter</a>
     </div>
+
     <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{vis.params.filterBarWidth}}">
       <div class="kuiLocalSearchAssistedInput">
         <input type="text" ng-model="vis.filterInput" ng-keyup="(vis.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="Filter input">
