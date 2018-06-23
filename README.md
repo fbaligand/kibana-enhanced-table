@@ -18,8 +18,8 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 Works also with numeric and date columns.
 - Support for a new bucket type : 'Split Cols'. It lets to create a pivot table.
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
+- Add a total label on total line first column
 - Kibana supported versions : 5.5, 5.6, 6.0, 6.1 and 6.2
-
 
 ## Demo
 
