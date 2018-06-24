@@ -1,5 +1,5 @@
 import { uiModules } from 'ui/modules';
-import enhancedTableVisParamsTemplate from 'plugins/enhanced-table/enhanced-table-vis-params.html';
+import enhancedTableVisParamsTemplate from './enhanced-table-vis-params.html';
 import _ from 'lodash';
 
 uiModules.get('kibana/enhanced-table')
