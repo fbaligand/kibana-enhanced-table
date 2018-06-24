@@ -1,9 +1,9 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
-import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
-import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
-import { VisAggConfigProvider } from 'ui/vis/agg_config';
+import { tabifyAggResponse } from 'ui/agg_response/tabify/tabify';
+import { fieldFormats } from 'ui/registry/field_formats';
+import { AggConfig } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
 import { Notifier } from 'ui/notify/notifier';
 
@@ -18,9 +18,6 @@ const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 // tabular format that we can pass to the table directive
 module.controller('EnhancedTableVisController', function ($scope, Private, config) {
 
-  const tabifyAggResponse = Private(AggResponseTabifyProvider);
-  const AggConfig = Private(VisAggConfigProvider);
-  const fieldFormats = Private(RegistryFieldFormatsProvider);
   const getConfig = (...args) => config.get(...args);
   const notifier = new Notifier();
 
@@ -417,10 +414,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       const totalHits = esResponse.hits.total;
 
       // create tableGroups
-      tableGroups = tabifyAggResponse(vis, esResponse, {
-        partialRows: params.showPartialRows,
-        minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
-        asAggConfigResults: true
+      tableGroups = tabifyAggResponse(vis.getAggConfig().getResponseAggs(), esResponse, {
+        canSplit: true,
+        asAggConfigResults: true,
+        isHierarchical: vis.isHierarchical()
       });
 
       // validate that 'Split Cols' is the last bucket
