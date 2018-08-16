@@ -3,12 +3,13 @@ import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import 'ui/agg_table';
 import 'ui/agg_table/agg_table_group';
-import { VisFactoryProvider } from 'ui/vis/vis_factory';
-import { CATEGORY } from 'ui/vis/vis_category';
-import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 import image from './images/icon-table.svg';
+
+import { VisVisTypeProvider } from 'ui/vis/vis_type';
+import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
+import { VisSchemasProvider } from 'ui/vis/schemas';
 // we need to load the css ourselves
 
 // we also need to load the controller and used by the template
@@ -22,21 +23,25 @@ VisTypesRegistryProvider.register(EnhancedTableVisProvider);
 
 // define the TableVisType
 function EnhancedTableVisProvider(Private) {
-  const VisFactory = Private(VisFactoryProvider);
+  //const VisFactory = Private(VisFactoryProvider);
+  const VisType = Private(VisVisTypeProvider);
+  const TemplateVisType = Private(TemplateVisTypeProvider);
+  const Schemas = Private(VisSchemasProvider);
 
   // define the EnhancedTableVisProvider which is used in the template
   // by angular's ng-controller directive
 
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
-  return VisFactory.createAngularVisualization({
+  return new TemplateVisType({
     type: 'table',
     name: 'enhanced-table',
     title: 'Enhanced Table',
     image,
     description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
-    category: CATEGORY.DATA,
-    visConfig: {
+    category: VisType.CATEGORY.MAP,
+    template: tableVisTemplate,
+    params: {
       defaults: {
         perPage: 10,
         showPartialRows: false,
@@ -55,43 +60,41 @@ function EnhancedTableVisProvider(Private) {
         filterAsYouType: false,
         filterBarWidth: '25%'
       },
-      template: tableVisTemplate
+      editor: '<enhanced-table-vis-params></enhanced-table-vis-params>',
     },
-    editorConfig: {
-      optionsTemplate: '<enhanced-table-vis-params></enhanced-table-vis-params>',
-      schemas: new Schemas([
-        {
-          group: 'metrics',
-          name: 'metric',
-          title: 'Metric',
-          aggFilter: ['!geo_centroid', '!geo_bounds'],
-          min: 1,
-          defaults: [
-            { type: 'count', schema: 'metric' }
-          ]
-        },
-        {
-          group: 'buckets',
-          name: 'split',
-          title: 'Split Table',
-          aggFilter: ['!filter']
-        },
-        {
-          group: 'buckets',
-          name: 'bucket',
-          title: 'Split Rows',
-          aggFilter: ['!filter']
-        },
-        {
-          group: 'buckets',
-          name: 'splitcols',
-          title: 'Split Cols',
-          aggFilter: ['!filter'],
-          max: 1,
-          editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
-        }
-      ])
-    },
+    schemas: new Schemas([
+      {
+        group: 'metrics',
+        name: 'metric',
+        title: 'Metric',
+        aggFilter: ['!geo_centroid', '!geo_bounds'],
+        min: 1,
+        defaults: [
+          { type: 'count', schema: 'metric' }
+        ]
+      },
+      {
+        group: 'buckets',
+        name: 'split',
+        title: 'Split Table',
+        aggFilter: ['!filter']
+      },
+      {
+        group: 'buckets',
+        name: 'bucket',
+        title: 'Split Rows',
+        aggFilter: ['!filter']
+      },
+      {
+        group: 'buckets',
+        name: 'splitcols',
+        title: 'Split Cols',
+        aggFilter: ['!filter'],
+        max: 1,
+        editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
+      }
+    ]),
+    implementsRenderComplete: true,
     responseHandler: 'none',
     hierarchicalData: function (vis) {
       return Boolean(vis.params.showPartialRows || vis.params.showMeticsAtAllLevels);
