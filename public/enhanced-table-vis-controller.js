@@ -1,9 +1,9 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
-import { tabifyAggResponse } from 'ui/agg_response/tabify/tabify';
-import { fieldFormats } from 'ui/registry/field_formats';
-import { AggConfig } from 'ui/vis/agg_config';
+import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
+import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
+import { VisAggConfigProvider } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
 import { Notifier } from 'ui/notify/notifier';
 
@@ -16,8 +16,10 @@ const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 
 // add a controller to tha module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
-module.controller('EnhancedTableVisController', function ($scope, Private, config) {
-
+module.controller('EnhancedTableVisController', function ($scope, $element, Private, config) {
+  const tabifyAggResponse = Private(AggResponseTabifyProvider);
+  const fieldFormats = Private(RegistryFieldFormatsProvider);
+  const AggConfig = Private(VisAggConfigProvider);
   const getConfig = (...args) => config.get(...args);
   const notifier = new Notifier();
 
@@ -382,7 +384,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   $scope.showFilterInput = function () {
-    return !$scope.visState.params.filterBarHideable || $scope.filterInputEnabled;
+    return !$scope.vis.params.filterBarHideable || $scope.filterInputEnabled;
   };
 
   // init controller state
@@ -402,7 +404,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
    * - table 'renderComplete' event (renderComplete)
    * - user submits a new filter to apply on results (activeFilter)
    */
-  $scope.$watchMulti(['renderComplete', 'activeFilter'], function watchMulti() {
+  $scope.$watchMulti(['renderComplete', 'esResponse', 'activeFilter'], function watchMulti() {
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
@@ -414,7 +416,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       const totalHits = esResponse.hits.total;
 
       // create tableGroups
-      tableGroups = tabifyAggResponse(vis.getAggConfig().getResponseAggs(), esResponse, {
+      tableGroups = tabifyAggResponse(vis, esResponse, {
         canSplit: true,
         asAggConfigResults: true,
         isHierarchical: vis.isHierarchical()
@@ -486,6 +488,6 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     if (hasSomeRows) {
       $scope.tableGroups = tableGroups;
     }
-    $scope.renderComplete();
+    $element.trigger('renderComplete');
   });
 });

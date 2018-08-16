@@ -1,18 +1,18 @@
 <div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis">
 
-  <div ng-show="visState.params.showFilterBar && (hasSomeRows || activeFilter !== '')">
+  <div ng-show="vis.params.showFilterBar && (hasSomeRows || activeFilter !== '')">
     <div ng-hide="showFilterInput()" align="right">
       <a ng-click="enableFilterInput()" class="filterText">Filter</a>
     </div>
 
-    <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{visState.params.filterBarWidth}}">
+    <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{vis.params.filterBarWidth}}">
       <div class="kuiLocalSearchAssistedInput">
-        <input type="text" ng-model="vis.filterInput" ng-keyup="(visState.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="Filter input">
+        <input type="text" ng-model="vis.filterInput" ng-keyup="(vis.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="Filter input">
       </div>
-      <button ng-click="doFilter()" aria-label="Filter" class="kuiLocalSearchButton filterButton" ng-disabled="visState.params.filterAsYouType">
+      <button ng-click="doFilter()" aria-label="Filter" class="kuiLocalSearchButton filterButton" ng-disabled="vis.params.filterAsYouType">
         <span class="fa fa-search" aria-hidden="true"></span>
       </button>
-      <button ng-click="disableFilterInput()" ng-show="visState.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
+      <button ng-click="disableFilterInput()" ng-show="vis.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
         <span aria-hidden="true" class="fa fa-times"></span>
       </button>
     </div>
@@ -26,11 +26,11 @@
   <div ng-if="tableGroups" class="table-vis-container" ng-class="tableVisContainerClass">
     <kbn-agg-table-group
       group="tableGroups"
-      export-title="visState.title"
-      per-page="visState.params.perPage"
+      export-title="vis.title"
+      per-page="vis.params.perPage"
       sort="sort"
-      show-total="visState.params.showTotal"
-      total-func="visState.params.totalFunc">
+      show-total="vis.params.showTotal"
+      total-func="vis.params.totalFunc">
     </kbn-agg-table-group>
   </div>
 </div>
