@@ -406,19 +406,14 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
-    let esResponse = $scope.esResponse;
 
-    if (esResponse) {
+    if ($scope.esResponse) {
       const vis = $scope.vis;
       const params = vis.params;
-      const totalHits = esResponse.hits.total;
 
       // create tableGroups
-      tableGroups = tabifyAggResponse(vis.getAggConfig().getResponseAggs(), esResponse, {
-        canSplit: true,
-        asAggConfigResults: true,
-        isHierarchical: vis.isHierarchical()
-      });
+      tableGroups = $scope.esResponse;
+      const totalHits = tableGroups.totalHits;
 
       // validate that 'Split Cols' is the last bucket
       const firstTable = findFirstDataTable(tableGroups);
