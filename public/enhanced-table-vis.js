@@ -8,7 +8,9 @@ import { CATEGORY } from 'ui/vis/vis_category';
 import { VisSchemasProvider } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from 'plugins/enhanced-table/enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import { VisResponseHandlersRegistryProvider } from 'ui/registry/vis_response_handlers';
 import image from './images/icon-table.svg';
+
 // we need to load the css ourselves
 
 // we also need to load the controller and used by the template
@@ -24,6 +26,15 @@ VisTypesRegistryProvider.register(EnhancedTableVisProvider);
 function EnhancedTableVisProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
   const Schemas = Private(VisSchemasProvider);
+  const visResponseHandlers = VisResponseHandlersRegistryProvider(Private);
+  const tabifyResponseHandler = visResponseHandlers.byName.tabify.handler;
+
+  const customResponseHandler = function(vis, response) {
+    return tabifyResponseHandler(vis, response).then(function(tabifiedResponse) {
+      tabifiedResponse.totalHits = response.hits.total;
+      return tabifiedResponse;
+    });
+  };
 
   // define the EnhancedTableVisProvider which is used in the template
   // by angular's ng-controller directive
@@ -93,7 +104,10 @@ function EnhancedTableVisProvider(Private) {
         }
       ])
     },
-    responseHandler: 'none',
+    responseHandler: customResponseHandler,
+    responseHandlerConfig: {
+      asAggConfigResults: true
+    },
     hierarchicalData: function (vis) {
       return Boolean(vis.params.showPartialRows || vis.params.showMeticsAtAllLevels);
     }
