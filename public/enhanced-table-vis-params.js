@@ -10,18 +10,18 @@ uiModules.get('kibana/enhanced-table')
     link: function ($scope) {
       $scope.totalAggregations = ['sum', 'avg', 'min', 'max', 'count'];
 
-      if ($scope.vis.params.perPage === undefined) {
-        _.extend($scope.vis.params, $scope.vis.type.params.defaults);
+      if ($scope.editorState.params.perPage === undefined) {
+        _.extend($scope.editorState.params, $scope.vis.type.params.defaults);
       }
 
       $scope.$watchMulti([
-        'vis.params.showPartialRows',
-        'vis.params.showMeticsAtAllLevels'
+          'editorState.params.showPartialRows',
+          'editorState.params.showMetricsAtAllLevels'
       ], function () {
         if (!$scope.vis) return;
 
-        const params = $scope.vis.params;
-        if (params.showPartialRows || params.showMeticsAtAllLevels) {
+        const params = $scope.editorState.params;
+        if (params.showPartialRows || params.showMetricsAtAllLevels) {
           $scope.metricsAtAllLevels = true;
         } else {
           $scope.metricsAtAllLevels = false;

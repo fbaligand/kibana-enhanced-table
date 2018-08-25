@@ -6,8 +6,8 @@
     </div>
   </div>
   
-  <div draggable-container="$parent.vis.params.computedColumns" style="width: 100%;">
-    <div ng-repeat="computedColumn in $parent.vis.params.computedColumns"
+  <div draggable-container="$parent.editorState.params.computedColumns" style="width: 100%;">
+    <div ng-repeat="computedColumn in $parent.editorState.params.computedColumns"
          ng-init="editorOpen = initEditorOpen(computedColumn)"
          draggable-item="computedColumn"
          style="width: 100%;">
@@ -59,7 +59,7 @@
                 </button>
 
                 <button draggable-handle
-                    ng-show="vis.params.computedColumns.length > 1" 
+                    ng-show="editorState.params.computedColumns.length > 1" 
                     aria-label="Modify Order by Dragging"
                     tooltip="Modify Order by Dragging"
                     tooltip-append-to-body="true"
@@ -69,7 +69,7 @@
                 </button>
 
                 <button
-                    aria-label="Remove Column" ng-click="removeComputedColumn(computedColumn, $parent.vis.params.computedColumns)"
+                    aria-label="Remove Column" ng-click="removeComputedColumn(computedColumn, editorState.params.computedColumns)"
                     tooltip="Remove Column"
                     tooltip-append-to-body="true"
                     type="button" class="btn btn-xs btn-danger kuiButton--basic">
@@ -140,7 +140,7 @@
     </div>
   </div>
 
-  <div ng-click="addComputedColumn($parent.vis.params.computedColumns)" class="vis-editor-agg-wide-btn">
+  <div ng-click="addComputedColumn(editorState.params.computedColumns)" class="vis-editor-agg-wide-btn">
     <div>
       <div class="kuiButton kuiButton--primary kuiButton--small">
         Add computed column
@@ -150,7 +150,7 @@
 
   <div class="form-group">
     <label>Hidden columns</label>
-    <input type="text" ng-model="vis.params.hiddenColumns" class="form-control" placeholder="0,1,..." />
+    <input type="text" ng-model="editorState.params.hiddenColumns" class="form-control" placeholder="0,1,..." />
   </div>
 
 
@@ -163,35 +163,35 @@
   
   <div class="checkbox">
     <label>
-      <input type="checkbox" ng-model="vis.params.showFilterBar">
+      <input type="checkbox" ng-model="editorState.params.showFilterBar">
       Show filter bar
     </label>
   </div>
 
-  <div class="checkbox" ng-show="vis.params.showFilterBar">
+  <div class="checkbox" ng-show="editorState.params.showFilterBar">
     <label>
-      <input type="checkbox" ng-model="vis.params.filterCaseSensitive">
+      <input type="checkbox" ng-model="editorState.params.filterCaseSensitive">
       Case sensitive filter
     </label>
   </div>
 
-  <div class="checkbox" ng-show="vis.params.showFilterBar">
+  <div class="checkbox" ng-show="editorState.params.showFilterBar">
     <label>
-      <input type="checkbox" ng-model="vis.params.filterBarHideable">
+      <input type="checkbox" ng-model="editorState.params.filterBarHideable">
       Filter bar hideable
     </label>
   </div>
 
-  <div class="checkbox" ng-show="vis.params.showFilterBar">
+  <div class="checkbox" ng-show="editorState.params.showFilterBar">
     <label>
-      <input type="checkbox" ng-model="vis.params.filterAsYouType">
+      <input type="checkbox" ng-model="editorState.params.filterAsYouType">
       Filter as you type
     </label>
   </div>
 
-  <div class="form-group" ng-show="vis.params.showFilterBar">
+  <div class="form-group" ng-show="editorState.params.showFilterBar">
     <label>Filter bar width</label>
-    <input type="text" ng-model="vis.params.filterBarWidth" class="form-control">
+    <input type="text" ng-model="editorState.params.filterBarWidth" class="form-control">
   </div>
 
 
@@ -204,26 +204,26 @@
   
   <div class="form-group">
     <label for="datatableVisualizationPerPage">Per Page</label>
-    <input type="number" ng-model="vis.params.perPage" class="form-control" id="datatableVisualizationPerPage">
+    <input type="number" ng-model="editorState.params.perPage" class="form-control" id="datatableVisualizationPerPage">
   </div>
 
   <div class="checkbox">
     <label>
-      <input type="checkbox" ng-model="vis.params.hideExportLinks">
+      <input type="checkbox" ng-model="editorState.params.hideExportLinks">
       Hide export links
     </label>
   </div>
 
   <div class="checkbox">
     <label>
-      <input type="checkbox" ng-model="vis.params.showMeticsAtAllLevels">
+      <input type="checkbox" ng-model="editorState.params.showMetricsAtAllLevels">
       Show metrics for every bucket/level
     </label>
   </div>
 
   <div class="checkbox">
     <label>
-      <input type="checkbox" ng-model="vis.params.showPartialRows">
+      <input type="checkbox" ng-model="editorState.params.showPartialRows">
       Show partial rows
     </label>
   </div>
@@ -237,23 +237,23 @@
 
   <div class="checkbox">
     <label>
-      <input type="checkbox" ng-model="vis.params.showTotal">
+      <input type="checkbox" ng-model="editorState.params.showTotal">
       Show total
     </label>
   </div>
 
   <div>
     <label for="datatableVisualizationTotalFunction">Total function</label>
-    <select ng-disabled="!vis.params.showTotal"
+    <select ng-disabled="!editorState.params.showTotal"
             class="form-control"
-            ng-model="vis.params.totalFunc"
+            ng-model="editorState.params.totalFunc"
             ng-options="x for x in totalAggregations" id="datatableVisualizationTotalFunction">
     </select>
   </div>
 
   <div class="form-group">
     <label for="datatableVisualizationTotalLabel">Total label</label>
-    <input type="text" ng-model="vis.params.totalLabel" class="form-control" id="datatableVisualizationTotalLabel" ng-disabled="!vis.params.showTotal">
+    <input type="text" ng-model="editorState.params.totalLabel" class="form-control" id="datatableVisualizationTotalLabel" ng-disabled="!editorState.params.showTotal">
   </div>
 
 </div>
