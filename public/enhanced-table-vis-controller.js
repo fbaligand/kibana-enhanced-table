@@ -224,7 +224,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const filterTableRows = function (tables, activeFilter, filterCaseSensitive) {
-    return _.filter(tables, function (table) {
+    const filteredTables = _.map(tables, (table) => _.clone(table));
+    return _.filter(filteredTables, function (table) {
       if (table.tables) {
         table.tables = filterTableRows(table.tables, activeFilter, filterCaseSensitive);
         return table.tables.length > 0;
@@ -397,12 +398,55 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   });
 
 
+  /** process filter submitted by user and refresh displayed table */
+  const processFilterBarAndRefreshTable = function() {
+
+    if ($scope.tableGroups !== undefined) {
+      let tableGroups = $scope.esResponse;
+      const vis = $scope.vis;
+      const params = vis.params;
+
+      // process filter bar
+      if ($scope.vis.filterInput === undefined) {
+        $scope.vis.filterInput = $scope.activeFilter;
+      }
+      if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
+        tableGroups = _.clone(tableGroups);
+        tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
+      }
+
+      // check if there are rows to display
+      const hasSomeRows = tableGroups.tables.some(function haveRows(table) {
+        if (table.tables) return table.tables.some(haveRows);
+        return table.rows.length > 0;
+      });
+
+      // optimize space under table
+      const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
+      $scope.tableVisContainerClass = {
+        'hide-pagination': !showPagination,
+        'hide-export-links': params.hideExportLinks
+      };
+
+      // update $scope
+      $scope.hasSomeRows = hasSomeRows;
+      if (hasSomeRows) {
+        $scope.tableGroups = tableGroups;
+      }
+    }
+
+  };
+
+  // listen activeFilter field changes, to filter results
+  $scope.$watch('activeFilter', processFilterBarAndRefreshTable);
+
+
   /**
    * Recreate the entire table when:
-   * - table 'renderComplete' event (renderComplete)
-   * - user submits a new filter to apply on results (activeFilter)
+   * - the underlying data changes (esResponse)
+   * - one of the view options changes (vis.params)
    */
-  $scope.$watchMulti(['renderComplete', 'activeFilter'], function watchMulti() {
+  $scope.$watch('renderComplete', function watchRenderComplete() {
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
@@ -445,14 +489,6 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         splitCols(tableGroups, splitColIndex, totalHits);
       }
 
-      // add filter bar
-      if ($scope.vis.filterInput === undefined) {
-        $scope.vis.filterInput = $scope.activeFilter;
-      }
-      if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
-        tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
-      }
-
       // add total label
       if (params.showTotal && params.totalLabel !== '') {
         tableGroups.tables.forEach(function setTotalLabel(table) {
@@ -463,24 +499,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         });
       }
 
-      // check if there are rows to display
-      hasSomeRows = tableGroups.tables.some(function haveRows(table) {
-        if (table.tables) return table.tables.some(haveRows);
-        return table.rows.length > 0;
-      });
-
-      // optimize space under table
-      const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
-      $scope.tableVisContainerClass = {
-        'hide-pagination': !showPagination,
-        'hide-export-links': params.hideExportLinks
-      };
+      // process filter bar
+      processFilterBarAndRefreshTable();
     }
 
-    $scope.hasSomeRows = hasSomeRows;
-    if (hasSomeRows) {
-      $scope.tableGroups = tableGroups;
-    }
     $scope.renderComplete();
   });
 });
