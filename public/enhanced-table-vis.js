@@ -59,6 +59,7 @@ function EnhancedTableVisProvider(Private) {
         showTotal: false,
         totalFunc: 'sum',
         computedColumns: [],
+        computedColsPerSplitCol: false,
         hideExportLinks: false,
         showFilterBar: false,
         filterCaseSensitive: false,

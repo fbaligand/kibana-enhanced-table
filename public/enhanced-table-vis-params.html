@@ -153,6 +153,17 @@
     <input type="text" ng-model="editorState.params.hiddenColumns" class="form-control" placeholder="0,1,..." />
   </div>
 
+  <div class="checkbox" ng-show="hasSplitColsBucket()">
+    <label>
+      <input type="checkbox" ng-model="editorState.params.computedColsPerSplitCol">
+      Computed/Hidden cols per split col&nbsp;
+      <icon-tip
+        content="'Example: when enabled, if there is one \'Split Cols\' bucket that implies two columns (term1 and term2), one Count metric, and one computed column configured, then in the result table, there will be a computed column for term1 and another computed column for term2 (each displayed after count column)'"
+        position="'right'"
+      ></icon-tip>
+    </label>
+  </div>
+
 
   <div>&nbsp;</div>
   <div class="kuiSideBarSectionTitle">

@@ -66,6 +66,12 @@ uiModules.get('kibana/enhanced-table')
         }
       };
 
+      $scope.hasSplitColsBucket = function () {
+        return _.some($scope.editorState.aggs, function(agg) {
+          return agg.schema.name === 'splitcols' && agg.enabled;
+        });
+      };
+
     }
   };
 });
