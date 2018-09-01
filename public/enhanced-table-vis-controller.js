@@ -44,7 +44,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const getRealColIndex = function (colIndex, splitColIndex) {
-    if (splitColIndex !== -1 && colIndex >= splitColIndex) {
+    if (splitColIndex !== -1 && colIndex >= splitColIndex && $scope.vis.params.computedColsPerSplitCol) {
       return colIndex + 1;
     }
     else {
@@ -473,6 +473,11 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         }
       }
 
+      // process 'Split Cols' bucket: transform rows to cols
+      if (splitColIndex != -1 && !params.computedColsPerSplitCol) {
+        splitCols(tableGroups, splitColIndex, totalHits);
+      }
+
       // add computed columns
       _.forEach(params.computedColumns, function (computedColumn, index) {
         if (computedColumn.enabled) {
@@ -487,8 +492,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
 
       // process 'Split Cols' bucket: transform rows to cols
-      splitColIndex = findSplitColIndex(firstTable);
-      if (splitColIndex != -1) {
+      if (splitColIndex != -1 && params.computedColsPerSplitCol) {
+        splitColIndex = findSplitColIndex(firstTable);
         splitCols(tableGroups, splitColIndex, totalHits);
       }
 
