@@ -272,7 +272,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const splitCols = function (table, splitColIndex, totalHits) {
 
-    // process only real tables
+    // process only real tables (with rows)
     if (table.tables) {
       _.forEach(table.tables, function (table) {
         splitCols(table, splitColIndex, totalHits);
@@ -307,8 +307,19 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     _.forEach(table.rows, function (row) {
 
+      // detect if we should create a row
+      let createNewRow = (newRow === null);
+      if (!createNewRow) {
+        for (let i = 0; i < splitColIndex; i++) {
+          if (row[i].value !== newRow[i].value) {
+            createNewRow = true;
+            break;
+          }
+        }
+      }
+
       // create a new row
-      if (newRow === null || (splitColIndex > 0 && row[splitColIndex-1].value != newRow[splitColIndex-1].value)) {
+      if (createNewRow) {
         newRow = [];
         for (let i = 0; i < splitColIndex; i++) {
           newRow.push(row[i]);
