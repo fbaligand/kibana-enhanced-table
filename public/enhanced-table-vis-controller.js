@@ -459,16 +459,15 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
    */
   $scope.$watch('renderComplete', function watchRenderComplete() {
 
-    let tableGroups = $scope.tableGroups = null;
-    let hasSomeRows = $scope.hasSomeRows = null;
+    if ($scope.esResponse && !$scope.esResponse.enhanced) {
 
-    if ($scope.esResponse) {
-      const vis = $scope.vis;
-      const params = vis.params;
-
-      // create tableGroups
-      tableGroups = $scope.esResponse;
+      // init tableGroups
+      $scope.tableGroups = null;
+      $scope.hasSomeRows = null;
+      let tableGroups = $scope.esResponse;
       const totalHits = tableGroups.totalHits;
+      tableGroups.enhanced = true;
+      const params = $scope.vis.params;
 
       // validate that 'Split Cols' is the last bucket
       const firstTable = findFirstDataTable(tableGroups);
