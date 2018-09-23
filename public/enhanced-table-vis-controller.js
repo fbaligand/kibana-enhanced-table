@@ -473,11 +473,12 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       // init tableGroups
       $scope.tableGroups = null;
       $scope.hasSomeRows = null;
-      const params = $scope.vis.params;
+      const vis = $scope.vis;
+      const params = vis.params;
       const esResponse = $scope.esResponse;
       let tableGroups = tabifyAggResponse(vis, esResponse, {
         partialRows: params.showPartialRows,
-        minimalColumns: $scope.vis.isHierarchical() && !params.showMeticsAtAllLevels,
+        minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
       $scope.tableGroupsBase = tableGroups;
@@ -493,6 +494,12 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
           notifyError(`'Split Cols' bucket must be the last one`);
           return;
         }
+      }
+
+      // no data to display
+      if (totalHits === 0) {
+        $scope.hasSomeRows = false;
+        return;
       }
 
       // process 'Split Cols' bucket: transform rows to cols
