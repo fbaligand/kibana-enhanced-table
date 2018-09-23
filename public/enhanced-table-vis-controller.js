@@ -480,6 +480,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         }
       }
 
+      // no data to display
+      if (totalHits === 0) {
+        $scope.hasSomeRows = false;
+        return;
+      }
+
       // process 'Split Cols' bucket: transform rows to cols
       if (splitColIndex != -1 && !params.computedColsPerSplitCol) {
         splitCols(tableGroups, splitColIndex, totalHits);
