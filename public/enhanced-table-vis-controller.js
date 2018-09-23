@@ -468,22 +468,21 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
    */
   $scope.$watchMulti(['esResponse', 'vis.params'], function watchMulti() {
 
-    let tableGroups = $scope.tableGroups = null;
-    let hasSomeRows = $scope.hasSomeRows = null;
-    let esResponse = $scope.esResponse;
+    if ($scope.esResponse && !$scope.esResponse.enhanced) {
 
-    if (esResponse) {
-      const vis = $scope.vis;
-      const params = vis.params;
-      const totalHits = esResponse.hits.total;
-
-      // create tableGroups
-      tableGroups = tabifyAggResponse(vis, esResponse, {
+      // init tableGroups
+      $scope.tableGroups = null;
+      $scope.hasSomeRows = null;
+      const params = $scope.vis.params;
+      const esResponse = $scope.esResponse;
+      let tableGroups = tabifyAggResponse(vis, esResponse, {
         partialRows: params.showPartialRows,
-        minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
+        minimalColumns: $scope.vis.isHierarchical() && !params.showMeticsAtAllLevels,
         asAggConfigResults: true
       });
       $scope.tableGroupsBase = tableGroups;
+      const totalHits = esResponse.hits.total;
+      tableGroups.enhanced = true;
 
       // validate that 'Split Cols' is the last bucket
       const firstTable = findFirstDataTable(tableGroups);
