@@ -39,6 +39,7 @@ function EnhancedTableVisProvider(Private) {
     title: 'Enhanced Table',
     image,
     description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
+    isBeta: true,
     category: VisType.CATEGORY.DATA,
     template: tableVisTemplate,
     params: {
