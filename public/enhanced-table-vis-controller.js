@@ -115,7 +115,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // create new column object
     let newColumn = {
-      aggConfig: new AggConfig($scope.vis, {schema: aggSchema, type: aggType}),
+      aggConfig: new AggConfig($scope.vis.aggs, {schema: aggSchema, type: aggType}),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,

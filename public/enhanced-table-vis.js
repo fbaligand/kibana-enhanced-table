@@ -1,4 +1,3 @@
-import './enhanced-table-vis.less';
 import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import 'ui/agg_table';
@@ -8,7 +7,7 @@ import { CATEGORY } from 'ui/vis/vis_category';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import image from './images/icon-table.svg';
+import { legacyTableResponseHandler } from './legacy_response_handler';
 
 // we need to load the css ourselves
 
@@ -34,7 +33,7 @@ function EnhancedTableVisTypeProvider(Private) {
     type: 'table',
     name: 'enhanced-table',
     title: 'Enhanced Table',
-    image,
+    icon: 'visTable',
     description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
     category: CATEGORY.DATA,
     visConfig: {
@@ -94,6 +93,7 @@ function EnhancedTableVisTypeProvider(Private) {
         }
       ])
     },
+    responseHandler: legacyTableResponseHandler,
     responseHandlerConfig: {
       asAggConfigResults: true
     },

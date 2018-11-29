@@ -8,7 +8,8 @@ export default function (kibana) {
       ],
       hacks: [
         'plugins/enhanced-table/enhanced-table-vis-hack'
-      ]
+      ],
+      styleSheetPaths: `${__dirname}/public/index.scss`
     }
   });
 
