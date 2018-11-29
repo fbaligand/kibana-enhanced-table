@@ -9,7 +9,7 @@
       <div class="kuiLocalSearchAssistedInput">
         <input type="text" ng-model="vis.filterInput" ng-keyup="(vis.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="Filter input">
       </div>
-      <button ng-click="doFilter()" aria-label="Filter" class="kuiLocalSearchButton filterButton" ng-disabled="vis.params.filterAsYouType">
+      <button ng-click="doFilter()" aria-label="Filter" class="kuiButton kuiLocalSearchButton filterButton" ng-disabled="vis.params.filterAsYouType">
         <span class="fa fa-search" aria-hidden="true"></span>
       </button>
       <button ng-click="disableFilterInput()" ng-show="vis.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
