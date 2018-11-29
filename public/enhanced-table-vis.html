@@ -9,7 +9,7 @@
       <div class="kuiLocalSearchAssistedInput">
         <input type="text" ng-model="vis.filterInput" ng-keyup="(visState.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="Filter input">
       </div>
-      <button ng-click="doFilter()" aria-label="Filter" class="kuiLocalSearchButton filterButton" ng-disabled="visState.params.filterAsYouType">
+      <button ng-click="doFilter()" aria-label="Filter" class="kuiButton kuiLocalSearchButton filterButton" ng-disabled="visState.params.filterAsYouType">
         <span class="fa fa-search" aria-hidden="true"></span>
       </button>
       <button ng-click="disableFilterInput()" ng-show="visState.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
@@ -23,7 +23,7 @@
     <h4>No results found</h4>
   </div>
 
-  <div ng-if="tableGroups" class="table-vis-container" ng-class="tableVisContainerClass">
+  <div ng-if="tableGroups" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
     <kbn-agg-table-group
       group="tableGroups"
       export-title="visState.title"
