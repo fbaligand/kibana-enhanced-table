@@ -465,7 +465,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       $scope.tableGroups = null;
       $scope.hasSomeRows = null;
       let tableGroups = $scope.esResponse;
-      const totalHits = tableGroups.totalHits;
+      const totalHits = $scope.vis.searchSource.rawResponse.hits.total;
       tableGroups.enhanced = true;
       const params = $scope.vis.params;
 

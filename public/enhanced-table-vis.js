@@ -8,7 +8,6 @@ import { CATEGORY } from 'ui/vis/vis_category';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { VisResponseHandlersRegistryProvider } from 'ui/registry/vis_response_handlers';
 import image from './images/icon-table.svg';
 
 // we need to load the css ourselves
@@ -20,22 +19,13 @@ import image from './images/icon-table.svg';
 // require the directives that we use as well
 
 // register the provider with the visTypes registry
-VisTypesRegistryProvider.register(EnhancedTableVisProvider);
+VisTypesRegistryProvider.register(EnhancedTableVisTypeProvider);
 
 // define the TableVisType
-function EnhancedTableVisProvider(Private) {
+function EnhancedTableVisTypeProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
-  const visResponseHandlers = VisResponseHandlersRegistryProvider(Private);
-  const tabifyResponseHandler = visResponseHandlers.byName.tabify.handler;
 
-  const customResponseHandler = function(vis, response) {
-    return tabifyResponseHandler(vis, response).then(function(tabifiedResponse) {
-      tabifiedResponse.totalHits = response.hits.total;
-      return tabifiedResponse;
-    });
-  };
-
-  // define the EnhancedTableVisProvider which is used in the template
+  // define the EnhancedTableVisTypeProvider which is used in the template
   // by angular's ng-controller directive
 
   // return the visType object, which kibana will use to display and configure new
@@ -104,7 +94,6 @@ function EnhancedTableVisProvider(Private) {
         }
       ])
     },
-    responseHandler: customResponseHandler,
     responseHandlerConfig: {
       asAggConfigResults: true
     },
@@ -114,4 +103,4 @@ function EnhancedTableVisProvider(Private) {
   });
 }
 
-export default EnhancedTableVisProvider;
+export default EnhancedTableVisTypeProvider;
