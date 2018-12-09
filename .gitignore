@@ -5,4 +5,3 @@ npm-debug.log*
 package-lock.json
 .project
 *.zip
-public/index.css
