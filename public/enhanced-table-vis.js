@@ -3,13 +3,12 @@ import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import 'ui/agg_table';
 import 'ui/agg_table/agg_table_group';
-import tableVisTemplate from './enhanced-table-vis.html';
-import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import image from './images/icon-table.svg';
-
 import { VisVisTypeProvider } from 'ui/vis/vis_type';
 import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
 import { VisSchemasProvider } from 'ui/vis/schemas';
+import tableVisTemplate from './enhanced-table-vis.html';
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import image from './images/icon-table.svg';
 // we need to load the css ourselves
 
 // we also need to load the controller and used by the template
@@ -23,7 +22,6 @@ VisTypesRegistryProvider.register(EnhancedTableVisProvider);
 
 // define the TableVisType
 function EnhancedTableVisProvider(Private) {
-  //const VisFactory = Private(VisFactoryProvider);
   const VisType = Private(VisVisTypeProvider);
   const TemplateVisType = Private(TemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);

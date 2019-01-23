@@ -113,7 +113,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParams = (computedColumn.format === 'number') ? {pattern: computedColumn.pattern} : {};
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
-    const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
+    const aggType = (computedColumn.format === 'number') ? 'count' : 'filters';
 
     // create new column object
     let newColumn = {
@@ -126,6 +126,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
+    newColumn.aggConfig.isFilterable = () => false;
 
     // add alignment options
     if (computedColumn.applyAlignmentOnTotal) {
@@ -401,10 +402,11 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
   /**
    * Recreate the entire table when:
-   * - table 'renderComplete' event (renderComplete)
+   * - the underlying data changes (esResponse)
+   * - one of the view options changes (vis.params)
    * - user submits a new filter to apply on results (activeFilter)
    */
-  $scope.$watchMulti(['renderComplete', 'esResponse', 'activeFilter'], function watchMulti() {
+  $scope.$watchMulti(['esResponse', 'vis.params', 'activeFilter'], function watchMulti() {
 
     let tableGroups = $scope.tableGroups = null;
     let hasSomeRows = $scope.hasSomeRows = null;
@@ -417,9 +419,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
       // create tableGroups
       tableGroups = tabifyAggResponse(vis, esResponse, {
-        canSplit: true,
-        asAggConfigResults: true,
-        isHierarchical: vis.isHierarchical()
+        partialRows: params.showPartialRows,
+        minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
+        asAggConfigResults: true
       });
 
       // validate that 'Split Cols' is the last bucket
@@ -482,12 +484,13 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         'hide-pagination': !showPagination,
         'hide-export-links': params.hideExportLinks
       };
+
+      $element.trigger('renderComplete');
     }
 
     $scope.hasSomeRows = hasSomeRows;
     if (hasSomeRows) {
       $scope.tableGroups = tableGroups;
     }
-    $element.trigger('renderComplete');
   });
 });
