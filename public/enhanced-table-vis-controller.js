@@ -227,32 +227,43 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     });
   };
 
-  const filterTableRows = function (tables, activeFilter, filterCaseSensitive) {
-    const filteredTables = _.map(tables, (table) => {
-      const mappedTable = _.clone(table);
-      mappedTable.aggConfig = table.aggConfig;
-      return mappedTable;
+  const rowContainsFilterTerm = function (row, activeFilter, filterCaseSensitive) {
+    return row.some(function (col) {
+      let colValue = col.toString();
+      if (typeof colValue === 'string') {
+        if (!filterCaseSensitive) {
+          colValue = colValue.toLowerCase();
+        }
+        return colValue.includes(activeFilter);
+      }
+      return false;
     });
+  }
+
+  const filterTableRows = function (tables, activeFilter, filterCaseSensitive, filterTermsSeparately) {
+    const filteredTables = _.map(tables, (table) => _.clone(table));
     return _.filter(filteredTables, function (table) {
       if (table.tables) {
-        table.tables = filterTableRows(table.tables, activeFilter, filterCaseSensitive);
+        table.tables = filterTableRows(table.tables, activeFilter, filterCaseSensitive, filterTermsSeparately);
         return table.tables.length > 0;
       }
       else {
         if (!filterCaseSensitive) {
           activeFilter = activeFilter.toLowerCase();
         }
+        let activeFilterTerms = null;
+        if (filterTermsSeparately) {
+          activeFilterTerms = activeFilter.replace(/ +/g, ' ').split(' ');
+        }
         table.rows = _.filter(table.rows, function (row) {
-          return row.some(function (col) {
-            let colValue = col.toString();
-            if (typeof colValue === 'string') {
-              if (!filterCaseSensitive) {
-                colValue = colValue.toLowerCase();
-              }
-              return colValue.includes(activeFilter);
-            }
-            return false;
-          });
+          if (filterTermsSeparately) {
+            return activeFilterTerms.every(function (filterTerm) {
+              return rowContainsFilterTerm(row, filterTerm, filterCaseSensitive);
+            });
+          }
+          else {
+            return rowContainsFilterTerm(row, activeFilter, filterCaseSensitive);
+          }
         });
         return table.rows.length > 0;
       }
@@ -432,7 +443,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       }
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
         tableGroups = _.clone(tableGroups);
-        tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive);
+        tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive, params.filterTermsSeparately);
       }
 
       // check if there are rows to display

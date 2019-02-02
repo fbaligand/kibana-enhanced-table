@@ -57,6 +57,7 @@ function EnhancedTableVisProvider(Private) {
         filterCaseSensitive: false,
         filterBarHideable: false,
         filterAsYouType: false,
+        filterTermsSeparately: false,
         filterBarWidth: '25%'
       },
       editor: '<enhanced-table-vis-params></enhanced-table-vis-params>',
