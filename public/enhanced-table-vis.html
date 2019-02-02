@@ -23,7 +23,7 @@
     <h4>No results found</h4>
   </div>
 
-  <div ng-if="tableGroups" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
+  <div ng-if="hasSomeRows" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
     <kbn-agg-table-group
       group="tableGroups"
       export-title="visState.title"
