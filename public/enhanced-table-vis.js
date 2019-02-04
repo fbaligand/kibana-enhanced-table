@@ -68,6 +68,7 @@ function EnhancedTableVisProvider(Private) {
         filterBarHideable: false,
         filterAsYouType: false,
         filterTermsSeparately: false,
+        filterHighlightResults: false,
         filterBarWidth: '25%'
       },
     },

@@ -226,43 +226,31 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     });
   };
 
-  const rowContainsFilterTerm = function (row, activeFilter, filterCaseSensitive) {
+  const rowContainsFilterTerm = function (row, termToFind, filterCaseSensitive) {
     return row.some(function (col) {
       let colValue = col.toString();
       if (typeof colValue === 'string') {
         if (!filterCaseSensitive) {
           colValue = colValue.toLowerCase();
         }
-        return colValue.includes(activeFilter);
+        return colValue.includes(termToFind);
       }
       return false;
     });
   }
 
-  const filterTableRows = function (tables, activeFilter, filterCaseSensitive, filterTermsSeparately) {
+  const filterTableRows = function (tables, activeFilterTerms, filterCaseSensitive) {
     const filteredTables = _.map(tables, (table) => _.clone(table));
     return _.filter(filteredTables, function (table) {
       if (table.tables) {
-        table.tables = filterTableRows(table.tables, activeFilter, filterCaseSensitive, filterTermsSeparately);
+        table.tables = filterTableRows(table.tables, activeFilterTerms, filterCaseSensitive);
         return table.tables.length > 0;
       }
       else {
-        if (!filterCaseSensitive) {
-          activeFilter = activeFilter.toLowerCase();
-        }
-        let activeFilterTerms = null;
-        if (filterTermsSeparately) {
-          activeFilterTerms = activeFilter.replace(/ +/g, ' ').split(' ');
-        }
         table.rows = _.filter(table.rows, function (row) {
-          if (filterTermsSeparately) {
-            return activeFilterTerms.every(function (filterTerm) {
-              return rowContainsFilterTerm(row, filterTerm, filterCaseSensitive);
-            });
-          }
-          else {
-            return rowContainsFilterTerm(row, activeFilter, filterCaseSensitive);
-          }
+          return activeFilterTerms.every(function (filterTerm) {
+            return rowContainsFilterTerm(row, filterTerm, filterCaseSensitive);
+          });
         });
         return table.rows.length > 0;
       }
@@ -397,6 +385,22 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
   };
 
+  const colToStringWithHighlightResults = function(initialToString, scope, contentType) {
+    let result = initialToString.call(this, contentType);
+    if ($scope.filterHighlightRegex !== null && contentType === 'html') {
+      if (typeof result === 'string') {
+        result = { 'markup': result};
+      }
+      if (result.markup.indexOf('<span') === -1) {
+        result.markup = `<span>${result.markup}</span>`;
+      }
+      result.markup = result.markup.replace(/>([^<>]+)</g, function (match, group) {
+        return '>' + group.replace($scope.filterHighlightRegex, '<mark>$1</mark>') + '<';
+      });
+    }
+    return result;
+  };
+
   // filter scope methods
   $scope.doFilter = function () {
     $scope.activeFilter = $scope.vis.filterInput;
@@ -435,13 +439,31 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       const vis = $scope.vis;
       const params = vis.params;
 
-      // process filter bar
+      // init filterInput & filterHighlightRegex
       if ($scope.vis.filterInput === undefined) {
         $scope.vis.filterInput = $scope.activeFilter;
       }
+      $scope.filterHighlightRegex = null;
+
+      // process filter bar
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
+        
+        // compute activeFilterTerms
+        const activeFilter = params.filterCaseSensitive ? $scope.activeFilter : $scope.activeFilter.toLowerCase();
+        let activeFilterTerms = [ activeFilter ];
+        if (params.filterTermsSeparately) {
+          activeFilterTerms = activeFilter.replace(/ +/g, ' ').split(' ');
+        }
+
+        // compute filterHighlightRegex
+        if (params.filterHighlightResults) {
+          const filterHighlightRegexString = '(' + _.sortBy(activeFilterTerms, term => term.length * -1).map(term => _.escapeRegExp(term)).join('|') + ')';
+          $scope.filterHighlightRegex = new RegExp(filterHighlightRegexString, 'g' + (!params.filterCaseSensitive ? 'i' : ''));
+        }
+        
+        // filter table rows to display
         tableGroups = _.clone(tableGroups);
-        tableGroups.tables = filterTableRows(tableGroups.tables, $scope.activeFilter, params.filterCaseSensitive, params.filterTermsSeparately);
+        tableGroups.tables = filterTableRows(tableGroups.tables, activeFilterTerms, params.filterCaseSensitive);
       }
 
       // check if there are rows to display
@@ -461,6 +483,18 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       $scope.hasSomeRows = hasSomeRows;
       if (hasSomeRows) {
         $scope.tableGroups = tableGroups;
+      }
+
+      // force render if 'Highlight results' is enabled
+      if (hasSomeRows && $scope.filterHighlightRegex !== null) {
+        tableGroups.tables.some(function cloneFirstRow(table) {
+          if (table.tables) return table.tables.some(cloneFirstRow);
+          if (table.rows.length > 0) {
+            table.rows[0] = _.clone(table.rows[0]);
+            return true;
+          }
+          return false;
+        });
       }
     }
 
@@ -535,6 +569,22 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
             table.tables.forEach(setTotalLabel);
           else
             table.totalLabel = params.totalLabel;
+        });
+      }
+
+      // prepare filter highlight results rendering
+      if (params.showFilterBar && params.filterHighlightResults) {
+        tableGroups.tables.forEach(function redefineColToString(table) {
+          if (table.tables) {
+            table.tables.forEach(redefineColToString);
+          }
+          else {
+            table.rows.forEach(function(row) {
+              row.forEach(function (col) {
+                col.toString = colToStringWithHighlightResults.bind(col, col.toString, $scope);
+              });
+            });
+          }
         });
       }
 
