@@ -16,11 +16,14 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
   - Works also with numeric and date columns
+  - Ability to filter as you type
+  - Ability to filter each term separately
+  - Ability to highlight filter results
 - Support for a new bucket type : 'Split Cols'. It lets to create a pivot table
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column
-- Kibana supported versions : 5.5, 5.6, 6.0, 6.1, 6.2, 6.3, 6.4 and 6.5
+- Kibana supported versions : 5.5, 5.6, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5 and 6.6
 
 ## Demo
 
