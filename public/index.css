@@ -13,7 +13,7 @@ visualization.enhanced-table {
 .enhanced-table-vis kbn-agg-table-group .table {
   margin-bottom: 0px; }
 
-.enhanced-table-vis .hide-export-links .agg-table-controls {
+.enhanced-table-vis .hide-export-links .pagination-container {
   display: none; }
 
 .enhanced-table-vis .hide-pagination paginate-controls {

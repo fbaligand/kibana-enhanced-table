@@ -2,8 +2,8 @@ import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import 'ui/agg_table';
 import 'ui/agg_table/agg_table_group';
+import { i18n } from '@kbn/i18n';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
-import { CATEGORY } from 'ui/vis/vis_category';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
@@ -32,10 +32,13 @@ function EnhancedTableVisTypeProvider(Private) {
   return VisFactory.createAngularVisualization({
     type: 'table',
     name: 'enhanced-table',
-    title: 'Enhanced Table',
+    title: i18n.translate('tableVis.enhancedTableVisTitle', {
+      defaultMessage: 'Enhanced Table',
+    }),
     icon: 'visTable',
-    description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
-    category: CATEGORY.DATA,
+    description: i18n.translate('tableVis.enhancedTableVisDescription', {
+      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
+    }),
     visConfig: {
       defaults: {
         perPage: 10,
@@ -66,7 +69,9 @@ function EnhancedTableVisTypeProvider(Private) {
         {
           group: 'metrics',
           name: 'metric',
-          title: 'Metric',
+          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.metricTitle', {
+            defaultMessage: 'Metric',
+          }),
           aggFilter: ['!geo_centroid', '!geo_bounds'],
           min: 1,
           defaults: [
@@ -76,19 +81,25 @@ function EnhancedTableVisTypeProvider(Private) {
         {
           group: 'buckets',
           name: 'split',
-          title: 'Split Table',
+          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
+            defaultMessage: 'Split Table',
+          }),
           aggFilter: ['!filter']
         },
         {
           group: 'buckets',
           name: 'bucket',
-          title: 'Split Rows',
+          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
+            defaultMessage: 'Split Rows',
+          }),
           aggFilter: ['!filter']
         },
         {
           group: 'buckets',
           name: 'splitcols',
-          title: 'Split Cols',
+          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
+            defaultMessage: 'Split Cols',
+          }),
           aggFilter: ['!filter'],
           max: 1,
           editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
