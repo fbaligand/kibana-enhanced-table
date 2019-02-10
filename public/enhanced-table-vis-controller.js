@@ -240,7 +240,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   }
 
   const filterTableRows = function (tables, activeFilterTerms, filterCaseSensitive) {
-    const filteredTables = _.map(tables, (table) => _.clone(table));
+    const filteredTables = _.map(tables, function (table) {
+      const clonedTable = _.clone(table);
+      clonedTable.aggConfig = table.aggConfig;
+      clonedTable.title = table.title;
+      return clonedTable;
+    });
     return _.filter(filteredTables, function (table) {
       if (table.tables) {
         table.tables = filterTableRows(table.tables, activeFilterTerms, filterCaseSensitive);
