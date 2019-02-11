@@ -158,8 +158,8 @@
       <input type="checkbox" ng-model="vis.params.computedColsPerSplitCol">
       Computed/Hidden cols per split col&nbsp;
       <kbn-info
-        info="'Example: when enabled, if there is one \'Split Cols\' bucket that implies two columns (term1 and term2), one Count metric, and one computed column configured, then in the result table, there will be a computed column for term1 and another computed column for term2 (each displayed after count column)'"
-        placement="right"
+        info="Example: when enabled, if there is one &apos;Split Cols&apos; bucket that implies two columns (term1 and term2), one Count metric, and one computed column configured, then in the result table, there will be a computed column for term1 and another computed column for term2 (each displayed after count column)."
+        placement="left"
       ></kbn-info>
     </label>
   </div>
@@ -203,11 +203,11 @@
   <div class="checkbox" ng-show="vis.params.showFilterBar">
     <label>
       <input type="checkbox" ng-model="vis.params.filterTermsSeparately">
-      Filter each term separately
-      <icon-tip
-        content="'Example with filter set to \'term1&nbsp;term2\': when this option is enabled, lines with one column containing \'term1\' and another column containing \'term2\' will be displayed. If disabled, only lines with one column containing \'term1&nbsp;term2\' will be displayed.'"
-        position="'right'"
-      ></icon-tip>
+      Filter each term separately&nbsp;
+      <kbn-info
+        info="Example with filter set to &apos;term1&nbsp;term2&apos;: when this option is enabled, lines with one column containing &apos;term1&apos; and another column containing &apos;term2&apos; will be displayed. If disabled, only lines with one column containing &apos;term1&nbsp;term2&apos; will be displayed."
+        placement="left"
+      ></kbn-info>
     </label>
   </div>
 
