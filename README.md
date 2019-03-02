@@ -32,15 +32,16 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 
 ## Install
 
-Every release includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
+Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
 - Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases "Go to releases!") and choose the right one for your Kibana
-- launch a command shell and go to $KIBANA_HOME/bin folder
+- launch a shell terminal and go to $KIBANA_HOME/bin folder
 - use Kibana CLI to install : 
   - directly from Internet URL :
 `$KIBANA_HOME/bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/enhanced-table-X.Y.Z_A.B.C.zip`
   - locally after manual download :
 `$KIBANA_HOME/bin/kibana-plugin install file:///path/to/enhanced-table-X.Y.Z_A.B.C.zip`
+- restart Kibana
 
 
 ## Change Log
@@ -53,28 +54,29 @@ Versions and Release Notes are listed in [Releases](https://github.com/fbaligand
 This Kibana plugin is inspired from [computed-columns](https://github.com/seadiaz/computed-columns) and [kbn_searchtables](https://github.com/dlumbrer/kbn_searchtables) plugins.  
 Thanks for their great work !
 
+
 ## Development
 
-See the [kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) for instructions setting up your development environment. Once you have completed that, use the following npm tasks.
+To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
+- execute these commands :
+``` bash
+git clone https://github.com/elastic/kibana.git
+git clone https://github.com/fbaligand/kibana-enhanced-table.git
+cd kibana
+git reset --hard vX.Y.Z # replace 'X.Y.Z' by desired Kibana version
+```
+- install the version of Node.js listed in the `.node-version` file
+- ensure that `node` binary is both in `PATH` environment variable and in `kibana/node` folder
+- execute these commands :
+``` bash
+npm install
+cd ../kibana-enhanced-table
+npm start
+```
+- in your browser, call `https://localhost:5601` and enjoy!
 
-  - `npm start`
 
-    Start kibana and have it include this plugin
-
-  - `npm start -- --config kibana.yml`
-
-    You can pass any argument that you would normally send to `bin/kibana` by putting them after `--` when running `npm start`
-
-  - `npm run build`
-
-    Build a distributable archive
-
-  - `npm run test:browser`
-
-    Run the browser tests in a real web browser
-
-  - `npm run test:server`
-
-    Run the server tests using mocha
-
-For more information about any of these commands run `npm run ${task} -- --help`.
+To build a distributable archive, set kibana version in `package.json` and execute this command :
+``` bash
+npm run build
+```
