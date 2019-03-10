@@ -1,5 +1,6 @@
 <div class="kuiSideBarSection">
 
+  <!-- COMPUTED COLUMNS SECTION -->
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">
       Computed Columns
@@ -149,6 +150,16 @@
   </div>
 
   <div class="form-group">
+    <label>Lines computed filter (<a ng-href="https://github.com/silentmatt/expr-eval#expression-syntax" target="_blank">expr-eval</a> syntax)&nbsp;
+      <icon-tip
+        content="'Example: when \'col0 &gt; 10\', only table lines having first column value greater than 10 are displayed'"
+        position="'right'"
+      ></icon-tip>
+    </label>
+    <input type="text" ng-model="editorState.params.linesComputedFilter" class="form-control" placeholder="col0 > 10" />
+  </div>
+
+  <div class="form-group">
     <label>Hidden columns</label>
     <input type="text" ng-model="editorState.params.hiddenColumns" class="form-control" placeholder="0,1,..." />
   </div>
@@ -165,6 +176,7 @@
   </div>
 
 
+  <!-- FILTER BAR SECTION -->
   <div>&nbsp;</div>
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">
@@ -224,6 +236,7 @@
   </div>
 
 
+  <!-- BASIC SETTINGS SECTION -->
   <div>&nbsp;</div>
   <div class="kuiSideBarSectionTitle">
     <div class="kuiSideBarSectionTitle__text">
