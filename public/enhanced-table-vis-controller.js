@@ -52,14 +52,14 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     }
   };
 
-  const createFormula = function (computedColumn, splitColIndex) {
+  const createFormula = function (inputFormula, splitColIndex) {
 
     // convert old col[i] syntax
     const colRefRegex = /col(\d+)/g;
-    const realFormula = computedColumn.formula.replace(/col\[(\d+)\]/g, 'col$1')
-                                              .replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+    const realFormula = inputFormula.replace(/col\[(\d+)\]/g, 'col$1')
+                                    .replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
-    // add formula param cols
+    // extract formula param cols
     const formulaParamsCols = [];
     let regexMatch;
     while ((regexMatch = colRefRegex.exec(realFormula)) !== null) {
@@ -74,12 +74,13 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     };
   };
 
-  const createFormulaParams = function (column, row, totalHits) {
-    let formulaParams = { total: totalHits };
-    _.forEach(column.formula.paramsCols, function (formulaParamCol) {
+  const computeFormulaValue = function (formula, row, totalHits) {
+    const formulaParams = { total: totalHits };
+    _.forEach(formula.paramsCols, function (formulaParamCol) {
       formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
     });
-    return formulaParams;
+    const value = formula.parser.evaluate(formulaParams);
+    return value;
   };
 
   const createTemplate = function (computedColumn, splitColIndex) {
@@ -122,7 +123,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
-      formula: createFormula(computedColumn, splitColIndex),
+      formula: createFormula(computedColumn.formula, splitColIndex),
       template: createTemplate(computedColumn, splitColIndex)
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
@@ -167,10 +168,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   };
 
   const createComputedCell = function (column, row, totalHits) {
-    let formulaParams = createFormulaParams(column, row, totalHits);
-    let value = column.formula.parser.evaluate(formulaParams);
-    let parent = row.length > 0 && row[row.length-1];
-    let newCell = new AggConfigResult(column.aggConfig, parent, value, value);
+    const value = computeFormulaValue(column.formula, row, totalHits);
+    const parent = row.length > 0 && row[row.length-1];
+    const newCell = new AggConfigResult(column.aggConfig, parent, value, value);
     newCell.column = column;
     if (column.template !== undefined) {
       newCell.templateContext = createTemplateContext(column, row, totalHits);
@@ -190,6 +190,20 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       _.forEach(table.rows, function (row) {
         row.push(createComputedCell(newColumn, row, totalHits));
       });
+    });
+  };
+
+  const processLinesComputedFilter = function (tables, linesComputedFilterFormula, totalHits) {
+    return _.filter(tables, function (table) {
+      if (table.tables) {
+        table.tables = processLinesComputedFilter(table.tables, linesComputedFilterFormula, totalHits);
+        return table.tables.length > 0;
+      }
+
+      table.rows = _.filter(table.rows, function (row) {
+        return computeFormulaValue(linesComputedFilterFormula, row, totalHits);
+      });
+      return table.rows.length > 0;
     });
   };
 
@@ -454,7 +468,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
       // process filter bar
       if (params.showFilterBar && $scope.showFilterInput() && $scope.activeFilter !== undefined && $scope.activeFilter !== '') {
-        
+
         // compute activeFilterTerms
         const activeFilter = params.filterCaseSensitive ? $scope.activeFilter : $scope.activeFilter.toLowerCase();
         let activeFilterTerms = [ activeFilter ];
@@ -467,7 +481,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
           const filterHighlightRegexString = '(' + _.sortBy(activeFilterTerms, term => term.length * -1).map(term => _.escapeRegExp(term)).join('|') + ')';
           $scope.filterHighlightRegex = new RegExp(filterHighlightRegexString, 'g' + (!params.filterCaseSensitive ? 'i' : ''));
         }
-        
+
         // filter table rows to display
         tableGroups = _.clone(tableGroups);
         tableGroups.tables = filterTableRows(tableGroups.tables, activeFilterTerms, params.filterCaseSensitive);
@@ -564,6 +578,12 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
           addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
         }
       });
+
+      // process lines computed filter
+      if (params.linesComputedFilter) {
+        const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex);
+        tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
+      }
 
       // remove hidden columns
       if (params.hiddenColumns) {
