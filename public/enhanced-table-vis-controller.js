@@ -52,12 +52,17 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     }
   };
 
-  const createFormula = function (inputFormula, splitColIndex) {
+  const createFormula = function (inputFormula, splitColIndex, columns) {
 
-    // convert old col[i] syntax
+    // convert col[0] syntax to col0 syntax
+    let realFormula = inputFormula.replace(/col\[(\d+)\]/g, 'col$1');
+
+    // convert col['colTitle'] syntax to col0 syntax
+    realFormula = realFormula.replace(/col\['(.+)'\]/g, (match, colTitle) => 'col' + _.findIndex(columns, 'title', colTitle));
+
+    // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)/g;
-    const realFormula = inputFormula.replace(/col\[(\d+)\]/g, 'col$1')
-                                    .replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+    realFormula = realFormula.replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // extract formula param cols
     const formulaParamsCols = [];
@@ -110,7 +115,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   };
 
   /** create a new data table column for specified computed column */
-  const createColumn = function (computedColumn, index, totalHits, splitColIndex) {
+  const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns) {
 
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParams = (computedColumn.format === 'number') ? {pattern: computedColumn.pattern} : {};
@@ -123,7 +128,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
-      formula: createFormula(computedColumn.formula, splitColIndex),
+      formula: createFormula(computedColumn.formula, splitColIndex, columns),
       template: createTemplate(computedColumn, splitColIndex)
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
@@ -574,14 +579,14 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       // add computed columns
       _.forEach(params.computedColumns, function (computedColumn, index) {
         if (computedColumn.enabled) {
-          let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex);
+          let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns);
           addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
         }
       });
 
       // process lines computed filter
       if (params.linesComputedFilter) {
-        const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex);
+        const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex, firstTable.columns);
         tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
       }
 
