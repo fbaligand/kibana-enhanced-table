@@ -52,13 +52,32 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     }
   };
 
+  const getOriginalColIndex = function (colIndex, splitColIndex) {
+    if (splitColIndex !== -1 && colIndex > splitColIndex && $scope.vis.params.computedColsPerSplitCol) {
+      return colIndex - 1;
+    }
+    else {
+      return colIndex;
+    }
+  };
+
+  const findColIndexByTitle = function (columns, colTitle, inputFormula, splitColIndex) {
+    const columnIndex = _.findIndex(columns, 'title', colTitle);
+    if (columnIndex !== -1) {
+      return getOriginalColIndex(columnIndex, splitColIndex);
+    }
+    else {
+      throw new EnhancedTableError(`In computed column '${inputFormula}', column with label '${colTitle}' does not exist`);
+    }
+  };
+
   const createFormula = function (inputFormula, splitColIndex, columns) {
 
     // convert col[0] syntax to col0 syntax
     let realFormula = inputFormula.replace(/col\[(\d+)\]/g, 'col$1');
 
     // convert col['colTitle'] syntax to col0 syntax
-    realFormula = realFormula.replace(/col\['(.+)'\]/g, (match, colTitle) => 'col' + _.findIndex(columns, 'title', colTitle));
+    realFormula = realFormula.replace(/col\['(.+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, splitColIndex));
 
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)/g;
@@ -69,6 +88,10 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     let regexMatch;
     while ((regexMatch = colRefRegex.exec(realFormula)) !== null) {
       let colIndex = parseInt(regexMatch[1]);
+      if (colIndex >= columns.length) {
+        colIndex = getOriginalColIndex(colIndex, splitColIndex);
+        throw new EnhancedTableError(`In computed column '${inputFormula}', column number ${colIndex} does not exist`);
+      }
       formulaParamsCols.push(colIndex);
     }
 
@@ -401,13 +424,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
   };
 
   const notifyError = function(errorMessage) {
-    if ($scope.errorMessageNotified === undefined) {
-      notifier.error(errorMessage);
-      $scope.errorMessageNotified = true;
-    }
-    else {
-      $scope.errorMessageNotified = undefined;
-    }
+    notifier.error(errorMessage);
   };
 
   const colToStringWithHighlightResults = function(initialToString, scope, contentType) {
@@ -537,101 +554,112 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
    */
   $scope.$watchMulti(['esResponse', 'vis.params'], function watchMulti() {
 
-    if ($scope.esResponse && !$scope.esResponse.enhanced) {
+    try {
 
-      // init tableGroups
-      $scope.tableGroups = null;
-      $scope.hasSomeRows = null;
-      const vis = $scope.vis;
-      const params = vis.params;
-      const esResponse = $scope.esResponse;
-      let tableGroups = tabifyAggResponse(vis, esResponse, {
-        partialRows: params.showPartialRows,
-        minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
-        asAggConfigResults: true
-      });
-      $scope.tableGroupsBase = tableGroups;
-      const totalHits = esResponse.hits.total;
-      tableGroups.enhanced = true;
+      if ($scope.esResponse && !$scope.esResponse.enhanced) {
 
-      // validate that 'Split Cols' is the last bucket
-      const firstTable = findFirstDataTable(tableGroups);
-      let splitColIndex = findSplitColIndex(firstTable);
-      if (splitColIndex != -1) {
-        const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
-        if (splitColIndex !== lastBucketIndex) {
-          notifyError(`'Split Cols' bucket must be the last one`);
+        // init tableGroups
+        $scope.tableGroups = null;
+        $scope.hasSomeRows = null;
+        const vis = $scope.vis;
+        const params = vis.params;
+        const esResponse = $scope.esResponse;
+        let tableGroups = tabifyAggResponse(vis, esResponse, {
+          partialRows: params.showPartialRows,
+          minimalColumns: vis.isHierarchical() && !params.showMeticsAtAllLevels,
+          asAggConfigResults: true
+        });
+        $scope.tableGroupsBase = tableGroups;
+        const totalHits = esResponse.hits.total;
+        tableGroups.enhanced = true;
+
+        // validate that 'Split Cols' is the last bucket
+        const firstTable = findFirstDataTable(tableGroups);
+        let splitColIndex = findSplitColIndex(firstTable);
+        if (splitColIndex != -1) {
+          const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
+          if (splitColIndex !== lastBucketIndex) {
+            notifyError(`'Split Cols' bucket must be the last one`);
+            return;
+          }
+        }
+
+        // no data to display
+        if (totalHits === 0 || firstTable === null) {
+          $scope.hasSomeRows = false;
           return;
         }
-      }
 
-      // no data to display
-      if (totalHits === 0 || firstTable === null) {
-        $scope.hasSomeRows = false;
-        return;
-      }
-
-      // process 'Split Cols' bucket: transform rows to cols
-      if (splitColIndex != -1 && !params.computedColsPerSplitCol) {
-        splitCols(tableGroups, splitColIndex, totalHits);
-      }
-
-      // add computed columns
-      _.forEach(params.computedColumns, function (computedColumn, index) {
-        if (computedColumn.enabled) {
-          let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns);
-          addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
+        // process 'Split Cols' bucket: transform rows to cols
+        if (splitColIndex != -1 && !params.computedColsPerSplitCol) {
+          splitCols(tableGroups, splitColIndex, totalHits);
         }
-      });
 
-      // process lines computed filter
-      if (params.linesComputedFilter) {
-        const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex, firstTable.columns);
-        tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
-      }
-
-      // remove hidden columns
-      if (params.hiddenColumns) {
-        hideColumns(tableGroups.tables, params.hiddenColumns.split(','), splitColIndex);
-      }
-
-      // process 'Split Cols' bucket: transform rows to cols
-      if (splitColIndex != -1 && params.computedColsPerSplitCol) {
-        splitColIndex = findSplitColIndex(firstTable);
-        splitCols(tableGroups, splitColIndex, totalHits);
-      }
-
-      // add total label
-      if (params.showTotal && params.totalLabel !== '') {
-        tableGroups.tables.forEach(function setTotalLabel(table) {
-          if (table.tables)
-            table.tables.forEach(setTotalLabel);
-          else
-            table.totalLabel = params.totalLabel;
-        });
-      }
-
-      // prepare filter highlight results rendering
-      if (params.showFilterBar && params.filterHighlightResults) {
-        tableGroups.tables.forEach(function redefineColToString(table) {
-          if (table.tables) {
-            table.tables.forEach(redefineColToString);
+        // add computed columns
+        _.forEach(params.computedColumns, function (computedColumn, index) {
+          if (computedColumn.enabled) {
+            let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns);
+            addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
           }
-          else {
-            table.rows.forEach(function(row) {
-              row.forEach(function (col) {
-                col.toString = colToStringWithHighlightResults.bind(col, col.toString, $scope);
+        });
+
+        // process lines computed filter
+        if (params.linesComputedFilter) {
+          const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex, firstTable.columns);
+          tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
+        }
+
+        // remove hidden columns
+        if (params.hiddenColumns) {
+          hideColumns(tableGroups.tables, params.hiddenColumns.split(','), splitColIndex);
+        }
+
+        // process 'Split Cols' bucket: transform rows to cols
+        if (splitColIndex != -1 && params.computedColsPerSplitCol) {
+          splitColIndex = findSplitColIndex(firstTable);
+          splitCols(tableGroups, splitColIndex, totalHits);
+        }
+
+        // add total label
+        if (params.showTotal && params.totalLabel !== '') {
+          tableGroups.tables.forEach(function setTotalLabel(table) {
+            if (table.tables)
+              table.tables.forEach(setTotalLabel);
+            else
+              table.totalLabel = params.totalLabel;
+          });
+        }
+
+        // prepare filter highlight results rendering
+        if (params.showFilterBar && params.filterHighlightResults) {
+          tableGroups.tables.forEach(function redefineColToString(table) {
+            if (table.tables) {
+              table.tables.forEach(redefineColToString);
+            }
+            else {
+              table.rows.forEach(function(row) {
+                row.forEach(function (col) {
+                  col.toString = colToStringWithHighlightResults.bind(col, col.toString, $scope);
+                });
               });
-            });
-          }
-        });
+            }
+          });
+        }
+
+        // process filter bar
+        processFilterBarAndRefreshTable();
+
+        $element.trigger('renderComplete');
       }
 
-      // process filter bar
-      processFilterBarAndRefreshTable();
-
-      $element.trigger('renderComplete');
     }
-
+    catch (e) {
+      if (e instanceof EnhancedTableError) {
+        notifyError(e.message);
+      }
+      else {
+        throw e;
+      }
+    }
   });
 });
