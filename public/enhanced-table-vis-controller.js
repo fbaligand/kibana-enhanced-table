@@ -144,7 +144,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns) {
 
     const FieldFormat = fieldFormats.getType(computedColumn.format);
-    const fieldFormatParams = (computedColumn.format === 'number') ? {pattern: computedColumn.pattern} : {};
+    const fieldFormatParamsByFormat = {
+      'string': {},
+      'number': {pattern: computedColumn.pattern},
+      'date': {pattern: computedColumn.datePattern}
+    };
+    const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
     const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
 
