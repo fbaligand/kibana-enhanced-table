@@ -35,6 +35,7 @@ uiModules.get('kibana/enhanced-table')
           formula: 'col0 * col0',
           format: 'number',
           pattern: '0,0',
+          datePattern: 'MMMM Do YYYY, HH:mm:ss.SSS',
           alignment: 'left',
           applyAlignmentOnTitle: true,
           applyAlignmentOnTotal: true,
