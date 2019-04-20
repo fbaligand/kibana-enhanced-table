@@ -6,24 +6,30 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 
 - Add computed columns, based on other columns :
   - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
-  - Support for numeric columns (ex: `col0 + col1`)
+  - Support for numeric columns (ex: `col0 + col1` or `col[0] + col[1]`)
   - Support for string columns, including HTML (ex: `col0 > 0 ? 'OK' : 'KO'`)
   - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
+  - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
+  - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](http://handlebarsjs.com/expressions.html) (ex: `<strong>{{value}}</strong>`)
-  - Template can reference other columns using :`<span style="color: {{col0}}">{{value}}</span>`
+  - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
+- Filter table lines based on a computed formula (ex: `col0 > 0`)
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
   - Works also with numeric and date columns
+  - Ability to enable case sensitive filter
+  - Ability to make filter bar hideable
   - Ability to filter as you type
   - Ability to filter each term separately
   - Ability to highlight filter results
+  - Ability to define filter bar width
 - Support for a new bucket type : 'Split Cols'. It lets to create a pivot table
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
-- Add a total label on total line first column
-- Kibana supported versions : 5.5, 5.6, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5 and 6.6
+- Add a total label on total line first column (ex: `Total:`)
+- Kibana supported versions : all versions from 5.5 to 6.7
 
 ## Demo
 
