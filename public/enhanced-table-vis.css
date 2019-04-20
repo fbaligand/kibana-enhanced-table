@@ -1,0 +1,67 @@
+visualization.enhanced-table {
+  padding: 0px 5px;
+}
+
+.enhanced-table-vis .agg-table-group > tbody > tr > td {
+  padding: 0px 5px;
+}
+
+.enhanced-table-vis paginate-controls {
+  padding: 0px 5px;
+}
+
+.enhanced-table-vis .computed-columns-options-container {
+  margin-bottom: 20px;
+}
+
+.enhanced-table-vis kbn-agg-table-group .table {
+  margin-bottom: 0px;
+}
+
+.enhanced-table-vis .hide-export-links .pagination-container {
+  display: none;
+}
+
+.enhanced-table-vis .hide-pagination paginate-controls {
+  display: none;
+}
+
+.enhanced-table-vis .filterInput {
+  border-color: #D9D9D9;
+  border-width: 1px;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.enhanced-table-vis .filterInput:focus {
+  border-color: #0079a5;
+}
+
+.enhanced-table-vis .filterButton {
+  height: 32px;
+}
+
+.enhanced-table-vis .filterButton:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.enhanced-table-vis .filterText {
+  padding-right: 20px;
+}
+
+.enhanced-table-vis .text-left {
+  text-align: left;
+}
+
+.enhanced-table-vis .text-right {
+  text-align: right;
+}
+
+.enhanced-table-vis .text-center {
+  text-align: center;
+}
+
+.enhanced-table-vis .text-justify {
+  text-align: justify;
+}
