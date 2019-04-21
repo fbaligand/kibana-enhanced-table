@@ -7,20 +7,15 @@
     "version": "kibana"
   },
   "scripts": {
-    "lint": "eslint",
-    "start": "plugin-helpers start",
+    "lint": "../../kibana/node_modules/.bin/eslint .",
+    "start": "plugin-helpers start --no-watch",
     "test:server": "plugin-helpers test:server",
     "test:browser": "plugin-helpers test:browser",
     "build": "plugin-helpers build",
     "postinstall": "plugin-helpers postinstall"
   },
   "devDependencies": {
-    "@elastic/eslint-config-kibana": "0.0.2",
-    "@elastic/plugin-helpers": "^6.0.0",
-    "babel-eslint": "4.1.8",
-    "chai": "^3.5.0",
-    "eslint": "1.10.3",
-    "eslint-plugin-mocha": "1.1.0"
+    "@elastic/plugin-helpers": "^6.0.0"
   },
   "dependencies": {
     "expr-eval": "^1.2.1"

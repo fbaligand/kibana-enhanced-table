@@ -77,6 +77,7 @@ git reset --hard vX.Y.Z # replace 'X.Y.Z' by desired Kibana version
 ``` bash
 npm install
 cd ../kibana-enhanced-table
+npm install
 npm start
 ```
 - in your browser, call `https://localhost:5601` and enjoy!
@@ -84,5 +85,5 @@ npm start
 
 To build a distributable archive, execute this command :
 ``` bash
-yarn run build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
+npm run build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
 ```
