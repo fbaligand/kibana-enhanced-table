@@ -78,12 +78,13 @@ git reset --hard vX.Y.Z # replace 'X.Y.Z' by desired Kibana version
 ``` bash
 yarn kbn bootstrap
 cd ../kibana-enhanced-table
-yarn start --oss
+yarn install
+yarn start
 ```
 - in your browser, call `https://localhost:5601` and enjoy!
 
 
 To build a distributable archive, execute this command :
 ``` bash
-yarn run build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
+yarn build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
 ```
