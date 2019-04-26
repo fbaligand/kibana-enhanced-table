@@ -18,6 +18,12 @@ const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 // tabular format that we can pass to the table directive
 module.controller('EnhancedTableVisController', function ($scope, $element, Private, config) {
 
+  class EnhancedTableError {
+    constructor(message) {
+      this.message = message;
+    }
+  }
+
   const tabifyAggResponse = Private(AggResponseTabifyProvider);
   const AggConfig = Private(VisAggConfigProvider);
   const fieldFormats = Private(RegistryFieldFormatsProvider);
@@ -120,7 +126,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     // convert old col.i.value syntax and manage 'split cols' case
     const colRefRegex = /\{\{\s*col(\d+)/g;
     const realTemplate = computedColumn.template.replace(/\{\{\s*col\.(\d+)\.value/g, '{{col$1')
-                                                .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+      .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // add template param cols
     const templateParamsCols = [];
@@ -285,7 +291,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       }
       return false;
     });
-  }
+  };
 
   const filterTableRows = function (tables, activeFilterTerms, filterCaseSensitive) {
     const filteredTables = _.map(tables, function (table) {
@@ -584,7 +590,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         if (splitColIndex != -1) {
           const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
           if (splitColIndex !== lastBucketIndex) {
-            notifyError(`'Split Cols' bucket must be the last one`);
+            notifyError('\'Split Cols\' bucket must be the last one');
             return;
           }
         }
