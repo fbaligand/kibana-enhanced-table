@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { existsSync } from 'fs';
 
 export default function (kibana) {
 
@@ -11,7 +12,7 @@ export default function (kibana) {
       hacks: [
         'plugins/enhanced-table/enhanced-table-vis-hack'
       ],
-      styleSheetPaths: resolve(__dirname, 'public/enhanced-table-vis.css')
+      styleSheetPaths: [resolve(__dirname, 'public/enhanced-table-vis.scss'), resolve(__dirname, 'public/enhanced-table-vis.css')].find(p => existsSync(p))
     }
   });
 
