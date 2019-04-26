@@ -1,7 +1,6 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
-import { AggResponseTabifyProvider } from 'ui/agg_response/tabify/tabify';
 import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import { VisAggConfigProvider } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
@@ -18,7 +17,12 @@ const module = uiModules.get('kibana/enhanced-table', ['kibana']);
 // tabular format that we can pass to the table directive
 module.controller('EnhancedTableVisController', function ($scope, Private, config) {
 
-  const tabifyAggResponse = Private(AggResponseTabifyProvider);
+  class EnhancedTableError {
+    constructor(message) {
+      this.message = message;
+    }
+  }
+
   const AggConfig = Private(VisAggConfigProvider);
   const fieldFormats = Private(RegistryFieldFormatsProvider);
   const getConfig = (...args) => config.get(...args);
@@ -120,7 +124,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // convert old col.i.value syntax and manage 'split cols' case
     const colRefRegex = /\{\{\s*col(\d+)/g;
     const realTemplate = computedColumn.template.replace(/\{\{\s*col\.(\d+)\.value/g, '{{col$1')
-                                                .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+      .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // add template param cols
     const templateParamsCols = [];
@@ -284,7 +288,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
       return false;
     });
-  }
+  };
 
   const filterTableRows = function (tables, activeFilterTerms, filterCaseSensitive) {
     const filteredTables = _.map(tables, function (table) {
@@ -555,7 +559,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
    * - the underlying data changes (esResponse)
    * - one of the view options changes (vis.params)
    */
-  $scope.$watchMulti(['esResponse', 'vis.params'], function watchRenderComplete ([resp]) {
+  $scope.$watchMulti(['esResponse', 'vis.params'], function watchRenderComplete () {
 
     try {
 
@@ -575,7 +579,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         if (splitColIndex != -1) {
           const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
           if (splitColIndex !== lastBucketIndex) {
-            notifyError(`'Split Cols' bucket must be the last one`);
+            notifyError('\'Split Cols\' bucket must be the last one');
             return;
           }
         }
