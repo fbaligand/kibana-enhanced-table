@@ -1,7 +1,6 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
-import { tabifyAggResponse } from 'ui/agg_response/tabify/tabify';
 import { fieldFormats } from 'ui/registry/field_formats';
 import { AggConfig } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
@@ -123,7 +122,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // convert old col.i.value syntax and manage 'split cols' case
     const colRefRegex = /\{\{\s*col(\d+)/g;
     const realTemplate = computedColumn.template.replace(/\{\{\s*col\.(\d+)\.value/g, '{{col$1')
-                                                .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+      .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // add template param cols
     const templateParamsCols = [];
@@ -287,7 +286,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
       return false;
     });
-  }
+  };
 
   const filterTableRows = function (tables, activeFilterTerms, filterCaseSensitive) {
     const filteredTables = _.map(tables, (table) => _.clone(table));
@@ -573,7 +572,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         if (splitColIndex != -1) {
           const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
           if (splitColIndex !== lastBucketIndex) {
-            throw new EnhancedTableError(`'Split Cols' bucket must be the last one`);
+            throw new EnhancedTableError('\'Split Cols\' bucket must be the last one');
           }
         }
 

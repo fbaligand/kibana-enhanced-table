@@ -3,76 +3,76 @@ import enhancedTableVisParamsTemplate from './enhanced-table-vis-params.html';
 import _ from 'lodash';
 
 uiModules.get('kibana/enhanced-table')
-.directive('enhancedTableVisParams', function () {
-  return {
-    restrict: 'E',
-    template: enhancedTableVisParamsTemplate,
-    link: function ($scope) {
-      $scope.totalAggregations = ['sum', 'avg', 'min', 'max', 'count'];
+  .directive('enhancedTableVisParams', function () {
+    return {
+      restrict: 'E',
+      template: enhancedTableVisParamsTemplate,
+      link: function ($scope) {
+        $scope.totalAggregations = ['sum', 'avg', 'min', 'max', 'count'];
 
-      if ($scope.editorState.params.perPage === undefined) {
-        _.extend($scope.editorState.params, $scope.vis.type.params.defaults);
-      }
+        if ($scope.editorState.params.perPage === undefined) {
+          _.extend($scope.editorState.params, $scope.vis.type.params.defaults);
+        }
 
-      $scope.$watchMulti([
+        $scope.$watchMulti([
           'editorState.params.showPartialRows',
           'editorState.params.showMetricsAtAllLevels'
-      ], function () {
-        if (!$scope.vis) return;
+        ], function () {
+          if (!$scope.vis) return;
 
-        const params = $scope.editorState.params;
-        if (params.showPartialRows || params.showMetricsAtAllLevels) {
-          $scope.metricsAtAllLevels = true;
-        } else {
-          $scope.metricsAtAllLevels = false;
-        }
-      });
-
-      $scope.addComputedColumn = function (computedColumns) {
-        $scope.newComputedColumn = true;
-        computedColumns.push({
-          label: 'Value squared',
-          formula: 'col0 * col0',
-          format: 'number',
-          pattern: '0,0',
-          datePattern: 'MMMM Do YYYY, HH:mm:ss.SSS',
-          alignment: 'left',
-          applyAlignmentOnTitle: true,
-          applyAlignmentOnTotal: true,
-          applyTemplate: false,
-          applyTemplateOnTotal: true,
-          template: '{{value}}',
-          enabled: true
+          const params = $scope.editorState.params;
+          if (params.showPartialRows || params.showMetricsAtAllLevels) {
+            $scope.metricsAtAllLevels = true;
+          } else {
+            $scope.metricsAtAllLevels = false;
+          }
         });
-      };
 
-      $scope.removeComputedColumn = function (computedColumnToDelete, computedColumns) {
-        const index = computedColumns.indexOf(computedColumnToDelete);
-        if (index >= 0) {
-          computedColumns.splice(index, 1);
-        }
+        $scope.addComputedColumn = function (computedColumns) {
+          $scope.newComputedColumn = true;
+          computedColumns.push({
+            label: 'Value squared',
+            formula: 'col0 * col0',
+            format: 'number',
+            pattern: '0,0',
+            datePattern: 'MMMM Do YYYY, HH:mm:ss.SSS',
+            alignment: 'left',
+            applyAlignmentOnTitle: true,
+            applyAlignmentOnTotal: true,
+            applyTemplate: false,
+            applyTemplateOnTotal: true,
+            template: '{{value}}',
+            enabled: true
+          });
+        };
 
-        if (computedColumns.length === 1) {
-          computedColumns[0].enabled = true;
-        }
-      };
+        $scope.removeComputedColumn = function (computedColumnToDelete, computedColumns) {
+          const index = computedColumns.indexOf(computedColumnToDelete);
+          if (index >= 0) {
+            computedColumns.splice(index, 1);
+          }
 
-      $scope.initEditorOpen = function (computedColumn) {
-        if ($scope.newComputedColumn) {
-          $scope.newComputedColumn = false;
-          return true;
-        }
-        else {
-          return false;
-        }
-      };
+          if (computedColumns.length === 1) {
+            computedColumns[0].enabled = true;
+          }
+        };
 
-      $scope.hasSplitColsBucket = function () {
-        return _.some($scope.editorState.aggs, function(agg) {
-          return agg.schema.name === 'splitcols' && agg.enabled;
-        });
-      };
+        $scope.initEditorOpen = function () {
+          if ($scope.newComputedColumn) {
+            $scope.newComputedColumn = false;
+            return true;
+          }
+          else {
+            return false;
+          }
+        };
 
-    }
-  };
-});
+        $scope.hasSplitColsBucket = function () {
+          return _.some($scope.editorState.aggs, function(agg) {
+            return agg.schema.name === 'splitcols' && agg.enabled;
+          });
+        };
+
+      }
+    };
+  });
