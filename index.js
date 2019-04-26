@@ -11,7 +11,7 @@ export default function (kibana) {
       hacks: [
         'plugins/enhanced-table/enhanced-table-vis-hack'
       ],
-      styleSheetPaths: resolve(__dirname, 'public/enhanced-table-vis.css')
+      styleSheetPaths: resolve('plugins/enhanced-table/public/enhanced-table-vis.css')
     }
   });
 
