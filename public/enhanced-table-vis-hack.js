@@ -10,7 +10,7 @@ if (appId === 'kibana') {
     .get('kibana')
     .config(($provide) => {
 
-      $provide.decorator('kbnAggTableDirective', ($delegate) => {
+      $provide.decorator('kbnEnhancedAggTableDirective', ($delegate) => {
       // Original
         const originalController = $delegate[0].controller;
 
@@ -33,7 +33,7 @@ if (appId === 'kibana') {
         return $delegate;
       });
 
-      $provide.decorator('paginatedTableDirective', ($delegate) => {
+      $provide.decorator('enhancedPaginatedTableDirective', ($delegate) => {
       // Original
         const originalTemplate = $delegate[0].template;
 

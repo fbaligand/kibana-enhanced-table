@@ -8,6 +8,10 @@ visualization.enhanced-table {
     padding: 0px 5px;
   }
 
+  kbn-enhanced-agg-table-group > .table > tbody > tr > td {
+    border-top: 0px;
+  }
+
   paginate-controls {
     padding: 0px 5px;
   }
@@ -16,7 +20,7 @@ visualization.enhanced-table {
     margin-bottom: 20px;
   }
 
-  kbn-agg-table-group .table {
+  kbn-enhanced-agg-table-group .table {
     margin-bottom: 0px;
   }
 
@@ -39,7 +43,7 @@ visualization.enhanced-table {
   }
 
   .filterButton {
-    height: 32px;
+    height: 33px;
   }
 
   .filterButton:disabled {

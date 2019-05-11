@@ -1,13 +1,14 @@
 import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
-import 'ui/agg_table';
-import 'ui/agg_table/agg_table_group';
+import './agg_table';
+import './agg_table/agg_table_group';
 import { i18n } from '@kbn/i18n';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 import { legacyTableResponseHandler } from './legacy_response_handler';
+import { VisFiltersProvider } from 'ui/vis/vis_filters';
 
 // we need to load the css ourselves
 
@@ -23,6 +24,7 @@ VisTypesRegistryProvider.register(EnhancedTableVisTypeProvider);
 // define the TableVisType
 function EnhancedTableVisTypeProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
+  const visFilters = Private(VisFiltersProvider);
 
   // define the EnhancedTableVisTypeProvider which is used in the template
   // by angular's ng-controller directive
@@ -33,11 +35,11 @@ function EnhancedTableVisTypeProvider(Private) {
     type: 'table',
     name: 'enhanced-table',
     title: i18n.translate('tableVis.enhancedTableVisTitle', {
-      defaultMessage: 'Enhanced Table',
+      defaultMessage: 'Enhanced Table'
     }),
     icon: 'visTable',
     description: i18n.translate('tableVis.enhancedTableVisDescription', {
-      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
+      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.'
     }),
     visConfig: {
       defaults: {
@@ -70,7 +72,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'metrics',
           name: 'metric',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.metricTitle', {
-            defaultMessage: 'Metric',
+            defaultMessage: 'Metric'
           }),
           aggFilter: ['!geo_centroid', '!geo_bounds'],
           min: 1,
@@ -82,15 +84,17 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'split',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
-            defaultMessage: 'Split Table',
+            defaultMessage: 'Split Table'
           }),
+          min: 0,
+          max: 1,
           aggFilter: ['!filter']
         },
         {
           group: 'buckets',
           name: 'bucket',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
-            defaultMessage: 'Split Rows',
+            defaultMessage: 'Split Rows'
           }),
           aggFilter: ['!filter']
         },
@@ -98,7 +102,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'splitcols',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
-            defaultMessage: 'Split Cols',
+            defaultMessage: 'Split Cols'
           }),
           aggFilter: ['!filter'],
           max: 1,
@@ -107,8 +111,10 @@ function EnhancedTableVisTypeProvider(Private) {
       ])
     },
     responseHandler: legacyTableResponseHandler,
-    responseHandlerConfig: {
-      asAggConfigResults: true
+    events: {
+      filterBucket: {
+        defaultAction: visFilters.filter,
+      }
     },
     hierarchicalData: function (vis) {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);

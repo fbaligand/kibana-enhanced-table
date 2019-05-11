@@ -154,6 +154,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // create new column object
     let newColumn = {
+      id: `computed-col-${index}`,
       aggConfig: new AggConfig($scope.vis.aggs, {schema: aggSchema, type: aggType}),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
@@ -222,7 +223,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
       table.columns.push(newColumn);
       _.forEach(table.rows, function (row) {
-        row.push(createComputedCell(newColumn, row, totalHits));
+        const newCell = createComputedCell(newColumn, row, totalHits);
+        row.push(newCell);
+        row[newColumn.id] = newCell.value;
       });
     });
   };
@@ -375,6 +378,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         newRow = [];
         for (let i = 0; i < splitColIndex; i++) {
           newRow.push(row[i]);
+          newRow[table.columns[i].id] = row[i].value;
         }
         newRows.push(newRow);
       }
@@ -466,9 +470,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   $scope.activeFilter = $scope.vis.filterInput = '';
 
   const uiStateSort = ($scope.uiState) ? $scope.uiState.get('vis.params.sort') : {};
-  _.assign($scope.vis.params.sort, uiStateSort);
+  _.assign($scope.visParams.sort, uiStateSort);
 
-  $scope.sort = $scope.vis.params.sort;
+  $scope.sort = $scope.visParams.sort;
   $scope.$watchCollection('sort', function (newSort) {
     $scope.uiState.set('vis.params.sort', newSort);
   });
@@ -533,7 +537,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         tableGroups.tables.some(function cloneFirstRow(table) {
           if (table.tables) return table.tables.some(cloneFirstRow);
           if (table.rows.length > 0) {
-            table.rows[0] = _.clone(table.rows[0]);
+            const clonedRow = _.clone(table.rows[0]);
+            table.columns.forEach(function (column) {
+              if (table.rows[0][column.id] !== undefined) {
+                clonedRow[column.id] = table.rows[0][column.id];
+              }
+            });
+            table.rows[0] = clonedRow;
             return true;
           }
           return false;
@@ -564,7 +574,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         let tableGroups = $scope.esResponse;
         const totalHits = $scope.vis.searchSource.rawResponse.hits.total;
         tableGroups.enhanced = true;
-        const params = $scope.vis.params;
+        const params = $scope.visParams;
 
         // validate that 'Split Cols' is the last bucket
         const firstTable = findFirstDataTable(tableGroups);

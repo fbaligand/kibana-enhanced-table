@@ -53,7 +53,7 @@ export function splitTable(columns, rows, $parent) {
       $parent,
       columns: columns.map(column => ({ title: column.name, ...column })),
       rows: rows.map((row, rowIndex) => {
-        return columns.map(column => {
+        const newRow = columns.map(column => {
           const aggConfigResult = new AggConfigResult(column.aggConfig, $parent, row[column.id], row[column.id]);
           aggConfigResult.rawData = {
             table: { columns, rows },
@@ -62,6 +62,8 @@ export function splitTable(columns, rows, $parent) {
           };
           return aggConfigResult;
         });
+        columns.forEach(column => newRow[column.id] = row[column.id]);
+        return newRow;
       })
     }];
   }

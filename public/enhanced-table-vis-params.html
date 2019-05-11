@@ -1,72 +1,106 @@
 <div class="visEditorSidebar__config">
 
   <!-- COMPUTED COLUMNS SECTION -->
-  <div class="sidebar-item visEditorAggGroup__wrapper">
+  <div class="visEditorSidebar__section">
 
-    <div class="sidebar-item-title visEditorAggGroup__title">
+    <div class="visEditorSidebar__sectionTitle">
         Computed Columns
     </div>
 
-    <div draggable-container="editorState.params.computedColumns" class="visEditorAggGroup">
+    <div draggable-container="editorState.params.computedColumns" class="computed-columns">
       <div ng-repeat="computedColumn in editorState.params.computedColumns"
            ng-init="editorOpen = initEditorOpen()"
-           draggable-item="computedColumn">
-          <div class="visEditorAggHeader">
+           draggable-item="computedColumn"
+           class="visEditorSidebar__section visEditorSidebar__collapsible visEditorSidebar__collapsible--marginBottom">
+
+           <!-- header -->
+          <div class="visEditorSidebar__collapsibleTitle">
 
               <!-- open/close editor -->
               <button
                     aria-label="{{editorOpen ? 'Close' : 'Open'}} Editor"
                     ng-click="editorOpen = !editorOpen"
+                    aria-expanded="{{ !!editorOpen }}"
                     type="button"
-                    class="visEditorAggHeader__toggle kuiButton kuiButton--primary kuiButton--small">
-                <i aria-hidden="true" ng-class="{ 'fa-caret-down': editorOpen, 'fa-caret-right': !editorOpen }" class="fa"></i>
+                    data-test-subj="toggleEditor"
+                    class="visEditorSidebar__collapsibleTitleLabel">
+                 <icon aria-hidden="true" ng-if="editorOpen" type="'arrowDown'" size="'s'"></icon>
+                 <icon aria-hidden="true" ng-if="!editorOpen" type="'arrowRight'" size="'s'"></icon>
+
+                 <!-- title -->
+                 <span class="visEditorSidebar__collapsibleTitleText">
+                    Computed col
+                 </span>
               </button>
 
-              <!-- title -->
-              <span class="visEditorAggHeader__title" ng-class="{'visEditorAggHeader__title--grow': editorOpen}">
-                  Computed col
-              </span>
-
               <!-- description -->
-              <span ng-if="!editorOpen" class="visEditorAggHeader__description" title="{{computedColumn.label || computedColumn.formula}}">
+              <span ng-if="!editorOpen" class="visEditorSidebar__collapsibleTitleDescription" title="{{computedColumn.label || computedColumn.formula}}">
                 {{computedColumn.label || computedColumn.formula}}
               </span>
 
-              <!-- buttons -->
+              <!-- error -->
+              <span ng-if="!editorOpen && computedColumn.$invalid" class="visEditorSidebar__collapsibleTitleDescription visEditorSidebar__collapsibleTitleDescription--danger" title="{{computedColumn.error}}">
+                  {{ computedColumn.error }}
+              </span>
+
+              <!-- controls -->
               <div class="visEditorAggHeader__controls kuiButtonGroup kuiButtonGroup--united">
 
-                  <!-- enable/disable column -->
+                  <!-- disable computed column -->
                   <button
-                      ng-click="computedColumn.enabled = !computedColumn.enabled"
-                      aria-label="{{computedColumn.enabled ? 'Disable' : 'Enable'}} Column"
-                      tooltip="{{computedColumn.enabled ? 'Disable' : 'Enable'}} Column"
-                      tooltip-append-to-body="true"
-                      type="button"
-                      class="kuiButton kuiButton--basic kuiButton--small">
-                    <i aria-hidden="true" class="fa fa-toggle-{{computedColumn.enabled ? 'on' : 'off'}}"></i>
+                    ng-if="computedColumn.enabled"
+                    ng-click="computedColumn.enabled = false"
+                    aria-label="{{::'enhancedTableVis.disableComputedColButtonAriaLabel' | i18n: { defaultMessage: 'Disable Column' } }}"
+                    tooltip="{{::'enhancedTableVis.disableComputedColButtonTooltip' | i18n: { defaultMessage: 'Disable Column' } }}"
+                    tooltip-append-to-body="true"
+                    data-test-subj="disableComputedColumnBtn"
+                    type="button"
+                    class="kuiButton kuiButton--basic kuiButton--small">
+                    <i aria-hidden="true" class="fa fa-toggle-on"></i>
                   </button>
 
-                  <!-- drag column -->
-                  <button draggable-handle
-                      ng-show="editorState.params.computedColumns.length > 1"
-                      aria-label="Modify Order by Dragging"
-                      tooltip="Modify Order by Dragging"
-                      tooltip-append-to-body="true"
-                      type="button"
-                      class="kuiButton kuiButton--basic kuiButton--small">
+                  <!-- enable computed column -->
+                  <button
+                    ng-if="!computedColumn.enabled"
+                    ng-click="computedColumn.enabled = true"
+                    aria-label="{{::'enhancedTableVis.enableComputedColButtonAriaLabel' | i18n: { defaultMessage: 'Enable Column' } }}"
+                    tooltip="{{::'enhancedTableVis.enableComputedColButtonTooltip' | i18n: { defaultMessage: 'Enable Column' } }}"
+                    tooltip-append-to-body="true"
+                    data-test-subj="enableComputedColumnBtn"
+                    type="button"
+                    class="kuiButton kuiButton--basic kuiButton--small">
+                    <i aria-hidden="true" class="fa fa-toggle-off"></i>
+                  </button>
+
+                  <!-- drag handle -->
+                  <button
+                    draggable-handle
+                    ng-if="editorState.params.computedColumns.length > 1"
+                    aria-label="{{::'enhancedTableVis.modifyComputedColumnOrderAriaLabel' | i18n: { defaultMessage: 'Modify Order by Dragging' } }}"
+                    tooltip="{{::'enhancedTableVis.modifyComputedColumnOrderButtonTooltip' | i18n: { defaultMessage: 'Modify Order by Dragging' } }}"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    keyboard-move="onPriorityReorder(direction)"
+                    class="kuiButton kuiButton--basic kuiButton--small">
                     <i aria-hidden="true" class="fa fa-arrows-v"></i>
+                    <span class="euiScreenReaderOnly"
+                      i18n-id="enhancedTableVis.howToModifyScreenReaderOrderDescription"
+                      i18n-default-message="Use up and down key on this button to move this computed column up and down in the order."
+                    >
+                    </span>
                   </button>
 
-                  <!-- remove column -->
+                  <!-- remove computed column -->
                   <button
-                      ng-click="removeComputedColumn(computedColumn, editorState.params.computedColumns)"
-                      aria-label="Remove Column"
-                      tooltip="Remove Column"
-                      tooltip-append-to-body="true"
-                      type="button"
-                      class="kuiButton kuiButton--danger kuiButton--small">
-                    <i aria-hidden="true" class="fa fa-times"></i>
+                    aria-label="{{::'enhancedTableVis.removeComputedColumnButtonAriaLabel' | i18n: { defaultMessage: 'Remove Column' } }}"
+                    ng-click="removeComputedColumn(computedColumn, editorState.params.computedColumns)"
+                    tooltip="{{::'enhancedTableVis.removeComputedColumnButtonTooltip' | i18n: { defaultMessage: 'Remove Column' } }}"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    class="kuiButton kuiButton--basic kuiButton--small">
+                    <icon aria-hidden="true" color="'danger'" type="'cross'" size="'m'"></icon>
                   </button>
+
               </div>
           </div>
 
@@ -137,12 +171,10 @@
       </div>
     </div>
 
-    <div ng-click="addComputedColumn(editorState.params.computedColumns)" class="eui-textCenter">
-      <div>
-        <div class="kuiButton kuiButton--secondary kuiButton--small">
+    <div class="eui-textCenter">
+      <a class="kuiButton kuiButton--secondary kuiButton--small" ng-click="addComputedColumn(editorState.params.computedColumns)">
           Add computed column
-        </div>
-      </div>
+      </a>
     </div>
 
     <div class="euiSpacer euiSpacer--s"></div>
@@ -176,9 +208,9 @@
   </div>
 
   <!-- FILTER BAR SECTION -->
-  <div class="sidebar-item visEditorAggGroup__wrapper">
+  <div class="visEditorSidebar__section">
 
-    <div class="sidebar-item-title visEditorAggGroup__title">
+    <div class="visEditorSidebar__sectionTitle">
         Filter Bar
     </div>
 
@@ -236,9 +268,9 @@
   </div>
 
   <!-- BASIC SETTINGS SECTION -->
-  <div class="sidebar-item visEditorAggGroup__wrapper">
+  <div class="visEditorSidebar__section">
 
-    <div class="sidebar-item-title visEditorAggGroup__title">
+    <div class="visEditorSidebar__sectionTitle">
         Basic Settings
     </div>
 
@@ -275,6 +307,13 @@
           i18n-id="tableVis.params.showPartialRowsLabel"
           i18n-default-message="Show partial rows"
         ></span>
+        &nbsp;
+        <icon-tip
+          content="::'tableVis.params.showPartialRowsTip' | i18n: {
+            defaultMessage: 'Show rows that have partial data. This will still calculate metrics for every bucket/level, even if they are not displayed.'
+          }"
+          position="'right'"
+        ></icon-tip>
       </label>
     </div>
 
