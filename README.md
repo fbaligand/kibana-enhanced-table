@@ -15,6 +15,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](http://handlebarsjs.com/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
+  - Column reference validation (by number or label), with error notification
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
@@ -29,7 +30,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column (ex: `Total:`)
-- Kibana supported versions : all versions from 5.5 to 6.7
+- Kibana supported versions : all versions from 5.5 to 7.0
 
 ## Demo
 
