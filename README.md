@@ -89,3 +89,9 @@ To build a distributable archive, execute this command :
 ``` bash
 yarn build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
 ```
+
+## Donation
+
+If this plugin helps you and you want to support it, you can give me a cup of coffee :)
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fbaligand%40gmail.com&currency_code=EUR&source=url)
