@@ -101,11 +101,16 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       formulaParamsCols.push(colIndex);
     }
 
-    // return final formula object
-    return {
-      parser: Parser.parse(realFormula),
-      paramsCols: formulaParamsCols
-    };
+    // parse formula and return final formula object
+    try {
+      return {
+        expression: Parser.parse(realFormula),
+        paramsCols: formulaParamsCols
+      };
+    }
+    catch (e) {
+      throw new EnhancedTableError(`Invalid computed column formula '${inputFormula}' (${e.message})`);
+    }
   };
 
   const computeFormulaValue = function (formula, row, totalHits) {
@@ -113,7 +118,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     _.forEach(formula.paramsCols, function (formulaParamCol) {
       formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
     });
-    const value = formula.parser.evaluate(formulaParams);
+    const value = formula.expression.evaluate(formulaParams);
     return value;
   };
 
