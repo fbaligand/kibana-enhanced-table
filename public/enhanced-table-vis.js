@@ -113,7 +113,10 @@ function EnhancedTableVisTypeProvider(Private) {
     responseHandler: legacyTableResponseHandler,
     events: {
       filterBucket: {
-        defaultAction: visFilters.filter,
+        defaultAction: function (event, { simulate = false } = {}) {
+          event.aggConfigs = event.data[0].table.columns.map(column => column.aggConfig);
+          visFilters.filter(event, simulate);
+        }
       }
     },
     hierarchicalData: function (vis) {

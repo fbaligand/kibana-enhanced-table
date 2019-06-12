@@ -47,22 +47,8 @@ module.directive('kbnEnhancedRows', function ($compile) {
               return;
             }
 
-            let table = $scope.table;
-            if (table.$parent !== null && table.filterTable === undefined) {
-              table.filterTable = {
-                  columns: [{id: 'split-table'}],
-                  rows: table.rows,
-                  $parent: table.$parent
-              };
-              table.columns.forEach(column => {
-                table.filterTable.columns.push(column);
-              });
-              table = table.filterTable;
-              iColumn = iColumn + 1;
-            }
-
             $scope.filter({ data: [{
-              table: table,
+              table: $scope.table,
               row: iRow,
               column: iColumn,
               value: aggConfigResult.value
