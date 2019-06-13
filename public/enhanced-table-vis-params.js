@@ -14,20 +14,6 @@ uiModules.get('kibana/enhanced-table')
           _.extend($scope.editorState.params, $scope.vis.type.params.defaults);
         }
 
-        $scope.$watchMulti([
-          'editorState.params.showPartialRows',
-          'editorState.params.showMetricsAtAllLevels'
-        ], function () {
-          if (!$scope.vis) return;
-
-          const params = $scope.editorState.params;
-          if (params.showPartialRows || params.showMetricsAtAllLevels) {
-            $scope.metricsAtAllLevels = true;
-          } else {
-            $scope.metricsAtAllLevels = false;
-          }
-        });
-
         $scope.addComputedColumn = function (computedColumns) {
           $scope.newComputedColumn = true;
           computedColumns.push({
