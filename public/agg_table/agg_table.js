@@ -156,27 +156,27 @@ uiModules
               const formatter = agg.fieldFormatter('text');
 
               switch ($scope.totalFunc) {
-                case 'sum':
-                  if (!isFieldDate) {
-                    formattedColumn.total = formatter(sum(table.rows));
-                  }
-                  break;
-                case 'avg':
-                  if (!isFieldDate) {
-                    formattedColumn.total = formatter(sum(table.rows) / table.rows.length);
-                  }
-                  break;
-                case 'min':
-                  formattedColumn.total = formatter(_.chain(table.rows).map(i).map('value').min().value());
-                  break;
-                case 'max':
-                  formattedColumn.total = formatter(_.chain(table.rows).map(i).map('value').max().value());
-                  break;
-                case 'count':
-                  formattedColumn.total = numberFormatter(table.rows.length);
-                  break;
-                default:
-                  break;
+              case 'sum':
+                if (!isFieldDate) {
+                  formattedColumn.total = formatter(sum(table.rows));
+                }
+                break;
+              case 'avg':
+                if (!isFieldDate) {
+                  formattedColumn.total = formatter(sum(table.rows) / table.rows.length);
+                }
+                break;
+              case 'min':
+                formattedColumn.total = formatter(_.chain(table.rows).map(i).map('value').min().value());
+                break;
+              case 'max':
+                formattedColumn.total = formatter(_.chain(table.rows).map(i).map('value').max().value());
+                break;
+              case 'count':
+                formattedColumn.total = numberFormatter(table.rows.length);
+                break;
+              default:
+                break;
               }
             }
 
