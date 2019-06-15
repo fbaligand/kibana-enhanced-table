@@ -1,3 +1,11 @@
+// required variables for agg_table, defined in @elastic/eui/src/global_styling/variable
+$euiFontWeightBold:     700 !default;
+$euiColorLightestShade: #F5F7FA !default;
+$euiSize:     16px !default;
+$euiSizeXS:   $euiSize * .25 !default;
+$euiSizeS:    $euiSize * .5 !default;
+
+
 kbn-enhanced-agg-table,
 kbn-enhanced-agg-table-group {
   display: block;
