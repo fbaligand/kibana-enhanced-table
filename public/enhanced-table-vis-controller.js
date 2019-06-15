@@ -101,8 +101,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // parse formula and return final formula object
     try {
+      const parser = new Parser();
+      // add 'now()' custom function
+      parser.functions.now = function () {
+        return Date.now();
+      };
       return {
-        expression: Parser.parse(realFormula),
+        expression: parser.parse(realFormula),
         paramsCols: formulaParamsCols
       };
     }
