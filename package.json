@@ -1,6 +1,6 @@
 {
   "name": "enhanced-table",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "This visualization plugin is like a Data Table, but with enhanced features like computed columns and filter bar",
   "main": "index.js",
   "kibana": {
@@ -18,6 +18,6 @@
     "@elastic/plugin-helpers": "^6.0.0"
   },
   "dependencies": {
-    "expr-eval": "^1.2.1"
+    "expr-eval": "^1.2.2"
   }
 }
