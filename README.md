@@ -8,14 +8,17 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
   - Support for numeric columns (ex: `col0 + col1` or `col[0] + col[1]`)
   - Support for string columns, including HTML (ex: `col0 > 0 ? 'OK' : 'KO'`)
+  - Support for date columns
   - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
+  - Ability to call `now()` function in formula to get the number of milliseconds since the Epoch time (ex: `(now() - col['timestamp']) / 1000`)
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](http://handlebarsjs.com/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
   - Column reference validation (by number or label), with error notification
+  - Formula validation, with error notification
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
