@@ -143,11 +143,16 @@ module.directive('kbnEnhancedRows', function ($compile) {
           _.times(min - rows.length, function () { rows.push(emptyRow); });
         }
 
+        let iFirstRow = 0;
+        if ($scope.page !== undefined) {
+          iFirstRow = $scope.page.firstItem - 1;
+        }
+
         rows.forEach(function (row, iRow) {
           const $tr = $(document.createElement('tr')).appendTo($el);
           $scope.columns.forEach(function (column, iColumn) {
             const value = row[iColumn];
-            addCell($tr, value, iColumn, iRow);
+            addCell($tr, value, iColumn, iFirstRow + iRow);
           });
         });
       });
