@@ -1,5 +1,7 @@
 import { uiModules } from  'ui/modules';
+import _ from 'lodash';
 import chrome from 'ui/chrome';
+import { topHitMetricAgg } from 'ui/agg_types/metrics/top_hit';
 
 const appId = chrome.getApp().id;
 
@@ -44,6 +46,16 @@ if (appId === 'kibana') {
 
         return $delegate;
       });
+
+      // Enable string fields in top hit aggregation for enhanced-table plugin
+      const fieldParam = topHitMetricAgg.params.filter(param => param.name === 'field')[0];
+      const filterFieldTypesOriginalMethod = fieldParam.filterFieldTypes;
+      fieldParam.filterFieldTypes = (vis, value) => vis.type.name === 'enhanced-table' || filterFieldTypesOriginalMethod(vis, value);
+
+      const concatOption = topHitMetricAgg.params.filter(param => param.name === 'aggregate')[0]
+        .options.filter(option => option.val === 'concat')[0];
+      const isCompatibleVisOriginalMethod = concatOption.isCompatibleVis;
+      concatOption.isCompatibleVis = (name) => name === 'enhanced-table' || isCompatibleVisOriginalMethod(name);
 
     });
 }
