@@ -9,6 +9,7 @@ import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 import { VisResponseHandlersRegistryProvider } from 'ui/registry/vis_response_handlers';
+import { AggTypesMetricsTopHitProvider } from 'ui/agg_types/metrics/top_hit';
 import image from './images/icon-table.svg';
 
 // we need to load the css ourselves
@@ -27,7 +28,19 @@ function EnhancedTableVisProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
   const visResponseHandlers = VisResponseHandlersRegistryProvider(Private);
   const tabifyResponseHandler = visResponseHandlers.byName.tabify.handler;
+  
+  // Enable string fields in top hit aggregation for enhanced-table plugin
+  const topHitMetricAgg = Private(AggTypesMetricsTopHitProvider);
+  const fieldParam = topHitMetricAgg.params.filter(param => param.name === 'field')[0];
+  const filterFieldTypesOriginalMethod = fieldParam.filterFieldTypes;
+  fieldParam.filterFieldTypes = (vis, value) => vis.type.name === 'enhanced-table' || filterFieldTypesOriginalMethod(vis, value);
+  const concatOption = topHitMetricAgg.params.filter(param => param.name === 'aggregate')[0]
+    .options.filter(option => option.val === 'concat')[0];
+  const isCompatibleVisOriginalMethod = concatOption.isCompatibleVis;
+  concatOption.isCompatibleVis = (name) => name === 'enhanced-table' || isCompatibleVisOriginalMethod(name);
 
+
+  // define custom response handler
   const customResponseHandler = function(vis, response) {
     return tabifyResponseHandler(vis, response).then(function(tabifiedResponse) {
       tabifiedResponse.totalHits = response.hits.total;
