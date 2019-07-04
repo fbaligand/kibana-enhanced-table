@@ -99,13 +99,41 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       formulaParamsCols.push(colIndex);
     }
 
+    // create formula parser with custom functions
+    const parser = new Parser();
+    parser.functions.now = function () {
+      return Date.now();
+    };
+    parser.functions.indexOf = function (str, searchValue, fromIndex) {
+      return str.indexOf(searchValue, fromIndex);
+    };
+    parser.functions.lastIndexOf = function (str, searchValue, fromIndex) {
+      return str.lastIndexOf(searchValue, fromIndex);
+    };
+    parser.functions.replace = function (str, substr, newSubstr) {
+      return str.replace(substr, newSubstr);
+    };
+    parser.functions.replaceRegexp = function (str, regexp, newSubstr) {
+      return str.replace(new RegExp(regexp, 'g'), newSubstr);
+    };
+    parser.functions.search = function (str, regexp) {
+      return str.search(regexp);
+    };
+    parser.functions.substring = function (str, indexStart, indexEnd) {
+      return str.substring(indexStart, indexEnd);
+    };
+    parser.functions.toLowerCase = function (str) {
+      return str.toLowerCase();
+    };
+    parser.functions.toUpperCase = function (str) {
+      return str.toUpperCase();
+    };
+    parser.functions.trim = function (str) {
+      return str.trim();
+    };
+
     // parse formula and return final formula object
     try {
-      const parser = new Parser();
-      // add 'now()' custom function
-      parser.functions.now = function () {
-        return Date.now();
-      };
       return {
         expression: parser.parse(realFormula),
         paramsCols: formulaParamsCols
