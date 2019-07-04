@@ -11,15 +11,14 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Support for date columns
   - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
-  - Ability to call `now()` function in formula to get the number of milliseconds since the Epoch time (ex: `(now() - col['timestamp']) / 1000`)
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](http://handlebarsjs.com/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
-  - Column reference validation (by number or label), with error notification
-  - Formula validation, with error notification
+  - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
+  - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
 - Hide some table columns (ex: `0,1` hides columns 0 and 1)
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
   - Works also with numeric and date columns
@@ -52,6 +51,30 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
   - locally after manual download :
 `$KIBANA_HOME/bin/kibana-plugin install file:///path/to/enhanced-table-X.Y.Z_A.B.C.zip`
 - restart Kibana
+
+
+## Computed Column Formula / Lines Computed Filter documentation
+
+Common features available for 'Computed Column Formula' and 'Lines Computed Filter':
+- Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
+- Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
+- Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
+- Column reference validation (by number or label), with error notification
+- Formula validation, with error notification
+- Additional custom functions listed in table below (ex: `col['Expiration Date'] > now() ? 'OK' : 'KO'`)
+  
+Function     | Description
+:----------- | :----------
+[now()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now)  | Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
+[indexOf(str, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf)  | Returns the index within the calling String object of the first occurrence of the specified value, starting the search at fromIndex. Returns -1 if the value is not found.
+[lastIndexOf(str, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/lastIndexOf)  | Returns the index within the calling String object of the last occurrence of the specified value, searching backwards from fromIndex. Returns -1 if the value is not found.
+[replace(str, substr, replacement)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)  | Returns a new string with first match of substr replaced by a replacement. Only the first occurrence will be replaced.
+[replaceRegexp(str, regexp, replacement)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)  | Returns a new string with all matches of a regexp replaced by a replacement. All the occurrences will be replaced.
+[search(str, regexp)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search)   | Executes a search for a match between a regular expression on 'str' String. Returns the index of the first match or -1 if not found.
+[substring(str, indexStart\[, indexEnd\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring)   | Returns the part of the string between the start and end indexes, or to the end of the string (if no index end is provided).
+[toLowerCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase)   | Returns the calling string value converted to lowercase.
+[toUpperCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toUpperCase)   | Returns the calling string value converted to uppercase.
+[trim(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim)   | Removes whitespace from both ends of a string.
 
 
 ## Change Log
