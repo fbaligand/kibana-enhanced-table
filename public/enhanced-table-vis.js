@@ -7,7 +7,7 @@ import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { legacyTableResponseHandler } from './legacy_response_handler';
+import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
 import { VisFiltersProvider } from 'ui/vis/vis_filters';
 
 // we need to load the css ourselves
@@ -110,7 +110,7 @@ function EnhancedTableVisTypeProvider(Private) {
         }
       ])
     },
-    responseHandler: legacyTableResponseHandler,
+    responseHandler: enhancedTableResponseHandler,
     events: {
       filterBucket: {
         defaultAction: function (event, { simulate = false } = {}) {
