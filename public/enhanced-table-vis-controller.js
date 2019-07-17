@@ -64,7 +64,15 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const findColIndexByTitle = function (columns, colTitle, inputFormula, splitColIndex) {
-    const columnIndex = _.findIndex(columns, 'title', colTitle);
+
+    let columnIndex = -1;
+    for (let i = 0; i < columns.length; i++) {
+      if (columns[i].title === colTitle) {
+        columnIndex = i;
+        break;
+      }
+    }
+
     if (columnIndex !== -1) {
       return getOriginalColIndex(columnIndex, splitColIndex);
     }
