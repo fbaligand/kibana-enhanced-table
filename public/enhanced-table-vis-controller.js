@@ -83,7 +83,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     let realFormula = inputFormula.replace(/col\[(\d+)\]/g, 'col$1');
 
     // convert col['colTitle'] syntax to col0 syntax
-    realFormula = realFormula.replace(/col\['(.+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, splitColIndex));
+    realFormula = realFormula.replace(/col\['([^\]]+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, splitColIndex));
 
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)/g;
