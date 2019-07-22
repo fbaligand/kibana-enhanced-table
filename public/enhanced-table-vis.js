@@ -29,7 +29,7 @@ function EnhancedTableVisProvider(Private) {
   const Schemas = Private(VisSchemasProvider);
   const visResponseHandlers = VisResponseHandlersRegistryProvider(Private);
   const tabifyResponseHandler = visResponseHandlers.byName.tabify.handler;
-  
+
   // Enable string fields in top hit aggregation for enhanced-table plugin
   const topHitMetricAgg = Private(AggTypesMetricsTopHitProvider);
   const fieldParam = topHitMetricAgg.params.filter(param => param.name === 'field')[0];
