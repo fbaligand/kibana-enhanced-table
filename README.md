@@ -32,7 +32,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column (ex: `Total:`)
-- Kibana supported versions : all versions from 5.5 to 7.0
+- Kibana supported versions : all versions from 5.5 to 7.2
 
 ## Demo
 
