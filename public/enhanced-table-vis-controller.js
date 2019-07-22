@@ -638,7 +638,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
             addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
           }
         });
-  
+
         // process lines computed filter
         if (params.linesComputedFilter) {
           const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex, firstTable.columns);
