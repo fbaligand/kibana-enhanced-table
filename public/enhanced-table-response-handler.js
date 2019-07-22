@@ -102,6 +102,6 @@ export function splitTable(columns, rows, $parent) {
   });
 }
 
-export async function enhancedTableResponseHandler(table) {
+export function enhancedTableResponseHandler(table) {
   return { tables: splitTable(table.columns, table.rows, null) };
 }

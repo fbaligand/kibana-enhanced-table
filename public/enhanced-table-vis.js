@@ -2,12 +2,12 @@ import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import './agg_table';
 import './agg_table/agg_table_group';
+
 import { i18n } from '@kbn/i18n';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
 import { VisFiltersProvider } from 'ui/vis/vis_filters';
 
 // we need to load the css ourselves
@@ -110,7 +110,9 @@ function EnhancedTableVisTypeProvider(Private) {
         }
       ])
     },
-    responseHandler: enhancedTableResponseHandler,
+    requestHandler: function (context) {
+      return context;
+    },
     events: {
       filterBucket: {
         defaultAction: function (event, { simulate = false } = {}) {

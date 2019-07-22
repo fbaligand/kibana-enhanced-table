@@ -1,6 +1,9 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
+import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
+import { EnhancedTableRequestHandlerProvider as enhancedTableRequestHandlerProvider } from './enhanced-table-request-handler';
+
 import { fieldFormats } from 'ui/registry/field_formats';
 import { AggConfig } from 'ui/vis/agg_config';
 import AggConfigResult from 'ui/vis/agg_config_result';
@@ -25,6 +28,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const getConfig = (...args) => config.get(...args);
   const notifier = new Notifier();
+  const enhancedTableRequestHandler = enhancedTableRequestHandlerProvider().handler;
+
 
   // controller methods
 
@@ -528,7 +533,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   const processFilterBarAndRefreshTable = function() {
 
     if ($scope.tableGroups !== undefined) {
-      let tableGroups = $scope.esResponse;
+      let tableGroups = $scope.initialTableGroups;
       const vis = $scope.vis;
       const params = vis.params;
 
@@ -608,18 +613,19 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
    * - the underlying data changes (esResponse)
    * - one of the view options changes (vis.params)
    */
-  $scope.$watch('renderComplete', function watchRenderComplete() {
+  $scope.$watch('renderComplete', async function watchRenderComplete() {
 
     try {
+      $scope.hasSomeRows = null;
+      $scope.tableGroups = null;
 
-      if ($scope.esResponse && !$scope.esResponse.enhanced) {
+      if ($scope.esResponse) {
 
         // init tableGroups
-        $scope.tableGroups = null;
-        $scope.hasSomeRows = null;
-        let tableGroups = $scope.esResponse;
-        const totalHits = $scope.vis.searchSource.rawResponse.hits.total;
-        tableGroups.enhanced = true;
+        const tabularEsResponse = await enhancedTableRequestHandler($scope.esResponse, $scope.vis.aggs);
+        $scope.initialTableGroups = enhancedTableResponseHandler(tabularEsResponse, $scope.vis.aggs);
+        let tableGroups = $scope.initialTableGroups;
+        const totalHits = tabularEsResponse.totalHits;
         const params = $scope.visParams;
 
         // validate that 'Split Cols' is the last bucket
