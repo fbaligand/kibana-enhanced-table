@@ -1,5 +1,4 @@
 import { uiModules } from  'ui/modules';
-import _ from 'lodash';
 import chrome from 'ui/chrome';
 import { topHitMetricAgg } from 'ui/agg_types/metrics/top_hit';
 
