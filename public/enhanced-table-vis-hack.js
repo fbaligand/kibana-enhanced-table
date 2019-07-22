@@ -62,7 +62,7 @@ if (appId === 'kibana') {
           return false;
         }
       });
-      
+
       if (topHitFilter !== undefined) {
         aggTypeFieldFilters.filters.delete(topHitFilter);
         aggTypeFieldFilters.addFilter(
@@ -70,12 +70,12 @@ if (appId === 'kibana') {
             return vis.type.name === 'enhanced-table' || topHitFilter(field, fieldParamType, aggConfig, vis);
           }
         );
-        
+
         const concatOption = topHitMetricAgg.params.filter(param => param.name === 'aggregate')[0]
           .options.filter(option => option.val === 'concat')[0];
         const isCompatibleVisOriginalMethod = concatOption.isCompatibleVis;
         concatOption.isCompatibleVis = (name) => name === 'enhanced-table' || isCompatibleVisOriginalMethod(name);
       }
-      
+
     });
 }
