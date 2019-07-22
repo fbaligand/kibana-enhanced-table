@@ -3,7 +3,7 @@ env:
   es6: true
 extends: 'eslint:recommended'
 parserOptions:
-  ecmaVersion: 2015
+  ecmaVersion: 2018
   sourceType: module
 rules:
   indent:
@@ -18,6 +18,9 @@ rules:
   semi:
     - error
     - always
+  no-trailing-spaces:
+    - 2
+    - skipBlankLines: false
 overrides:
   files: ['index.js']
   env:
