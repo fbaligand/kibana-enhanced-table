@@ -30,7 +30,7 @@ module.directive('kbnEnhancedRows', function ($compile) {
   return {
     restrict: 'A',
     link: function ($scope, $el, attr) {
-      function addCell($tr, contents, iColumn, iRow) {
+      function addCell($tr, contents, iColumn, row) {
         function createCell() {
           return $(document.createElement('td'));
         }
@@ -49,7 +49,7 @@ module.directive('kbnEnhancedRows', function ($compile) {
 
             $scope.filter({ data: [{
               table: $scope.table,
-              row: iRow,
+              row: $scope.rows.findIndex(r => r === row),
               column: iColumn,
               value: aggConfigResult.value
             }], negate });
@@ -143,16 +143,11 @@ module.directive('kbnEnhancedRows', function ($compile) {
           _.times(min - rows.length, function () { rows.push(emptyRow); });
         }
 
-        let iFirstRow = 0;
-        if ($scope.page !== undefined) {
-          iFirstRow = $scope.page.firstItem - 1;
-        }
-
-        rows.forEach(function (row, iRow) {
+        rows.forEach(function (row) {
           const $tr = $(document.createElement('tr')).appendTo($el);
           $scope.columns.forEach(function (column, iColumn) {
             const value = row[iColumn];
-            addCell($tr, value, iColumn, iFirstRow + iRow);
+            addCell($tr, value, iColumn, row);
           });
         });
       });
