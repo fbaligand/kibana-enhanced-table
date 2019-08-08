@@ -628,13 +628,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         const totalHits = tabularEsResponse.totalHits;
         const params = $scope.visParams;
 
-        // validate that 'Split Cols' is the last bucket
+        // validate that 'Split cols' is the last bucket
         const firstTable = findFirstDataTable(tableGroups);
         let splitColIndex = findSplitColIndex(firstTable);
         if (splitColIndex != -1) {
           const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
           if (splitColIndex !== lastBucketIndex) {
-            throw new EnhancedTableError('\'Split Cols\' bucket must be the last one');
+            throw new EnhancedTableError('\'Split cols\' bucket must be the last one');
           }
         }
 
@@ -644,7 +644,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           return;
         }
 
-        // process 'Split Cols' bucket: transform rows to cols
+        // process 'Split cols' bucket: transform rows to cols
         if (splitColIndex != -1 && !params.computedColsPerSplitCol) {
           splitCols(tableGroups, splitColIndex, totalHits);
         }
@@ -668,7 +668,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           hideColumns(tableGroups.tables, params.hiddenColumns.split(','), splitColIndex);
         }
 
-        // process 'Split Cols' bucket: transform rows to cols
+        // process 'Split cols' bucket: transform rows to cols
         if (splitColIndex != -1 && params.computedColsPerSplitCol) {
           splitColIndex = findSplitColIndex(firstTable);
           splitCols(tableGroups, splitColIndex, totalHits);

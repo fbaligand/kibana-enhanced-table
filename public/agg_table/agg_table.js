@@ -27,7 +27,7 @@ import { fieldFormats } from 'ui/registry/field_formats';
 
 uiModules
   .get('kibana', ['RecursionHelper'])
-  .directive('kbnEnhancedAggTable', function ($filter, config, Private, RecursionHelper) {
+  .directive('kbnEnhancedAggTable', function (config, RecursionHelper) {
 
     const numberFormatter = fieldFormats.getDefaultInstance('number').getConverterFor('text');
 

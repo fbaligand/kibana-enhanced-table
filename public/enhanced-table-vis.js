@@ -8,7 +8,7 @@ import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { VisFiltersProvider } from 'ui/vis/vis_filters';
+import { VisFiltersProvider, createFiltersFromEvent } from 'ui/vis/vis_filters';
 
 // we need to load the css ourselves
 
@@ -75,6 +75,11 @@ function EnhancedTableVisTypeProvider(Private) {
             defaultMessage: 'Metric'
           }),
           aggFilter: ['!geo_centroid', '!geo_bounds'],
+          aggSettings: {
+            top_hits: {
+              allowStrings: true
+            }
+          },
           min: 1,
           defaults: [
             { type: 'count', schema: 'metric' }
@@ -84,7 +89,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'split',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
-            defaultMessage: 'Split Table'
+            defaultMessage: 'Split table'
           }),
           min: 0,
           max: 1,
@@ -94,7 +99,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'bucket',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
-            defaultMessage: 'Split Rows'
+            defaultMessage: 'Split rows'
           }),
           aggFilter: ['!filter']
         },
@@ -102,7 +107,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'splitcols',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
-            defaultMessage: 'Split Cols'
+            defaultMessage: 'Split cols'
           }),
           aggFilter: ['!filter'],
           max: 1,
@@ -117,7 +122,8 @@ function EnhancedTableVisTypeProvider(Private) {
       filterBucket: {
         defaultAction: function (event, { simulate = false } = {}) {
           event.aggConfigs = event.data[0].table.columns.map(column => column.aggConfig);
-          visFilters.filter(event, simulate);
+          const filters = createFiltersFromEvent(event);
+          visFilters.pushFilters(filters, simulate);
         }
       }
     },
