@@ -306,14 +306,20 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         table.refRowWithHiddenCols = _.clone(table.rows[0]);
       }
 
-      let removedCounter = 0;
       _.forEach(hiddenColumns, function (item) {
-        let index = getRealColIndex(parseInt(item), splitColIndex);
-        table.columns.splice(index - removedCounter, 1);
-        _.forEach(table.rows, function (row) {
-          row.splice(index - removedCounter, 1);
-        });
-        removedCounter++;
+        try {
+          let itemIndex = findColIndexByTitle(table.columns, item, item, splitColIndex);
+          let index = getRealColIndex(itemIndex, splitColIndex);
+          table.columns.splice(index, 1);
+          _.forEach(table.rows, function (row) {
+            row.splice(index, 1);
+          });
+        } 
+        catch {
+          return;
+        }
+        
+        
       });
     });
   };
