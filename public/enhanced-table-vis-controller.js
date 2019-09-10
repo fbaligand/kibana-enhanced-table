@@ -295,6 +295,21 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     });
   };
 
+  const fixUnsortedInput = (removedColumns, index) => {
+    let fixer = 0;
+    removedColumns.forEach(function (removedColumnIndex) {
+      if (removedColumnIndex > index) {
+        fixer++;
+      }
+    })
+    return fixer;
+  };
+
+  const isInt = (item) => {
+    return parseInt(item).toString() == item;
+  }
+  
+
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
     _.forEach(tables, function (table) {
       if (table.tables) {
@@ -307,27 +322,26 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
 
       let removedCounter = 0;
+      let removedColumns = [];
       _.forEach(hiddenColumns, function (item) {
         try {
-          if (parseInt(item).toString() == item) {
-            let index = getRealColIndex(parseInt(item), splitColIndex);
-            let colToRemove = index - removedCounter;
-            console.log(colToRemove)
-            table.columns.splice(colToRemove, 1);
-            _.forEach(table.rows, function (row) {
-              row.splice(colToRemove, 1);
-            });
-            removedCounter++;
-          } else {
-            let itemIndex = findColIndexByTitle(table.columns, item, item, splitColIndex);
-            let index = getRealColIndex(itemIndex, splitColIndex);
-            let colToRemove = index;
-            console.log(colToRemove)
-            table.columns.splice(colToRemove, 1);
-            _.forEach(table.rows, function (row) {
-              row.splice(colToRemove, 1);
-            });
+          let index = isInt(item) ? getRealColIndex(parseInt(item), splitColIndex) : findColIndexByTitle(table.columns, item, item, splitColIndex);
+          if (index >= table.columns.length + removedCounter) {
+            return;
           }
+          let colToRemove = index;
+          if (isInt(item)) {
+            let indexFixer = fixUnsortedInput(removedColumns, index) - removedCounter;
+            colToRemove += indexFixer;
+            removedColumns.push(index)
+          } else {
+            removedColumns.push(index + removedCounter)
+          }
+          table.columns.splice(colToRemove, 1);
+          _.forEach(table.rows, function (row) {
+            row.splice(colToRemove, 1);
+          });
+          removedCounter++;
         } 
         catch {
           return;
