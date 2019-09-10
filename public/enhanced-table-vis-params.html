@@ -193,11 +193,11 @@
       <label>
         Hidden columns
         <icon-tip
-          content="'A column can be referenced by its index (e.g. 1,2,3..) or by its label (e.g. example_column,Example Column). It is important not to put any superscript or inverted comma if they are not part of the column label and to separate the columns to hide simply using a comma (labels containing commas cannot be hidden). References by id and by label can be mixed (e.g. 1,2,ExampleColumn) but it is strongly recommended to use the reference by label feature since indices may vary according to the timerange set.'"
+          content="'Reference a column by its index (1,2,3), by its label (Example Column) or both (1,2,column_3). Write the column label as is (no superscript or inverted commas) and divide them with a comma. It is STRONGLY recommended to reference a column by its label.'"
           position="'right'"
         ></icon-tip>
       </label>
-      <input type="text" ng-model="editorState.params.hiddenColumns" class="form-control" placeholder="0,1,2,Col2 Label,..." />
+      <input type="text" ng-model="editorState.params.hiddenColumns" class="form-control" placeholder="0,1,Col2 Label,..." />
     </div>
 
     <div class="checkbox" ng-show="hasSplitColsBucket()">
