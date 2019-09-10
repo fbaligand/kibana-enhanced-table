@@ -306,7 +306,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const isInt = (item) => {
-    return /^[0-9]+$/.test(item);
+    return /^ *[0-9]+ *$/.test(item);
   }
   
 
