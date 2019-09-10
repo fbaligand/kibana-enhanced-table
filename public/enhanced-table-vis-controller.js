@@ -331,10 +331,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           }
           let colToRemove = index;
           if (isInt(item)) {
+            if (removedColumns.includes(index)) return;
             let indexFixer = fixUnsortedInput(removedColumns, index) - removedCounter;
             colToRemove += indexFixer;
             removedColumns.push(index)
           } else {
+            if (removedColumns.includes(index + removedCounter)) return;
             removedColumns.push(index + removedCounter)
           }
           table.columns.splice(colToRemove, 1);
