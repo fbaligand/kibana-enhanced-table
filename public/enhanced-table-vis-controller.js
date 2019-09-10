@@ -306,7 +306,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const isInt = (item) => {
-    return parseInt(item).toString() == item;
+    return /^[0-9]+$/.test(item);
   }
   
 
