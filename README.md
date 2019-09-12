@@ -20,9 +20,9 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
 - Hide some table columns (ex: `0,1,Col2 Label` hides columns 0, 1 and the column labeled 'Col2 Label')
-  - Note that the column label must be written as is (including whitespaces), without any superscript/apostrophe.
+  - Note that the column label must be written as is (including whitespaces), with no surrounding quotes.
   - Column labels containing commas are not supported since the comma is used to separate the columns
-  - It is strongly recommended to use column labels to hide columns rather than their indices. Using the 'Split cols' feature, in fact,     indices might depend on the global timerange that has been set. 
+  - It is recommended to use column labels to hide columns rather than their indices. Using the 'Split cols' feature, in fact, indices might depend on the global timerange that has been set. 
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
   - Works also with numeric and date columns
   - Ability to enable case sensitive filter
