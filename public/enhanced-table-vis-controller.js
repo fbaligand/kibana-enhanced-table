@@ -345,7 +345,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           });
           removedCounter++;
         } 
-        catch {
+        catch(e) {
           return;
         }     
       });
