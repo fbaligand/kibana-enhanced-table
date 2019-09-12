@@ -295,63 +295,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     });
   };
 
-  // const fixUnsortedInput = (removedColumns, index) => {
-  //   let fixer = 0;
-  //   removedColumns.forEach(function (removedColumnIndex) {
-  //     if (removedColumnIndex > index) {
-  //       fixer++;
-  //     }
-  //   })
-  //   return fixer;
-  // };
-
   const isInt = (item) => {
     return /^ *[0-9]+ *$/.test(item);
   }
   
-
-  // const hideColumns = function (tables, hiddenColumns, splitColIndex) {
-  //   _.forEach(tables, function (table) {
-  //     if (table.tables) {
-  //       hideColumns(table.tables, hiddenColumns, splitColIndex);
-  //       return;
-  //     }
-
-  //     if (splitColIndex !== -1 && table.rows.length > 0) {
-  //       table.refRowWithHiddenCols = _.clone(table.rows[0]);
-  //     }
-
-  //     let removedCounter = 0;
-  //     let removedColumns = [];
-  //     _.forEach(hiddenColumns, function (item) {
-  //       try {
-  //         let index = isInt(item) ? getRealColIndex(parseInt(item), splitColIndex) : findColIndexByTitle(table.columns, item, item, splitColIndex);
-  //         if (index >= table.columns.length + removedCounter) {
-  //           return;
-  //         }
-  //         let colToRemove = index;
-  //         if (isInt(item)) {
-  //           if (removedColumns.includes(index)) return;
-  //           let indexFixer = fixUnsortedInput(removedColumns, index) - removedCounter;
-  //           colToRemove += indexFixer;
-  //           removedColumns.push(index)
-  //         } else {
-  //           if (removedColumns.includes(index + removedCounter)) return;
-  //           removedColumns.push(index + removedCounter)
-  //         }
-  //         table.columns.splice(colToRemove, 1);
-  //         _.forEach(table.rows, function (row) {
-  //           row.splice(colToRemove, 1);
-  //         });
-  //         removedCounter++;
-  //       } 
-  //       catch(e) {
-  //         return;
-  //       }     
-  //     });
-  //   });
-  // };
-
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
     // recursively call sub-tables
     _.forEach(tables, function (table) {
