@@ -281,7 +281,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     });
   };
 
+  const isInt = (item) => {
+    return /^ *[0-9]+ *$/.test(item);
+  };
+
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
+    // recursively call sub-tables
     _.forEach(tables, function (table) {
       if (table.tables) {
         hideColumns(table.tables, hiddenColumns, splitColIndex);
@@ -292,14 +297,30 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         table.refRowWithHiddenCols = _.clone(table.rows[0]);
       }
 
-      let removedCounter = 0;
-      _.forEach(hiddenColumns, function (item) {
-        let index = getRealColIndex(parseInt(item), splitColIndex);
-        table.columns.splice(index - removedCounter, 1);
-        _.forEach(table.rows, function (row) {
-          row.splice(index - removedCounter, 1);
-        });
-        removedCounter++;
+      // retrieve real col indices
+      let hiddenColumnIndices = _.map(hiddenColumns, function (item) {
+        try {
+          if (!isInt(item)) {
+            item = findColIndexByTitle(table.columns, item, item, splitColIndex);
+          }
+          return getRealColIndex(parseInt(item), splitColIndex);
+        }
+        catch(e) {
+          return table.columns.length;
+        }
+      });
+
+      // sort from higher to lower index and keep uniq indices
+      hiddenColumnIndices = _.uniq(hiddenColumnIndices.sort( (a,b) => b - a));
+
+      // remove hidden columns
+      _.forEach(hiddenColumnIndices, function (colToRemove) {
+        if (colToRemove < table.columns.length) {
+          table.columns.splice(colToRemove, 1);
+          _.forEach(table.rows, function (row) {
+            row.splice(colToRemove, 1);
+          });
+        }
       });
     });
   };
