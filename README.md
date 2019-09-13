@@ -19,7 +19,10 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
-- Hide some table columns (ex: `0,1` hides columns 0 and 1)
+- Hide some table columns (ex: `0,1,Col2 Label` hides columns 0, 1 and the column labeled 'Col2 Label')
+  - Note that the column label must be written as is (including whitespaces), with no surrounding quotes.
+  - Column labels containing commas are not supported since the comma is used to separate the columns
+  - It is recommended to use column labels to hide columns rather than their indices. Using the 'Split cols' feature, in fact, indices might depend on the global timerange that has been set. 
 - Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
   - Works also with numeric and date columns
   - Ability to enable case sensitive filter
@@ -45,7 +48,7 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 
 - Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases "Go to releases!") and choose the right one for your Kibana
 - launch a shell terminal and go to $KIBANA_HOME/bin folder
-- use Kibana CLI to install : 
+- use Kibana CLI to install :
   - directly from Internet URL :
 `$KIBANA_HOME/bin/kibana-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/enhanced-table-X.Y.Z_A.B.C.zip`
   - locally after manual download :
@@ -62,7 +65,7 @@ Common features available for 'Computed Column Formula' and 'Lines Computed Filt
 - Column reference validation (by number or label), with error notification
 - Formula validation, with error notification
 - Additional custom functions listed in table below (ex: `col['Expiration Date'] > now() ? 'OK' : 'KO'`)
-  
+
 Function     | Description
 :----------- | :----------
 [now()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now)  | Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC

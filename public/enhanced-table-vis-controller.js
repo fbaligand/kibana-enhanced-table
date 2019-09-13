@@ -196,8 +196,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
       'string': {},
-      'number': {pattern: computedColumn.pattern},
-      'date': {pattern: computedColumn.datePattern}
+      'number': { pattern: computedColumn.pattern },
+      'date': { pattern: computedColumn.datePattern }
     };
     const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
@@ -206,7 +206,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // create new column object
     let newColumn = {
       id: `computed-col-${index}`,
-      aggConfig: new AggConfig($scope.vis.aggs, {schema: aggSchema, type: aggType}),
+      aggConfig: new AggConfig($scope.vis.aggs, { schema: aggSchema, type: aggType }),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
@@ -295,7 +295,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     });
   };
 
+  const isInt = (item) => {
+    return /^ *[0-9]+ *$/.test(item);
+  };
+
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
+    // recursively call sub-tables
     _.forEach(tables, function (table) {
       if (table.tables) {
         hideColumns(table.tables, hiddenColumns, splitColIndex);
@@ -306,14 +311,30 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         table.refRowWithHiddenCols = _.clone(table.rows[0]);
       }
 
-      let removedCounter = 0;
-      _.forEach(hiddenColumns, function (item) {
-        let index = getRealColIndex(parseInt(item), splitColIndex);
-        table.columns.splice(index - removedCounter, 1);
-        _.forEach(table.rows, function (row) {
-          row.splice(index - removedCounter, 1);
-        });
-        removedCounter++;
+      // retrieve real col indices
+      let hiddenColumnIndices = _.map(hiddenColumns, function (item) {
+        try {
+          if (!isInt(item)) {
+            item = findColIndexByTitle(table.columns, item, item, splitColIndex);
+          }
+          return getRealColIndex(parseInt(item), splitColIndex);
+        }
+        catch(e) {
+          return table.columns.length;
+        }
+      });
+
+      // sort from higher to lower index and keep uniq indices
+      hiddenColumnIndices = _.uniq(hiddenColumnIndices.sort( (a,b) => b - a));
+
+      // remove hidden columns
+      _.forEach(hiddenColumnIndices, function (colToRemove) {
+        if (colToRemove < table.columns.length) {
+          table.columns.splice(colToRemove, 1);
+          _.forEach(table.rows, function (row) {
+            row.splice(colToRemove, 1);
+          });
+        }
       });
     });
   };
@@ -487,7 +508,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     let result = initialToString.call(this, contentType);
     if ($scope.filterHighlightRegex !== null && contentType === 'html') {
       if (typeof result === 'string') {
-        result = { 'markup': result};
+        result = { 'markup': result };
       }
       if (result.markup.indexOf('<span') === -1) {
         result.markup = `<span>${result.markup}</span>`;
