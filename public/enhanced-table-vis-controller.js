@@ -196,8 +196,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
       'string': {},
-      'number': {pattern: computedColumn.pattern},
-      'date': {pattern: computedColumn.datePattern}
+      'number': { pattern: computedColumn.pattern },
+      'date': { pattern: computedColumn.datePattern }
     };
     const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
@@ -206,7 +206,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // create new column object
     let newColumn = {
       id: `computed-col-${index}`,
-      aggConfig: new AggConfig($scope.vis.aggs, {schema: aggSchema, type: aggType}),
+      aggConfig: new AggConfig($scope.vis.aggs, { schema: aggSchema, type: aggType }),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
@@ -297,8 +297,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const isInt = (item) => {
     return /^ *[0-9]+ *$/.test(item);
-  }
-  
+  };
+
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
     // recursively call sub-tables
     _.forEach(tables, function (table) {
@@ -508,7 +508,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     let result = initialToString.call(this, contentType);
     if ($scope.filterHighlightRegex !== null && contentType === 'html') {
       if (typeof result === 'string') {
-        result = { 'markup': result};
+        result = { 'markup': result };
       }
       if (result.markup.indexOf('<span') === -1) {
         result.markup = `<span>${result.markup}</span>`;
