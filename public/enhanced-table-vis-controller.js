@@ -509,7 +509,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const notifyError = function(errorMessage) {
-    notifier.error(errorMessage);
+    if ($scope.errorMessageNotified === undefined) {
+      notifier.error(errorMessage);
+      $scope.errorMessageNotified = true;
+    }
+    else {
+      $scope.errorMessageNotified = undefined;
+    }
   };
 
   const colToStringWithHighlightResults = function(initialToString, scope, contentType) {
