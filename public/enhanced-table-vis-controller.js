@@ -65,23 +65,23 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
   };
 
-  const findColIndexByTitle = function (columns, colTitle, inputFormula, splitColIndex) {
+  const findColIndexByTitle = function (columns, colTitle, input, inputType, splitColIndex) {
     const columnIndex = _.findIndex(columns, 'title', colTitle);
     if (columnIndex !== -1) {
       return getOriginalColIndex(columnIndex, splitColIndex);
     }
     else {
-      throw new EnhancedTableError(`In computed column '${inputFormula}', column with label '${colTitle}' does not exist`);
+      throw new EnhancedTableError(`In ${inputType} '${input}', column with label '${colTitle}' does not exist`);
     }
   };
 
-  const createFormula = function (inputFormula, splitColIndex, columns) {
+  const createFormula = function (inputFormula, formulaType, splitColIndex, columns) {
 
     // convert col[0] syntax to col0 syntax
     let realFormula = inputFormula.replace(/col\[(\d+)\]/g, 'col$1');
 
     // convert col['colTitle'] syntax to col0 syntax
-    realFormula = realFormula.replace(/col\['([^\]]+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, splitColIndex));
+    realFormula = realFormula.replace(/col\['([^\]]+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
 
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)/g;
@@ -153,16 +153,24 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     return value;
   };
 
-  const createTemplate = function (computedColumn, splitColIndex) {
+  const createTemplate = function (computedColumn, splitColIndex, columns) {
 
     if (!computedColumn.applyTemplate) {
       return undefined;
     }
 
     // convert old col.i.value syntax and manage 'split cols' case
+    let realTemplate = computedColumn.template.replace(/\{\{\s*col\.(\d+)\.value/g, '{{col$1');
+
+    // convert col[0] syntax to col0 syntax
+    realTemplate = realTemplate.replace(/\{\{\s*col\[(\d+)\]/g, '{{col$1');
+
+    // convert col['colTitle'] syntax to col0 syntax
+    realTemplate = realTemplate.replace(/\{\{\s*col\['([^\]]+)'\]/g, (match, colTitle) => '{{col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex));
+
+    // set the right column index, depending splitColIndex
     const colRefRegex = /\{\{\s*col(\d+)/g;
-    const realTemplate = computedColumn.template.replace(/\{\{\s*col\.(\d+)\.value/g, '{{col$1')
-      .replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+    realTemplate = realTemplate.replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // add template param cols
     const templateParamsCols = [];
@@ -185,8 +193,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
       'string': {},
-      'number': {pattern: computedColumn.pattern},
-      'date': {pattern: computedColumn.datePattern}
+      'number': { pattern: computedColumn.pattern },
+      'date': { pattern: computedColumn.datePattern }
     };
     const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
@@ -198,8 +206,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
-      formula: createFormula(computedColumn.formula, splitColIndex, columns),
-      template: createTemplate(computedColumn, splitColIndex)
+      formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns),
+      template: createTemplate(computedColumn, splitColIndex, columns)
     };
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
@@ -498,7 +506,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     let result = initialToString.call(this, contentType);
     if ($scope.filterHighlightRegex !== null && contentType === 'html') {
       if (typeof result === 'string') {
-        result = { 'markup': result};
+        result = { 'markup': result };
       }
       if (result.markup.indexOf('<span') === -1) {
         result.markup = `<span>${result.markup}</span>`;
@@ -664,7 +672,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
         // process lines computed filter
         if (params.linesComputedFilter) {
-          const linesComputedFilterFormula = createFormula(params.linesComputedFilter, splitColIndex, firstTable.columns);
+          const linesComputedFilterFormula = createFormula(params.linesComputedFilter, 'Lines computed filter', splitColIndex, firstTable.columns);
           tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
         }
 
