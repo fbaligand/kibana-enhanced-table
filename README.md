@@ -16,6 +16,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](http://handlebarsjs.com/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
+  - Template can reference another column by its label (ex: `<span style="color: {{col['color']}}">{{value}}</span>`)
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
