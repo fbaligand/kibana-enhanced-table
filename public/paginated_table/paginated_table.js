@@ -18,9 +18,9 @@
  */
 
 import _ from 'lodash';
-import AggConfigResult from 'ui/vis/agg_config_result';
 
 import { uiModules } from 'ui/modules';
+import AggConfigResult from '../agg_config_result';
 import paginatedTableTemplate from './paginated_table.html';
 
 import 'ui/directives/paginate';

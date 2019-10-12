@@ -3,11 +3,11 @@ import _ from 'lodash';
 
 import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
 import { EnhancedTableRequestHandlerProvider as enhancedTableRequestHandlerProvider } from './enhanced-table-request-handler';
+import AggConfigResult from './agg_config_result';
 
 import { fieldFormats } from 'ui/registry/field_formats';
 import { AggConfig } from 'ui/vis/agg_config';
-import AggConfigResult from 'ui/vis/agg_config_result';
-import { Notifier } from 'ui/notify/notifier';
+import { toastNotifications } from 'ui/notify';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
@@ -27,7 +27,6 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   }
 
   const getConfig = (...args) => config.get(...args);
-  const notifier = new Notifier();
   const enhancedTableRequestHandler = enhancedTableRequestHandlerProvider().handler;
 
 
@@ -510,7 +509,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const notifyError = function(errorMessage) {
     if ($scope.errorMessageNotified === undefined) {
-      notifier.error(errorMessage);
+      toastNotifications.addDanger(errorMessage);
       $scope.errorMessageNotified = true;
     }
     else {

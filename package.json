@@ -17,6 +17,7 @@
     "build": "../../kibana/node_modules/.bin/plugin-helpers build"
   },
   "dependencies": {
-    "expr-eval": "^1.2.2"
+    "expr-eval": "^1.2.2",
+    "dragula": "3.7.2"
   }
 }

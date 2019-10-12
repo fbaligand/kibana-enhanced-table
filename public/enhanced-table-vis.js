@@ -2,6 +2,7 @@ import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import './agg_table';
 import './agg_table/agg_table_group';
+import './draggable';
 
 import { i18n } from '@kbn/i18n';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';

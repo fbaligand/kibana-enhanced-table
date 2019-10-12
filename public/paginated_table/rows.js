@@ -19,7 +19,7 @@
 
 import $ from 'jquery';
 import _ from 'lodash';
-import AggConfigResult from 'ui/vis/agg_config_result';
+import AggConfigResult from '../agg_config_result';
 import { uiModules } from 'ui/modules';
 import tableCellFilterHtml from './table_cell_filter.html';
 import { isNumeric } from 'ui/utils/numeric';
