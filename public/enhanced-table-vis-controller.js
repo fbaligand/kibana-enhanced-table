@@ -29,7 +29,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   const getConfig = (...args) => config.get(...args);
   const notifier = new Notifier();
   const enhancedTableRequestHandler = enhancedTableRequestHandlerProvider().handler;
-
+  handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 
   // controller methods
 
@@ -142,6 +142,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     parser.functions.trim = function (str) {
       return str.trim();
     };
+    parser.functions.encodeURIComponent = function (str) {
+      return encodeURIComponent(str);
+    };
 
     // parse formula and return final formula object
     try {
@@ -171,17 +174,17 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
 
     // convert old col.i.value syntax and manage 'split cols' case
-    let realTemplate = computedColumn.template.replace(/\{\{\s*col\.(\d+)\.value/g, '{{col$1');
+    let realTemplate = computedColumn.template.replace(/col\.(\d+)\.value\s*\}\}/g, 'col$1}}');
 
     // convert col[0] syntax to col0 syntax
-    realTemplate = realTemplate.replace(/\{\{\s*col\[(\d+)\]/g, '{{col$1');
+    realTemplate = realTemplate.replace(/col\[(\d+)\]\s*\}\}/g, 'col$1}}');
 
     // convert col['colTitle'] syntax to col0 syntax
-    realTemplate = realTemplate.replace(/\{\{\s*col\['([^\]]+)'\]/g, (match, colTitle) => '{{col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex));
+    realTemplate = realTemplate.replace(/col\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
 
     // set the right column index, depending splitColIndex
-    const colRefRegex = /\{\{\s*col(\d+)/g;
-    realTemplate = realTemplate.replace(colRefRegex, (match, colIndex) => '{{col' + getRealColIndex(parseInt(colIndex), splitColIndex));
+    const colRefRegex = /col(\d+)\s*\}\}/g;
+    realTemplate = realTemplate.replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex) + '}}');
 
     // add template param cols
     const templateParamsCols = [];
