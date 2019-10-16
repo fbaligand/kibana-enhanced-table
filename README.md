@@ -11,6 +11,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Support for date columns
   - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
+  - Ability to reference a column total (ex: `col['Sales by month'] / total['Sales by month']`)
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
   - Support for column alignment (ex: `left`, `right`)
