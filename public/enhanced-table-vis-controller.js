@@ -139,11 +139,16 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     parser.functions.now = function () {
       return Date.now();
     };
-    parser.functions.indexOf = function (str, searchValue, fromIndex) {
-      return str.indexOf(searchValue, fromIndex);
+    parser.functions.indexOf = function (strOrArray, searchValue, fromIndex) {
+      return strOrArray.indexOf(searchValue, fromIndex);
     };
-    parser.functions.lastIndexOf = function (str, searchValue, fromIndex) {
-      return str.lastIndexOf(searchValue, fromIndex);
+    parser.functions.lastIndexOf = function (strOrArray, searchValue, fromIndex) {
+      if (fromIndex) {
+        return strOrArray.lastIndexOf(searchValue, fromIndex);
+      }
+      else {
+        return strOrArray.lastIndexOf(searchValue);
+      }
     };
     parser.functions.replace = function (str, substr, newSubstr) {
       return str.replace(substr, newSubstr);
@@ -168,6 +173,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     };
     parser.functions.encodeURIComponent = function (str) {
       return encodeURIComponent(str);
+    };
+    parser.functions.sort = function (array, compareFunction) {
+      return array.sort(compareFunction);
+    };
+    parser.functions.uniq = function (array) {
+      return _.uniq(array);
     };
 
     // parse formula and return final formula object
