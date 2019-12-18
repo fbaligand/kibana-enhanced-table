@@ -1,6 +1,6 @@
 node_modules/
 build/
-local/
+local
 npm-debug.log*
 package-lock.json
 yarn.lock
