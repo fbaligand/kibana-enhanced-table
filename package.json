@@ -7,7 +7,7 @@
     "version": "kibana"
   },
   "scripts": {
-    "lint": "../../kibana/node_modules/.bin/eslint .",
+    "lint": "../../node_modules/.bin/eslint .",
     "start": "plugin-helpers start --no-watch",
     "test:server": "plugin-helpers test:server",
     "test:browser": "plugin-helpers test:browser",
