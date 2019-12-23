@@ -7,7 +7,7 @@ import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './agg_config_result';
 
 import { fieldFormats } from 'ui/registry/field_formats';
-import { AggConfig } from 'ui/vis/agg_config';
+import { AggConfig } from 'ui/agg_types/agg_config';
 import { toastNotifications } from 'ui/notify';
 
 // third-party dependencies

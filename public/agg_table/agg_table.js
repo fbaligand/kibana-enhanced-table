@@ -123,7 +123,7 @@ uiModules
             const aggType = agg.type;
             if (aggType && aggType.type === 'metrics') {
               if (aggType.name === 'top_hits') {
-                if (agg._opts.params.aggregate !== 'concat') {
+                if (agg.params.aggregate.value !== 'concat') {
                 // all other aggregate types for top_hits output numbers
                 // so treat this field as numeric
                   isFieldNumeric = true;

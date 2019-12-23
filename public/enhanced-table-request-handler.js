@@ -1,10 +1,8 @@
 import _ from 'lodash';
-import { CourierRequestHandlerProvider as courierRequestHandlerProvider } from 'ui/vis/request_handlers/courier';
+import { handleCourierRequest } from './courier';
 import { SearchSourceProvider } from 'ui/courier/search_source';
 import { RequestAdapter, DataAdapter } from 'ui/inspector/adapters';
 import chrome from 'ui/chrome';
-
-const courierRequestHandler = courierRequestHandlerProvider().handler;
 
 const EnhancedTableRequestHandlerProvider = function () {
 
@@ -32,7 +30,7 @@ const EnhancedTableRequestHandlerProvider = function () {
       inspectorAdapters.requests = new RequestAdapter();
       inspectorAdapters.data = new DataAdapter();
 
-      const response = await courierRequestHandler({
+      const response = await handleCourierRequest({
         searchSource,
         aggs,
         timeRange,
