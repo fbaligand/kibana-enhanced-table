@@ -28,7 +28,7 @@ import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { VisFiltersProvider, createFiltersFromEvent } from 'ui/vis/vis_filters';
+import { createFiltersFromEvent } from 'ui/vis/vis_filters';
 
 // we need to load the css ourselves
 
@@ -44,7 +44,6 @@ VisTypesRegistryProvider.register(EnhancedTableVisTypeProvider);
 // define the TableVisType
 function EnhancedTableVisTypeProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
-  const visFilters = Private(VisFiltersProvider);
 
   // define the EnhancedTableVisTypeProvider which is used in the template
   // by angular's ng-controller directive
@@ -140,10 +139,10 @@ function EnhancedTableVisTypeProvider(Private) {
     },
     events: {
       filterBucket: {
-        defaultAction: function (event, { simulate = false } = {}) {
+        defaultAction: function (event) {
           event.aggConfigs = event.data[0].table.columns.map(column => column.aggConfig);
           const filters = createFiltersFromEvent(event);
-          visFilters.pushFilters(filters, simulate);
+          return filters;
         }
       }
     },
