@@ -11,10 +11,10 @@
       <div ng-repeat="computedColumn in editorState.params.computedColumns"
            ng-init="editorOpen = initEditorOpen()"
            draggable-item="computedColumn"
-           class="visEditorSidebar__section visEditorSidebar__collapsible visEditorSidebar__collapsible--marginBottom">
+           class="euiAccordion visEditorSidebar__section visEditorSidebar__collapsible visEditorSidebar__collapsible--marginBottom">
 
            <!-- header -->
-          <div class="visEditorSidebar__collapsibleTitle">
+          <div class="euiAccordion__triggerWrapper">
 
               <!-- open/close editor -->
               <button
@@ -23,28 +23,23 @@
                     aria-expanded="{{ !!editorOpen }}"
                     type="button"
                     data-test-subj="toggleEditor"
-                    class="visEditorSidebar__collapsibleTitleLabel">
+                    class="euiAccordion__button eui-textTruncate">
                  <icon aria-hidden="true" ng-if="editorOpen" type="'arrowDown'" size="'s'"></icon>
                  <icon aria-hidden="true" ng-if="!editorOpen" type="'arrowRight'" size="'s'"></icon>
+                 &nbsp;
 
                  <!-- title -->
-                 <span class="visEditorSidebar__collapsibleTitleText">
+                 <span class="visEditorSidebar__aggGroupAccordionButtonContent eui-textTruncate">
                     Computed col
+                    <!-- description -->
+                    <span ng-if="!editorOpen" title="{{computedColumn.label || computedColumn.formula}}">
+                      {{computedColumn.label || computedColumn.formula}}
+                    </span>
                  </span>
               </button>
 
-              <!-- description -->
-              <span ng-if="!editorOpen" class="visEditorSidebar__collapsibleTitleDescription" title="{{computedColumn.label || computedColumn.formula}}">
-                {{computedColumn.label || computedColumn.formula}}
-              </span>
-
-              <!-- error -->
-              <span ng-if="!editorOpen && computedColumn.$invalid" class="visEditorSidebar__collapsibleTitleDescription visEditorSidebar__collapsibleTitleDescription--danger" title="{{computedColumn.error}}">
-                  {{ computedColumn.error }}
-              </span>
-
               <!-- controls -->
-              <div class="visEditorAggHeader__controls kuiButtonGroup kuiButtonGroup--united">
+              <div class="euiAccordion__optionalAction">
 
                   <!-- disable computed column -->
                   <button
@@ -55,8 +50,8 @@
                     tooltip-append-to-body="true"
                     data-test-subj="disableComputedColumnBtn"
                     type="button"
-                    class="kuiButton kuiButton--basic kuiButton--small">
-                    <i aria-hidden="true" class="fa fa-toggle-on"></i>
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'eye'" color="'text'"/>
                   </button>
 
                   <!-- enable computed column -->
@@ -68,8 +63,8 @@
                     tooltip-append-to-body="true"
                     data-test-subj="enableComputedColumnBtn"
                     type="button"
-                    class="kuiButton kuiButton--basic kuiButton--small">
-                    <i aria-hidden="true" class="fa fa-toggle-off"></i>
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'eyeClosed'" color="'text'"/>
                   </button>
 
                   <!-- drag handle -->
@@ -81,8 +76,8 @@
                     tooltip-append-to-body="true"
                     type="button"
                     keyboard-move="onPriorityReorder(direction)"
-                    class="kuiButton kuiButton--basic kuiButton--small">
-                    <i aria-hidden="true" class="fa fa-arrows-v"></i>
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'grab'"/>
                     <span class="euiScreenReaderOnly"
                       i18n-id="enhancedTableVis.howToModifyScreenReaderOrderDescription"
                       i18n-default-message="Use up and down key on this button to move this computed column up and down in the order."
@@ -97,8 +92,8 @@
                     tooltip="{{::'enhancedTableVis.removeComputedColumnButtonTooltip' | i18n: { defaultMessage: 'Remove Column' } }}"
                     tooltip-append-to-body="true"
                     type="button"
-                    class="kuiButton kuiButton--basic kuiButton--small">
-                    <icon aria-hidden="true" color="'danger'" type="'cross'" size="'m'"></icon>
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'cross'" color="'danger'"/>
                   </button>
 
               </div>
