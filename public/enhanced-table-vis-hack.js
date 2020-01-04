@@ -22,6 +22,13 @@ import _ from 'lodash';
 import chrome from 'ui/chrome';
 import { aggTypeFieldFilters } from 'ui/agg_types/param_types/filter';
 import { topHitMetricAgg } from 'ui/agg_types/metrics/top_hit';
+import { functionsRegistry } from 'plugins/interpreter/registries';
+
+import { visualization } from './data_load/enhanced-table-visualization-fn';
+
+
+// register enhanced-table visualization function, to customize elasticsearch response transformation to table data
+functionsRegistry.register(visualization);
 
 const appId = chrome.getApp().id;
 
