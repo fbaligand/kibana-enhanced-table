@@ -64,3 +64,29 @@ visualization.enhanced-table {
     text-align: justify;
   }
 }
+
+.striped-rows .kbnAggTable__paginated {
+  $euiColorLightestShade: #F5F7FA;
+
+  tr:nth-child(odd) td {
+    background-color: lighten($euiColorLightestShade, 2%);
+  }
+
+  tr:hover td {
+    background-color: $euiColorLightestShade;
+  }
+
+}
+
+.theme-dark .striped-rows .kbnAggTable__paginated {
+  $euiColorLightestShade: #25262E;
+
+  tr:nth-child(odd) td {
+    background-color: lighten($euiColorLightestShade, 2%);
+  }
+
+  tr:hover td {
+    background-color: $euiColorLightestShade;
+  }
+
+}
