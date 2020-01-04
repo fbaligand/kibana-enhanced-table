@@ -22,6 +22,8 @@ import './enhanced-table-vis-params';
 import './agg_table';
 import './agg_table/agg_table_group';
 import './draggable';
+import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
+import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 
 import { i18n } from '@kbn/i18n';
 import { visFactory } from 'ui/vis/vis_factory';
@@ -31,14 +33,13 @@ import { AggGroupNames } from 'ui/vis/editors/default';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
 import { createFiltersFromEvent } from 'ui/vis/vis_filters';
+import { prepareJson, prepareString } from 'ui/visualize/loader/pipeline_helpers/build_pipeline';
 
 // register the provider with the visTypes registry
 visualizations.types.registerVisualization(EnhancedTableVisTypeProvider);
 
-// define the TableVisType
+// define the EnhancedTableVisTypeProvider which is used in the template by angular's ng-controller directive
 function EnhancedTableVisTypeProvider() {
-
-  // define the EnhancedTableVisTypeProvider which is used in the template by angular's ng-controller directive
 
   // return the visType object, which kibana will use to display and configure new Vis object of this type.
   return visFactory.createBaseVisualization({
@@ -124,9 +125,8 @@ function EnhancedTableVisTypeProvider() {
         }
       ])
     },
-    requestHandler: function (context) {
-      return context;
-    },
+    requestHandler: enhancedTableRequestHandler,
+    responseHandler: enhancedTableResponseHandler,
     events: {
       filterBucket: {
         defaultAction: function (event) {
@@ -138,6 +138,23 @@ function EnhancedTableVisTypeProvider() {
     },
     hierarchicalData: function (vis) {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
+    },
+    toExpression: function (vis) {
+      const visState = vis.getCurrentState();
+      const visConfig = visState.params;
+      const { indexPattern } = vis;
+
+      let pipeline = `enhanced_table_visualization type='${vis.type.name}'
+        ${prepareJson('visConfig', visConfig)}
+        metricsAtAllLevels=${vis.isHierarchical()}
+        ${prepareJson('aggConfigs', visState.aggs)}
+        partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
+
+      if (indexPattern) {
+        pipeline += `${prepareString('index', indexPattern.id)}`;
+      }
+
+      return pipeline;
     }
   });
 }

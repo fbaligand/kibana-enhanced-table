@@ -20,10 +20,8 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
-import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
-import { EnhancedTableRequestHandlerProvider as enhancedTableRequestHandlerProvider } from './enhanced-table-request-handler';
 import { computeColumnTotal } from './column_total_computer';
-import AggConfigResult from './agg_config_result';
+import AggConfigResult from './data_load/agg_config_result';
 
 import { fieldFormats } from 'ui/registry/field_formats';
 import { AggConfig } from 'ui/agg_types/agg_config';
@@ -47,7 +45,6 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   }
 
   const getConfig = (...args) => config.get(...args);
-  const enhancedTableRequestHandler = enhancedTableRequestHandlerProvider().handler;
   handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 
   // controller methods
@@ -633,6 +630,22 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     return result;
   };
 
+  const setFullAggConfig = function(table, aggConfigs) {
+    if (table.tables) {
+      if (table.aggConfig) {
+        table.aggConfig = aggConfigs.bySchemaName('split')[0];
+      }
+      table.tables.forEach(subTable => {
+        setFullAggConfig(subTable, aggConfigs);
+      });
+    }
+    else {
+      table.columns.forEach(column => {
+        column.aggConfig = aggConfigs.byId(column.aggConfig.id);
+      });
+    }
+  };
+
   // filter scope methods
   $scope.doFilter = function () {
     $scope.activeFilter = $scope.vis.filterInput;
@@ -667,7 +680,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   const processFilterBarAndRefreshTable = function() {
 
     if ($scope.tableGroups !== undefined) {
-      let tableGroups = $scope.initialTableGroups;
+      let tableGroups = $scope.esResponse;
       const vis = $scope.vis;
       const params = vis.params;
 
@@ -747,7 +760,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
    * - the underlying data changes (esResponse)
    * - one of the view options changes (vis.params)
    */
-  $scope.$watch('renderComplete', async function watchRenderComplete() {
+  $scope.$watch('renderComplete', function watchRenderComplete() {
 
     try {
       $scope.hasSomeRows = null;
@@ -756,11 +769,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       if ($scope.esResponse) {
 
         // init tableGroups
-        const tabularEsResponse = await enhancedTableRequestHandler($scope.esResponse, $scope.vis.aggs);
-        $scope.initialTableGroups = enhancedTableResponseHandler(tabularEsResponse, $scope.vis.aggs);
-        let tableGroups = $scope.initialTableGroups;
-        const totalHits = tabularEsResponse.totalHits;
+        let tableGroups = $scope.esResponse;
+        const totalHits = $scope.esResponse.totalHits;
+        const vis = $scope.vis;
         const params = $scope.visParams;
+
+        // set the full AggConfig object on each split table and each column
+        setFullAggConfig(tableGroups, vis.aggs);
 
         // validate that 'Split cols' is the last bucket
         const firstTable = findFirstDataTable(tableGroups);

@@ -19,10 +19,18 @@
 
 import { uiModules } from  'ui/modules';
 import chrome from 'ui/chrome';
+import { npSetup } from 'ui/new_platform';
 
-const appId = chrome.getApp().id;
+import { visualization } from './data_load/enhanced-table-visualization-fn';
+
+
+// register enhanced-table visualization function, to customize elasticsearch response transformation to table data
+const expressions = npSetup.plugins.expressions;
+expressions.registerFunction(visualization);
+
 
 // Only inject decorator on kibana app
+const appId = chrome.getApp().id;
 if (appId === 'kibana') {
 
   uiModules

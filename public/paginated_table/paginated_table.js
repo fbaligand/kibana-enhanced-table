@@ -20,7 +20,7 @@
 import _ from 'lodash';
 
 import { uiModules } from 'ui/modules';
-import AggConfigResult from '../agg_config_result';
+import AggConfigResult from '../data_load/agg_config_result';
 import paginatedTableTemplate from './paginated_table.html';
 
 import 'ui/directives/paginate';
