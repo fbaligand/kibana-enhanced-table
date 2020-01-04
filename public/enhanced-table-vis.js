@@ -21,6 +21,8 @@ import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
 import './agg_table';
 import './agg_table/agg_table_group';
+import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
+import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 
 import { i18n } from '@kbn/i18n';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
@@ -28,27 +30,16 @@ import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 import { createFiltersFromEvent } from 'ui/vis/vis_filters';
-
-// we need to load the css ourselves
-
-// we also need to load the controller and used by the template
-
-// our params are a bit complex so we will manage them with a directive
-
-// require the directives that we use as well
+import { prepareJson, prepareString } from 'ui/visualize/loader/pipeline_helpers/build_pipeline';
 
 // register the provider with the visTypes registry
 VisTypesRegistryProvider.register(EnhancedTableVisTypeProvider);
 
-// define the TableVisType
+// define the EnhancedTableVisTypeProvider which is used in the template by angular's ng-controller directive
 function EnhancedTableVisTypeProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
 
-  // define the EnhancedTableVisTypeProvider which is used in the template
-  // by angular's ng-controller directive
-
-  // return the visType object, which kibana will use to display and configure new
-  // Vis object of this type.
+  // return the visType object, which kibana will use to display and configure new Vis object of this type.
   return VisFactory.createAngularVisualization({
     type: 'table',
     name: 'enhanced-table',
@@ -99,9 +90,7 @@ function EnhancedTableVisTypeProvider(Private) {
             }
           },
           min: 1,
-          defaults: [
-            { type: 'count', schema: 'metric' }
-          ]
+          defaults: [{ type: 'count', schema: 'metric' }]
         },
         {
           group: 'buckets',
@@ -133,9 +122,8 @@ function EnhancedTableVisTypeProvider(Private) {
         }
       ])
     },
-    requestHandler: function (context) {
-      return context;
-    },
+    requestHandler: enhancedTableRequestHandler,
+    responseHandler: enhancedTableResponseHandler,
     events: {
       filterBucket: {
         defaultAction: function (event) {
@@ -147,6 +135,23 @@ function EnhancedTableVisTypeProvider(Private) {
     },
     hierarchicalData: function (vis) {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
+    },
+    toExpression: function (vis) {
+      const visState = vis.getCurrentState();
+      const visConfig = visState.params;
+      const { indexPattern } = vis;
+
+      let pipeline = `enhanced_table_visualization type='${vis.type.name}'
+        ${prepareJson('visConfig', visConfig)}
+        metricsAtAllLevels=${vis.isHierarchical()}
+        ${prepareJson('aggConfigs', visState.aggs)}
+        partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
+
+      if (indexPattern) {
+        pipeline += `${prepareString('index', indexPattern.id)}`;
+      }
+
+      return pipeline;
     }
   });
 }
