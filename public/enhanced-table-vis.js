@@ -67,6 +67,7 @@ function EnhancedTableVisTypeProvider() {
         computedColumns: [],
         computedColsPerSplitCol: false,
         hideExportLinks: false,
+        stripedRows: false,
         showFilterBar: false,
         filterCaseSensitive: false,
         filterBarHideable: false,

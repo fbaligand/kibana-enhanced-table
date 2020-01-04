@@ -45,6 +45,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   }
 
   const getConfig = (...args) => config.get(...args);
+  const isDarkTheme = getConfig('theme:darkMode');
+
   handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 
   // controller methods
@@ -717,11 +719,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         return table.rows.length > 0;
       });
 
-      // optimize space under table
+      // set conditional css classes
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
       $scope.tableVisContainerClass = {
         'hide-pagination': !showPagination,
-        'hide-export-links': params.hideExportLinks
+        'hide-export-links': params.hideExportLinks,
+        'striped-rows': params.stripedRows,
+        'theme-dark': isDarkTheme
       };
 
       // update $scope
