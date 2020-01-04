@@ -699,7 +699,8 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
       $scope.tableVisContainerClass = {
         'hide-pagination': !showPagination,
-        'hide-export-links': params.hideExportLinks
+        'hide-export-links': params.hideExportLinks,
+        'striped-rows': params.stripedRows
       };
 
       // update $scope
