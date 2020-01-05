@@ -11,7 +11,7 @@
     "kbn": "node ../../scripts/kbn",
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
-    "start": "../../node_modules/.bin/plugin-helpers start --oss --no-watch",
+    "start": "node ../../scripts/kibana --dev --oss --no-watch",
     "test:server": "../../node_modules/.bin/plugin-helpers test:server",
     "test:browser": "../../node_modules/.bin/plugin-helpers test:browser",
     "build": "../../node_modules/.bin/plugin-helpers build"
