@@ -56,7 +56,7 @@ function EnhancedTableVisTypeProvider(Private) {
     }),
     icon: 'visTable',
     description: i18n.translate('tableVis.enhancedTableVisDescription', {
-      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
+      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visConfig: {
       defaults: {
