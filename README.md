@@ -1,6 +1,6 @@
 # Kibana Enhanced Table
 
-This Kibana visualization plugin is like a Data Table, but with enhanced features like computed columns and filter bar.
+This Kibana visualization plugin is like a Data Table, but with enhanced features like computed columns, filter bar and pivot table.
 
 ## Features
 
@@ -12,6 +12,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
   - Ability to reference a column total (ex: `col['Sales by month'] / total['Sales by month']`)
+  - Ability to define/reference arrays, do variable assignment and define custom functions in expressions
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
   - Support for column alignment (ex: `left`, `right`)
@@ -38,7 +39,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column (ex: `Total:`)
-- Kibana supported versions : all versions from 5.5 to 7.4
+- Kibana supported versions : all versions from 5.5 to 7.5
 
 ## Demo
 
