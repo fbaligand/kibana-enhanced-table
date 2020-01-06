@@ -64,7 +64,7 @@ function EnhancedTableVisProvider(Private) {
     name: 'enhanced-table',
     title: 'Enhanced Table',
     image,
-    description: 'Same functionality than Data Table, but with enhanced features like computed columns and filter bar.',
+    description: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.',
     category: CATEGORY.DATA,
     visConfig: {
       defaults: {
