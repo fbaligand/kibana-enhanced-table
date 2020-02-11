@@ -641,7 +641,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
     else {
       table.columns.forEach(column => {
-        column.aggConfig = aggConfigs.byId((column.aggConfig.parentId ? column.aggConfig.parentId : column.aggConfig.id));
+        if (!column.aggConfig) {
+          column.aggConfig = aggConfigs.byId((column.aggConfig.parentId ? column.aggConfig.parentId : column.aggConfig.id));
+        }
       });
     }
   };
