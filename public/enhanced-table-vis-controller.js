@@ -768,12 +768,13 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   $scope.$watch('renderComplete', function watchRenderComplete() {
 
     try {
-      $scope.hasSomeRows = null;
-      $scope.tableGroups = null;
 
-      if ($scope.esResponse) {
+      if ($scope.esResponse && $scope.esResponse.newResponse) {
 
         // init tableGroups
+        $scope.hasSomeRows = null;
+        $scope.tableGroups = null;
+        $scope.esResponse.newResponse = false;
         let tableGroups = $scope.esResponse;
         const totalHits = $scope.esResponse.totalHits;
         const vis = $scope.vis;

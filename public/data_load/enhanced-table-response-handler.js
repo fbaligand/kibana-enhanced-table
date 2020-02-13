@@ -103,5 +103,5 @@ function splitTable(columns, rows, $parent) {
 }
 
 export function enhancedTableResponseHandler(table) {
-  return { tables: splitTable(table.columns, table.rows, null), totalHits: table.totalHits };
+  return { tables: splitTable(table.columns, table.rows, null), totalHits: table.totalHits, newResponse: true };
 }
