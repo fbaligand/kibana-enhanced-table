@@ -309,6 +309,18 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns, totalFunc),
       template: createTemplate(computedColumn, splitColIndex, columns, totalFunc)
     };
+
+    // if computed column formula is just a simple column reference (ex: col0), then copy its aggConfig to get filtering feature
+    const simpleColRefMatch = newColumn.formula.expression.toString().match(/^\s*col(\d+)\s*$/);
+    if (simpleColRefMatch) {
+      const simpleColRefIndex = simpleColRefMatch[1];
+      const simpleColRef = columns[simpleColRefIndex];
+      if (simpleColRef.aggConfig.isFilterable()) {
+        newColumn.aggConfig = new AggConfig(simpleColRef.aggConfig.aggConfigs, simpleColRef.aggConfig);
+      }
+    }
+
+    // define aggConfig identifiers
     newColumn.aggConfig.id = `1.computed-column-${index}`;
     newColumn.aggConfig.key = `computed-column-${index}`;
 
@@ -354,6 +366,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const parent = row.length > 0 && row[row.length-1];
     const newCell = new AggConfigResult(column.aggConfig, parent, value, value);
     newCell.column = column;
+    if (column.aggConfig.isFilterable()) {
+      newCell.rawData = { table, row, column: row.length };
+    }
     if (column.template !== undefined) {
       newCell.templateContext = createTemplateContext(column, row, totalHits, table);
     }
