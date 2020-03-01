@@ -69,11 +69,11 @@ if (appId === 'kibana') {
 
       // Enable string fields in top hit aggregation for enhanced-table plugin
       const topHitFilter = _.find(Array.from(aggTypeFieldFilters.filters), (filter) => {
-        const field = {type: 'string'};
+        const field = { type: 'string' };
         const fieldParamType = '';
-        const aggConfig = {type: {name: 'top_hit'}};
-        const tableVis = {type: {name: 'table'}};
-        const enhancedTableVis = {type: {name: 'enhanced-table'}};
+        const aggConfig = { type: { name: 'top_hit' } };
+        const tableVis = { type: { name: 'table' } };
+        const enhancedTableVis = { type: { name: 'enhanced-table' } };
         try {
           return filter(field, fieldParamType, aggConfig, tableVis) && !filter(field, fieldParamType, aggConfig, enhancedTableVis);
         }
