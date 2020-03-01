@@ -39,7 +39,8 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column (ex: `Total:`)
-- Kibana supported versions : all versions from 5.5 to 7.5
+- Ability to display striped rows
+- Kibana supported versions : all versions from 5.5 to 7.6
 
 ## Demo
 
@@ -64,6 +65,12 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 
 Common features available for 'Computed Column Formula' and 'Lines Computed Filter':
 - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
+- Support for features brought by expr-eval 2.0:
+  - Ability to reference arrays. Especially useful to reference a 'Top Hits' metric column: `col1[0]`
+  - New functions for arrays available: `join, map, filter`
+  - Variable assignment: `x = 4`
+  - Custom function definitions: `myfunction(x, y) = x * y`
+  - Evaluate multiple expressions by separating them with `;`
 - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
 - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
 - Column reference validation (by number or label), with error notification
