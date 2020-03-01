@@ -54,7 +54,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   const createTemplateContext = function (column, row, totalHits, table) {
 
     // inject column value references
-    let templateContext = { total: totalHits };
+    const templateContext = { total: totalHits };
     _.forEach(column.template.paramsCols, function (templateParamCol) {
       templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
     });
@@ -266,7 +266,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const templateParamsCols = [];
     let regexMatch;
     while ((regexMatch = colRefRegex.exec(realTemplate)) !== null) {
-      let colIndex = parseInt(regexMatch[1]);
+      const colIndex = parseInt(regexMatch[1]);
       templateParamsCols.push(colIndex);
     }
 
@@ -283,7 +283,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // add template param totals
     const templateParamsTotals = [];
     while ((regexMatch = totalRefRegex.exec(realTemplate)) !== null) {
-      let colIndex = parseInt(regexMatch[1]);
+      const colIndex = parseInt(regexMatch[1]);
       templateParamsTotals.push(colIndex);
     }
 
@@ -294,6 +294,21 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       paramsTotals: templateParamsTotals,
       totalFunc: totalFunc
     };
+  };
+
+  const renderCell = function (contentType) {
+    let result = this.column.fieldFormatter.convert(this.value);
+    if (this.templateContext !== undefined) {
+      this.templateContext.value = result;
+      result = this.column.template.compiledTemplate(this.templateContext);
+    }
+    if (contentType !== 'html') {
+      result = result.replace(/<(?:.|\n)*?>/gm, '');
+    }
+    else {
+      result = { 'markup': result, 'class': this.column.dataAlignmentClass };
+    }
+    return result;
   };
 
   /** create a new data table column for specified computed column */
@@ -310,7 +325,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
 
     // create new column object
-    let newColumn = {
+    const newColumn = {
       id: `computed-col-${index}`,
       aggConfig: new AggConfig($scope.vis.aggs, { schema: aggSchema, type: aggType }),
       title: computedColumn.label,
@@ -354,21 +369,6 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     };
 
     return newColumn;
-  };
-
-  const renderCell = function (contentType) {
-    let result = this.column.fieldFormatter.convert(this.value);
-    if (this.templateContext !== undefined) {
-      this.templateContext.value = result;
-      result = this.column.template.compiledTemplate(this.templateContext);
-    }
-    if (contentType !== 'html') {
-      result = result.replace(/<(?:.|\n)*?>/gm, '');
-    }
-    else {
-      result = { 'markup': result, 'class': this.column.dataAlignmentClass };
-    }
-    return result;
   };
 
   const createComputedCell = function (column, row, totalHits, table) {
@@ -528,7 +528,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // define ref row for computed columns
     const refRowForComputedColumn = (table.refRowWithHiddenCols !== undefined) ? table.refRowWithHiddenCols : _.clone(table.rows[0]);
     for (let i = 0; i < refRowForComputedColumn.length; i++) {
-      let cell = refRowForComputedColumn[i];
+      const cell = refRowForComputedColumn[i];
       if (cell.column !== undefined) {
         refRowForComputedColumn[i] = createComputedCell(cell.column, refRowForComputedColumn, totalHits, table);
       }
@@ -538,16 +538,16 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
 
     // initialize new column headers
-    let newCols = [];
+    const newCols = [];
     for (let i = 0; i < splitColIndex; i++) {
       newCols.push(table.columns[i]);
     }
 
     // compute new table rows
-    let newRows = [];
+    const newRows = [];
     let newRow = null;
-    let newColNamePrefixes = [];
-    let newColDefaultMetrics = [];
+    const newColNamePrefixes = [];
+    const newColDefaultMetrics = [];
     const metricsCount = table.columns.length - 1 - splitColIndex;
 
     _.forEach(table.rows, function (row) {
@@ -574,7 +574,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
 
       // split col
-      let rowSplitColValue = row[splitColIndex].toString();
+      const rowSplitColValue = row[splitColIndex].toString();
       let newColIndex = _.indexOf(newColNamePrefixes, rowSplitColValue);
 
       // create new col
@@ -582,7 +582,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         newColNamePrefixes.push(rowSplitColValue);
         newColIndex = newColNamePrefixes.length - 1;
         for (let i = splitColIndex+1; i < row.length; i++) {
-          let newCol = _.clone(table.columns[i]);
+          const newCol = _.clone(table.columns[i]);
           newCol.title = metricsCount > 1 ? rowSplitColValue + ' - ' + newCol.title : rowSplitColValue;
           newCols.push(newCol);
           let newColDefaultMetric;
@@ -604,7 +604,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         newRow[splitColIndex + (newColIndex * metricsCount) + i] = row[splitColIndex + 1 + i];
       }
       for (let i = 0; i < newColDefaultMetrics.length; i++) {
-        let targetCol = splitColIndex + i;
+        const targetCol = splitColIndex + i;
         if (newRow[targetCol] === undefined) {
           newRow[targetCol] = newColDefaultMetrics[i];
         }
@@ -786,7 +786,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         $scope.hasSomeRows = null;
         $scope.tableGroups = null;
         $scope.esResponse.newResponse = false;
-        let tableGroups = $scope.esResponse;
+        const tableGroups = $scope.esResponse;
         const totalHits = $scope.esResponse.totalHits;
         const vis = $scope.vis;
         const params = $scope.visParams;
@@ -797,7 +797,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         // validate that 'Split cols' is the last bucket
         const firstTable = findFirstDataTable(tableGroups);
         let splitColIndex = findSplitColIndex(firstTable);
-        if (splitColIndex != -1) {
+        if (splitColIndex !== -1) {
           const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
           if (splitColIndex !== lastBucketIndex) {
             throw new EnhancedTableError('\'Split cols\' bucket must be the last one');
@@ -811,14 +811,14 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         }
 
         // process 'Split cols' bucket: transform rows to cols
-        if (splitColIndex != -1 && !params.computedColsPerSplitCol) {
+        if (splitColIndex !== -1 && !params.computedColsPerSplitCol) {
           splitCols(tableGroups, splitColIndex, totalHits);
         }
 
         // add computed columns
         _.forEach(params.computedColumns, function (computedColumn, index) {
           if (computedColumn.enabled) {
-            let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.totalFunc);
+            const newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.totalFunc);
             addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
           }
         });
@@ -835,7 +835,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         }
 
         // process 'Split cols' bucket: transform rows to cols
-        if (splitColIndex != -1 && params.computedColsPerSplitCol) {
+        if (splitColIndex !== -1 && params.computedColsPerSplitCol) {
           splitColIndex = findSplitColIndex(firstTable);
           splitCols(tableGroups, splitColIndex, totalHits);
         }
