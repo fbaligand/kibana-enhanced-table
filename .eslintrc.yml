@@ -6,6 +6,7 @@ parserOptions:
   ecmaVersion: 2018
   sourceType: module
 rules:
+  "prettier/prettier": off
   indent:
     - error
     - 2
@@ -22,6 +23,6 @@ rules:
     - 2
     - skipBlankLines: false
 overrides:
-  files: ['index.js']
-  env:
-    node: true
+  - files: ['index.js']
+    env:
+      node: true
