@@ -19,9 +19,10 @@
 
 import _ from 'lodash';
 import { handleCourierRequest } from './courier';
-import { SearchSourceProvider } from 'ui/courier/search_source';
+import { SearchSource } from 'ui/courier';
 import { RequestAdapter, DataAdapter } from 'ui/inspector/adapters';
-import chrome from 'ui/chrome';
+import { getQueryService } from '../../../../src/plugins/data/public/services';
+
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -30,14 +31,13 @@ export async function enhancedTableRequestHandler ({
   query,
   filters,
   inspectorAdapters,
-  queryFilter,
   forceFetch,
   aggs
 }) {
 
-  const $injector = await chrome.dangerouslyGetActiveInjector();
-  const Private = $injector.get('Private');
-  const SearchSource = Private(SearchSourceProvider);
+  const { filterManager } = getQueryService();
+
+  // we should move searchSource creation inside courier request handler
   const searchSource = new SearchSource();
   searchSource.setField('index', aggs.indexPattern);
   searchSource.setField('size', 0);
@@ -55,7 +55,7 @@ export async function enhancedTableRequestHandler ({
     metricsAtAllLevels,
     partialRows,
     inspectorAdapters,
-    queryFilter
+    filterManager
   });
 
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);

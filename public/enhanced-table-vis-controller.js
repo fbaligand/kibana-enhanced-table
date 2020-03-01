@@ -17,13 +17,12 @@
  * under the License.
  */
 
-import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
 import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 
-import { fieldFormats } from 'ui/registry/field_formats';
+import { npStart } from 'ui/new_platform';
 import { AggConfig } from 'ui/agg_types/agg_config';
 import { toastNotifications } from 'ui/notify';
 
@@ -31,12 +30,8 @@ import { toastNotifications } from 'ui/notify';
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
-// get the kibana/enhanced-table module, and make sure that it requires the "kibana" module if it didn't already
-const module = uiModules.get('kibana/enhanced-table', ['kibana']);
-
-// add a controller to tha module, which will transform the esResponse into a
-// tabular format that we can pass to the table directive
-module.controller('EnhancedTableVisController', function ($scope, Private, config) {
+// EnhancedTableVis AngularJS controller
+function EnhancedTableVisController ($scope, Private, config) {
 
   class EnhancedTableError {
     constructor(message) {
@@ -299,6 +294,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   /** create a new data table column for specified computed column */
   const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns, totalFunc) {
 
+    const fieldFormats = npStart.plugins.data.fieldFormats;
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
       'string': {},
@@ -882,4 +878,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
     }
   });
-});
+
+}
+
+export { EnhancedTableVisController };

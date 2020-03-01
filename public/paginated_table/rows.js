@@ -20,13 +20,9 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import AggConfigResult from '../data_load/agg_config_result';
-import { uiModules } from 'ui/modules';
 import tableCellFilterHtml from './table_cell_filter.html';
-import { isNumeric } from 'ui/utils/numeric';
 
-const module = uiModules.get('kibana');
-
-module.directive('kbnEnhancedRows', function ($compile) {
+export function KbnEnhancedRows($compile) {
   return {
     restrict: 'A',
     link: function ($scope, $el, attr) {
@@ -79,12 +75,6 @@ module.directive('kbnEnhancedRows', function ($compile) {
           contents = contents.toString('html');
         } else {
           $cell = $cellContent = createCell();
-
-          // TODO: It would be better to actually check the type of the field, but we don't have
-          // access to it here. This may become a problem with the switch to BigNumber
-          if (isNumeric(contents)) {
-            $cell.addClass('numeric-value');
-          }
         }
 
         if (_.isObject(contents)) {
@@ -153,4 +143,4 @@ module.directive('kbnEnhancedRows', function ($compile) {
       });
     }
   };
-});
+}

@@ -60,7 +60,8 @@ AggConfigResult.prototype.toString = function (contentType) {
     pathname: window.location.pathname,
     basePath: chrome.getBasePath(),
   };
-  return this.aggConfig.fieldFormatter(contentType)(this.value, null, null, parsedUrl);
+  const options = { parsedUrl };
+  return this.aggConfig.fieldFormatter(contentType)(this.value, options);
 };
 
 AggConfigResult.prototype.valueOf = function () {

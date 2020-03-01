@@ -17,147 +17,140 @@
  * under the License.
  */
 
-import './enhanced-table-vis-controller';
+import { i18n } from '@kbn/i18n';
+import { AggGroupNames } from 'ui/vis/editors/default';
+import { Schemas } from 'ui/vis/editors/default/schemas';
+import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
+import { npSetup } from './legacy_imports';
+import { createFiltersFromEvent } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/filters/vis_filters';
+import { prepareJson, prepareString } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy/build_pipeline';
+
+import tableVisTemplate from './enhanced-table-vis.html';
+import { EnhancedTableVisualizationController } from './vis_controller';
 import './enhanced-table-vis-params';
-import './agg_table';
-import './agg_table/agg_table_group';
 import './draggable';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
+import { visualization } from './data_load/enhanced-table-visualization-fn';
 
-import { i18n } from '@kbn/i18n';
-import { visFactory } from 'ui/vis/vis_factory';
-import { Schemas } from 'ui/vis/editors/default/schemas';
-import { AngularVisController } from 'ui/vis/vis_types/angular_vis_type';
-import { AggGroupNames } from 'ui/vis/editors/default';
-import tableVisTemplate from './enhanced-table-vis.html';
-import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
-import { createFiltersFromEvent } from 'ui/vis/vis_filters';
-import { prepareJson, prepareString } from 'ui/visualize/loader/pipeline_helpers/build_pipeline';
 
-// register the provider with the visTypes registry
-visualizations.types.registerVisualization(EnhancedTableVisTypeProvider);
-
-// define the EnhancedTableVisTypeProvider which is used in the template by angular's ng-controller directive
-function EnhancedTableVisTypeProvider() {
-
-  // return the visType object, which kibana will use to display and configure new Vis object of this type.
-  return visFactory.createBaseVisualization({
-    type: 'table',
-    name: 'enhanced-table',
-    title: i18n.translate('tableVis.enhancedTableVisTitle', {
-      defaultMessage: 'Enhanced Table'
-    }),
-    icon: 'visTable',
-    description: i18n.translate('tableVis.enhancedTableVisDescription', {
-      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
-    }),
-    visualization: AngularVisController,
-    visConfig: {
-      defaults: {
-        perPage: 10,
-        showPartialRows: false,
-        showMetricsAtAllLevels: false,
-        sort: {
-          columnIndex: null,
-          direction: null
-        },
-        showTotal: false,
-        totalFunc: 'sum',
-        computedColumns: [],
-        computedColsPerSplitCol: false,
-        hideExportLinks: false,
-        stripedRows: false,
-        showFilterBar: false,
-        filterCaseSensitive: false,
-        filterBarHideable: false,
-        filterAsYouType: false,
-        filterTermsSeparately: false,
-        filterHighlightResults: false,
-        filterBarWidth: '25%'
+// define the visType object, which kibana will use to display and configure new Vis object of this type.
+const tableVisTypeDefinition = {
+  type: 'table',
+  name: 'enhanced-table',
+  title: i18n.translate('tableVis.enhancedTableVisTitle', {
+    defaultMessage: 'Enhanced Table'
+  }),
+  icon: 'visTable',
+  description: i18n.translate('tableVis.enhancedTableVisDescription', {
+    defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
+  }),
+  visualization: EnhancedTableVisualizationController,
+  visConfig: {
+    defaults: {
+      perPage: 10,
+      showPartialRows: false,
+      showMetricsAtAllLevels: false,
+      sort: {
+        columnIndex: null,
+        direction: null
       },
-      template: tableVisTemplate
+      showTotal: false,
+      totalFunc: 'sum',
+      computedColumns: [],
+      computedColsPerSplitCol: false,
+      hideExportLinks: false,
+      stripedRows: false,
+      showFilterBar: false,
+      filterCaseSensitive: false,
+      filterBarHideable: false,
+      filterAsYouType: false,
+      filterTermsSeparately: false,
+      filterHighlightResults: false,
+      filterBarWidth: '25%'
     },
-    editorConfig: {
-      optionsTemplate: '<enhanced-table-vis-params></enhanced-table-vis-params>',
-      schemas: new Schemas([
-        {
-          group: AggGroupNames.Metrics,
-          name: 'metric',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.metricTitle', {
-            defaultMessage: 'Metric'
-          }),
-          aggFilter: ['!geo_centroid', '!geo_bounds'],
-          aggSettings: {
-            top_hits: {
-              allowStrings: true
-            }
-          },
-          min: 1,
-          defaults: [{ type: 'count', schema: 'metric' }]
+    template: tableVisTemplate
+  },
+  editorConfig: {
+    optionsTemplate: '<enhanced-table-vis-params></enhanced-table-vis-params>',
+    schemas: new Schemas([
+      {
+        group: AggGroupNames.Metrics,
+        name: 'metric',
+        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.metricTitle', {
+          defaultMessage: 'Metric'
+        }),
+        aggFilter: ['!geo_centroid', '!geo_bounds'],
+        aggSettings: {
+          top_hits: {
+            allowStrings: true
+          }
         },
-        {
-          group: AggGroupNames.Buckets,
-          name: 'split',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
-            defaultMessage: 'Split table'
-          }),
-          min: 0,
-          max: 1,
-          aggFilter: ['!filter']
-        },
-        {
-          group: AggGroupNames.Buckets,
-          name: 'bucket',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
-            defaultMessage: 'Split rows'
-          }),
-          aggFilter: ['!filter']
-        },
-        {
-          group: AggGroupNames.Buckets,
-          name: 'splitcols',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
-            defaultMessage: 'Split cols'
-          }),
-          aggFilter: ['!filter'],
-          max: 1,
-          editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
-        }
-      ])
-    },
-    requestHandler: enhancedTableRequestHandler,
-    responseHandler: enhancedTableResponseHandler,
-    events: {
-      filterBucket: {
-        defaultAction: function (event) {
-          event.aggConfigs = event.data[0].table.columns.map(column => column.aggConfig);
-          const filters = createFiltersFromEvent(event);
-          return filters;
-        }
+        min: 1,
+        defaults: [{ type: 'count', schema: 'metric' }]
+      },
+      {
+        group: AggGroupNames.Buckets,
+        name: 'split',
+        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitTitle', {
+          defaultMessage: 'Split table'
+        }),
+        min: 0,
+        max: 1,
+        aggFilter: ['!filter']
+      },
+      {
+        group: AggGroupNames.Buckets,
+        name: 'bucket',
+        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.bucketTitle', {
+          defaultMessage: 'Split rows'
+        }),
+        aggFilter: ['!filter']
+      },
+      {
+        group: AggGroupNames.Buckets,
+        name: 'splitcols',
+        title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
+          defaultMessage: 'Split cols'
+        }),
+        aggFilter: ['!filter'],
+        max: 1,
+        editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
       }
-    },
-    hierarchicalData: function (vis) {
-      return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
-    },
-    toExpression: function (vis) {
-      const visState = vis.getCurrentState();
-      const visConfig = visState.params;
-      const { indexPattern } = vis;
-
-      let pipeline = `enhanced_table_visualization type='${vis.type.name}'
-        ${prepareJson('visConfig', visConfig)}
-        metricsAtAllLevels=${vis.isHierarchical()}
-        ${prepareJson('aggConfigs', visState.aggs)}
-        partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
-
-      if (indexPattern) {
-        pipeline += `${prepareString('index', indexPattern.id)}`;
+    ])
+  },
+  requestHandler: enhancedTableRequestHandler,
+  responseHandler: enhancedTableResponseHandler,
+  events: {
+    filterBucket: {
+      defaultAction: function (event) {
+        event.aggConfigs = event.data[0].table.columns.map(column => column.aggConfig);
+        const filters = createFiltersFromEvent(event);
+        return filters;
       }
-
-      return pipeline;
     }
-  });
-}
+  },
+  hierarchicalData: function (vis) {
+    return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
+  },
+  toExpression: function (vis) {
+    const visState = vis.getCurrentState();
+    const visConfig = visState.params;
+    const { indexPattern } = vis;
+    let pipeline = `enhanced_table_visualization type='${vis.type.name}'
+      ${prepareJson('visConfig', visConfig)}
+      metricsAtAllLevels=${vis.isHierarchical()}
+      ${prepareJson('aggConfigs', visState.aggs)}
+      partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
+    if (indexPattern) {
+      pipeline += `${prepareString('index', indexPattern.id)}`;
+    }
+    return pipeline;
+  }
+};
 
-export default EnhancedTableVisTypeProvider;
+//register enhanced-table visualization function, to customize elasticsearch response transformation to table data
+npSetup.plugins.expressions.registerFunction(visualization);
+
+//register the vis type definition
+visualizations.types.createBaseVisualization(tableVisTypeDefinition);

@@ -23,11 +23,10 @@ import chrome from 'ui/chrome';
 import { FilterBarQueryFilterProvider } from 'ui/filter_manager/query_filter';
 import { PersistedState } from 'ui/persisted_state';
 import { VisResponseValue } from 'src/plugins/visualizations/public';
-import { start as data } from 'plugins/data/legacy';
+import { ExpressionFunction, Render } from 'src/plugins/expressions/public';
+import { npStart } from 'ui/new_platform';
 import { start as visualizations } from '../../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
-import { ExpressionFunction, Render } from 'core_plugins/interpreter/types';
 import { AggConfigs } from 'ui/agg_types/agg_configs';
-
 
 interface Arguments {
   index?: string | null;
@@ -50,7 +49,7 @@ export type ExpressionFunctionVisualization = ExpressionFunction<
 export const visualization = (): ExpressionFunctionVisualization => ({
   name: 'enhanced_table_visualization',
   type: 'render',
-  help: i18n.translate('interpreter.functions.visualization.help', {
+  help: i18n.translate('visualizations.functions.visualization.help', {
     defaultMessage: 'enhanced table visualization',
   }),
   args: {
@@ -100,7 +99,7 @@ export const visualization = (): ExpressionFunctionVisualization => ({
   async fn(context, args, handlers) {
     const $injector = await chrome.dangerouslyGetActiveInjector();
     const Private = $injector.get('Private') as any;
-    const { indexPatterns } = data.indexPatterns;
+    const indexPatterns = npStart.plugins.data.indexPatterns;
     const queryFilter = Private(FilterBarQueryFilterProvider);
 
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
