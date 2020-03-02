@@ -109,7 +109,9 @@ uiModules
             const field = agg.getField();
             const formattedColumn = {
               title: col.title,
-              filterable: field && field.filterable && agg.schema.group === 'buckets'
+              filterable: field && field.filterable && agg.schema.group === 'buckets',
+              titleAlignmentClass: col.titleAlignmentClass,
+              totalAlignmentClass: col.totalAlignmentClass
             };
 
             const last = i === (table.columns.length - 1);
@@ -178,6 +180,10 @@ uiModules
               default:
                 break;
               }
+            }
+
+            if (i === 0 && table.totalLabel !== undefined && table.columns.length > 0 && formattedColumn.total === undefined) {
+              formattedColumn.total = table.totalLabel;
             }
 
             return formattedColumn;
