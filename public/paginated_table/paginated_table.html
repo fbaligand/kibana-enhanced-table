@@ -13,7 +13,7 @@
             ng-click="enhancedPaginatedTable.sortColumn($index)"
             kbn-accessible-click
             tabindex="0"
-            class="{{ col.class }}">
+            class="{{ col.class }} {{ col.titleAlignmentClass }}">
             <span ng-bind="::col.title"></span>
 
             <icon-tip
@@ -41,7 +41,7 @@
       </tbody>
       <tfoot ng-if="showTotal">
         <tr>
-          <th scope="col" ng-repeat="col in columns" class="numeric-value">{{col.total}}</th>
+          <th scope="col" ng-repeat="col in columns" class="numeric-value {{ col.totalAlignmentClass }}">{{col.total}}</th>
         </tr>
       </tfoot>
     </table>
