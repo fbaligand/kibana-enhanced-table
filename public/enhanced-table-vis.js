@@ -24,6 +24,7 @@ import './agg_table/agg_table_group';
 import './draggable';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
+import { visualization } from './data_load/enhanced-table-visualization-fn';
 
 import { i18n } from '@kbn/i18n';
 import { visFactory } from 'ui/vis/vis_factory';
@@ -34,9 +35,7 @@ import tableVisTemplate from './enhanced-table-vis.html';
 import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
 import { createFiltersFromEvent } from 'ui/vis/vis_filters';
 import { prepareJson, prepareString } from 'ui/visualize/loader/pipeline_helpers/build_pipeline';
-
-// register the provider with the visTypes registry
-visualizations.types.registerVisualization(EnhancedTableVisTypeProvider);
+import { npSetup } from 'ui/new_platform';
 
 // define the EnhancedTableVisTypeProvider which is used in the template by angular's ng-controller directive
 function EnhancedTableVisTypeProvider() {
@@ -161,3 +160,9 @@ function EnhancedTableVisTypeProvider() {
 }
 
 export default EnhancedTableVisTypeProvider;
+
+// register enhanced-table visualization function, to customize elasticsearch response transformation to table data
+npSetup.plugins.expressions.registerFunction(visualization);
+
+//register the provider with the visTypes registry
+visualizations.types.registerVisualization(EnhancedTableVisTypeProvider);
