@@ -132,10 +132,11 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // extract formula param cols
     const formulaParamsCols = [];
+    const currentCol = columns.length;
     let regexMatch;
     while ((regexMatch = colRefRegex.exec(realFormula)) !== null) {
       let colIndex = parseInt(regexMatch[1]);
-      if (colIndex >= columns.length) {
+      if (colIndex >= currentCol) {
         colIndex = getOriginalColIndex(colIndex, splitColIndex);
         throw new EnhancedTableError(`In computed column '${inputFormula}', column number ${colIndex} does not exist`);
       }
@@ -152,11 +153,20 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const totalRefRegex = /total(\d+)/g;
     realFormula = realFormula.replace(totalRefRegex, (match, colIndex) => 'total' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
+    // add 'row' param for functions that require whole row
+    realFormula = realFormula.replace(/(col)\s*\(/g, '$1(row, ');
+    realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
+
+    // check 'sumSplitCols/countSplitCols' functions condition
+    if ((realFormula.indexOf('sumSplitCols') !== -1 || realFormula.indexOf('countSplitCols') !== -1) && splitColIndex === -1) {
+      throw new EnhancedTableError(`In computed column '${inputFormula}', sumSplitCols() and countSplitCols() functions must be used with a 'Split cols' bucket`);
+    }
+
     // extract formula param totals
     const formulaParamsTotals = [];
     while ((regexMatch = totalRefRegex.exec(realFormula)) !== null) {
       let colIndex = parseInt(regexMatch[1]);
-      if (colIndex >= columns.length) {
+      if (colIndex >= currentCol) {
         colIndex = getOriginalColIndex(colIndex, splitColIndex);
         throw new EnhancedTableError(`In computed column '${inputFormula}', column number ${colIndex} does not exist`);
       }
@@ -209,6 +219,42 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     parser.functions.uniq = function (array) {
       return _.uniq(array);
     };
+    parser.functions.col = function (row, colRef, defaultValue) {
+      try {
+        let colIndex = colRef;
+        if (typeof colRef === 'string') {
+          colIndex = findColIndexByTitle(columns, colRef, inputFormula, formulaType, splitColIndex);
+        }
+        if (colIndex < currentCol) {
+          colIndex = getRealColIndex(colIndex, splitColIndex);
+          return row[colIndex].value;
+        }
+        else {
+          return defaultValue;
+        }
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
+    parser.functions.sumSplitCols = function (row) {
+      let splitCol = splitColIndex;
+      let sum = 0;
+      while (splitCol < currentCol && columns[splitCol].formula === undefined) {
+        sum += row[splitCol].value;
+        splitCol++;
+      }
+      return sum;
+    };
+    parser.functions.countSplitCols = function () {
+      let splitCol = splitColIndex;
+      let count = 0;
+      while (splitCol < currentCol && columns[splitCol].formula === undefined) {
+        count++;
+        splitCol++;
+      }
+      return count;
+    };
 
     // parse formula and return final formula object
     try {
@@ -225,7 +271,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const computeFormulaValue = function (formula, row, totalHits, table) {
-    const formulaParams = { total: totalHits };
+    const formulaParams = { total: totalHits, row: row };
 
     // inject column value references
     _.forEach(formula.paramsCols, function (formulaParamCol) {
