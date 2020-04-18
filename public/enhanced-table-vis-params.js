@@ -52,6 +52,7 @@ uiModules.get('kibana/enhanced-table')
           computedColumns.push({
             label: 'Value squared',
             formula: 'col0 * col0',
+            computeTotalUsingFormula: false,
             format: 'number',
             pattern: '0,0',
             datePattern: 'MMMM Do YYYY, HH:mm:ss.SSS',
