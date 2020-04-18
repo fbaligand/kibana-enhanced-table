@@ -39,8 +39,14 @@ if (appId === 'kibana') {
           $scope.$watch('formattedColumns', function () {
             if ($scope.table !== undefined && $scope.formattedColumns !== undefined) {
               for (let i=0; i < $scope.formattedColumns.length; i++) {
-                $scope.formattedColumns[i].titleAlignmentClass = $scope.table.columns[i].titleAlignmentClass;
-                $scope.formattedColumns[i].totalAlignmentClass = $scope.table.columns[i].totalAlignmentClass;
+                const formattedColumn = $scope.formattedColumns[i];
+                const column = $scope.table.columns[i];
+                formattedColumn.titleAlignmentClass = column.titleAlignmentClass;
+                formattedColumn.totalAlignmentClass = column.totalAlignmentClass;
+                if (column.totalFormula !== undefined) {
+                  const formatter = column.aggConfig.fieldFormatter('text');
+                  formattedColumn.total = formatter(column.total);
+                }
               }
               if ($scope.table.totalLabel !== undefined && $scope.formattedColumns.length > 0 && $scope.formattedColumns[0].total === undefined) {
                 $scope.formattedColumns[0].total = $scope.table.totalLabel;
