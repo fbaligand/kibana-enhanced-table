@@ -336,7 +336,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   /** create a new data table column for specified computed column */
-  const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns, totalFunc) {
+  const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns, showTotal, totalFunc) {
 
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
@@ -378,6 +378,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
     if (computedColumn.applyAlignmentOnTitle) {
       newColumn.titleAlignmentClass = newColumn.dataAlignmentClass;
+    }
+
+    // process "computeTotalUsingFormula" option
+    if (showTotal && computedColumn.computeTotalUsingFormula) {
+      const totalFormula = computedColumn.formula.replace(/col(\[|\d+)/g, 'total$1');
+      newColumn.totalFormula = createFormula(totalFormula, 'computed column', splitColIndex, columns, totalFunc);
     }
 
     // add "total" formatter function
@@ -431,11 +437,19 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         return;
       }
 
+      // add new computed column and its cells
+      newColumn = _.clone(newColumn);
       table.columns.push(newColumn);
       _.forEach(table.rows, function (row) {
         const newCell = createComputedCell(newColumn, row, totalHits, table);
         row.push(newCell);
       });
+
+      // compute total if totalFormula is present
+      if (newColumn.totalFormula) {
+        newColumn.total = computeFormulaValue(newColumn.totalFormula, null, totalHits, table);
+      }
+
     });
   };
 
@@ -830,7 +844,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         // add computed columns
         _.forEach(params.computedColumns, function (computedColumn, index) {
           if (computedColumn.enabled) {
-            let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.totalFunc);
+            let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc);
             addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
           }
         });
