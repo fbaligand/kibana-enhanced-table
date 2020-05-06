@@ -680,13 +680,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   const notifyError = function(errorMessage) {
-    if ($scope.errorMessageNotified === undefined) {
-      notifier.error(errorMessage);
-      $scope.errorMessageNotified = true;
-    }
-    else {
-      $scope.errorMessageNotified = undefined;
-    }
+    notifier.error(errorMessage);
   };
 
   const colToStringWithHighlightResults = function(initialToString, scope, contentType) {
@@ -776,7 +770,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         return table.rows.length > 0;
       });
 
-      // optimize space under table
+      // set conditional css classes
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
       $scope.tableVisContainerClass = {
         'hide-pagination': !showPagination,
