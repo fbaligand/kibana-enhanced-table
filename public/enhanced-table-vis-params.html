@@ -304,7 +304,7 @@
       </label>
     </div>
 
-    <div class="checkbox">
+    <div class="checkbox" ng-if="!editorState.params.fieldColumns">
       <label>
         <input type="checkbox" ng-model="editorState.params.showMetricsAtAllLevels">
         <span
@@ -314,7 +314,7 @@
       </label>
     </div>
 
-    <div class="checkbox">
+    <div class="checkbox" ng-if="!editorState.params.fieldColumns">
       <label>
         <input type="checkbox" ng-model="editorState.params.showPartialRows">
         <span

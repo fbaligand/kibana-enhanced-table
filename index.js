@@ -26,7 +26,8 @@ export default function (kibana) {
     id: 'enhanced-table',
     uiExports: {
       visTypes: [
-        'plugins/enhanced-table/enhanced-table-vis'
+        'plugins/enhanced-table/enhanced-table-vis',
+        'plugins/enhanced-table/document-table-vis'
       ],
       styleSheetPaths: [resolve(__dirname, 'public/index.scss'), resolve(__dirname, 'public/index.css')].find(p => existsSync(p))
     }

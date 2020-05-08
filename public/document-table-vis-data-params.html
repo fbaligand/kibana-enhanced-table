@@ -1,0 +1,167 @@
+<div class="visEditorSidebar__config enhanced-table-vis-params">
+
+  <!-- FIELD COLUMNS SECTION -->
+  <div class="visEditorSidebar__section">
+
+    <div class="visEditorSidebar__sectionTitle">
+        Columns
+    </div>
+
+    <div draggable-container="editorState.params.fieldColumns" class="computed-columns">
+      <div ng-repeat="fieldColumn in editorState.params.fieldColumns"
+           ng-init="editorOpen = initEditorOpen()"
+           draggable-item="fieldColumn"
+           class="euiAccordion visEditorSidebar__section visEditorSidebar__collapsible visEditorSidebar__collapsible--marginBottom">
+
+           <!-- header -->
+          <div class="euiAccordion__triggerWrapper">
+
+              <!-- open/close editor -->
+              <button
+                    aria-label="{{editorOpen ? 'Close' : 'Open'}} Editor"
+                    ng-click="editorOpen = !editorOpen"
+                    aria-expanded="{{ !!editorOpen }}"
+                    type="button"
+                    data-test-subj="toggleEditor"
+                    class="euiAccordion__button eui-textTruncate">
+                 <icon aria-hidden="true" ng-if="editorOpen" type="'arrowDown'" size="'s'"></icon>
+                 <icon aria-hidden="true" ng-if="!editorOpen" type="'arrowRight'" size="'s'"></icon>
+                 &nbsp;
+
+                 <!-- title -->
+                 <span class="visEditorSidebar__aggGroupAccordionButtonContent eui-textTruncate">
+                    Column
+                    <!-- description -->
+                    <span ng-if="!editorOpen" title="{{fieldColumn.label || fieldColumn.field.name}}">
+                      {{fieldColumn.label || fieldColumn.field.name}}
+                    </span>
+                 </span>
+              </button>
+
+              <!-- controls -->
+              <div class="euiAccordion__optionalAction">
+
+                  <!-- disable fieldColumn -->
+                  <button
+                    ng-if="fieldColumn.enabled && editorState.params.fieldColumns.length > 1"
+                    ng-click="fieldColumn.enabled = false"
+                    aria-label="{{::'enhancedTableVis.disableFieldColumnButtonAriaLabel' | i18n: { defaultMessage: 'Disable Column' } }}"
+                    tooltip="{{::'enhancedTableVis.disableFieldColumnButtonTooltip' | i18n: { defaultMessage: 'Disable Column' } }}"
+                    tooltip-append-to-body="true"
+                    data-test-subj="disableFieldColumnBtn"
+                    type="button"
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'eye'" color="'text'"/>
+                  </button>
+
+                  <!-- enable fieldColumn -->
+                  <button
+                    ng-if="!fieldColumn.enabled"
+                    ng-click="fieldColumn.enabled = true"
+                    aria-label="{{::'enhancedTableVis.enableFieldColumnButtonAriaLabel' | i18n: { defaultMessage: 'Enable Column' } }}"
+                    tooltip="{{::'enhancedTableVis.enableFieldButtonTooltip' | i18n: { defaultMessage: 'Enable Column' } }}"
+                    tooltip-append-to-body="true"
+                    data-test-subj="enableFieldColumnBtn"
+                    type="button"
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'eyeClosed'" color="'text'"/>
+                  </button>
+
+                  <!-- drag handle -->
+                  <button
+                    draggable-handle
+                    ng-if="editorState.params.fieldColumns.length > 1"
+                    aria-label="{{::'enhancedTableVis.modifyFieldColumnOrderAriaLabel' | i18n: { defaultMessage: 'Modify Order by Dragging' } }}"
+                    tooltip="{{::'enhancedTableVis.modifyFieldColumnOrderButtonTooltip' | i18n: { defaultMessage: 'Modify Order by Dragging' } }}"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    keyboard-move="onPriorityReorder(direction)"
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'grab'"/>
+                    <span class="euiScreenReaderOnly"
+                      i18n-id="enhancedTableVis.howToModifyScreenReaderOrderDescription"
+                      i18n-default-message="Use up and down key on this button to move this column up and down in the order."
+                    >
+                    </span>
+                  </button>
+
+                  <!-- remove fieldColumn -->
+                  <button
+                    ng-if="editorState.params.fieldColumns.length > 1"
+                    aria-label="{{::'enhancedTableVis.removeFieldColumnButtonAriaLabel' | i18n: { defaultMessage: 'Remove Column' } }}"
+                    ng-click="removeFieldColumn(fieldColumn, editorState.params.fieldColumns)"
+                    tooltip="{{::'enhancedTableVis.removeFieldColumnButtonTooltip' | i18n: { defaultMessage: 'Remove Column' } }}"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    class="euiButtonIcon euiButtonIcon--text">
+                    <icon type="'cross'" color="'danger'"/>
+                  </button>
+
+              </div>
+          </div>
+
+          <!-- editor -->
+          <div ng-if="editorOpen">
+              <div class="form-group">
+                <label>Field</label>
+                <ui-select ng-model="fieldColumn.field" required ng-class="{ 'display-error': visualizeEditor.errorCount() > 0 && visualizeEditor.errorCount() === visualizeEditor.softErrorCount() }">
+                  <ui-select-match placeholder="Select a field">{{$select.selected.name}}</ui-select-match>
+                  <ui-select-choices repeat="field in vis.indexPattern.fields | filter: { name: $select.search } | orderBy:'name'">
+                    <span ng-bind-html="field.name | highlight: $select.search"></span>
+                  </ui-select-choices>
+                </ui-select>
+              </div>
+
+              <div class="form-group">
+                <label>Label</label>
+                <input type="text" ng-model="fieldColumn.label" class="form-control">
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="eui-textCenter">
+      <a class="kuiButton kuiButton--secondary kuiButton--small" ng-click="addFieldColumn(editorState.params.fieldColumns)">
+          Add column
+      </a>
+    </div>
+
+  </div>
+
+  <!-- QUERY PARAMETERS SECTION -->
+  <div class="visEditorSidebar__section">
+
+    <div class="visEditorSidebar__sectionTitle">
+        Query Parameters
+    </div>
+
+    <div class="form-group">
+      <label
+        for="datatableVisualizationHitsSize"
+        i18n-id="tableVis.params.hitsSize"
+        i18n-default-message="Hits size"
+      ></label>
+      <input type="number" ng-model="editorState.params.hitsSize" class="form-control" id="datatableVisualizationHitsSize">
+    </div>
+
+    <div class="form-group">
+      <label>Sort Field</label>
+      <ui-select ng-model="editorState.params.sortField">
+        <ui-select-match placeholder="Select a field">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="field in getSortableFields() | filter: { name: $select.search } | orderBy:'name'" position="up">
+          <span ng-bind-html="field.name | highlight: $select.search"></span>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+
+    <div class="form-group">
+      <label>Sort Order</label>
+      <select ng-model="editorState.params.sortOrder" class="form-control">
+        <option value="desc">Descending</option>
+        <option value="asc">Ascending</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>

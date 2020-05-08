@@ -27,6 +27,7 @@ import { getQueryService } from '../../../../src/plugins/data/public/services';
 export async function enhancedTableRequestHandler ({
   partialRows,
   metricsAtAllLevels,
+  visParams,
   timeRange,
   query,
   filters,
@@ -37,14 +38,53 @@ export async function enhancedTableRequestHandler ({
 
   const { filterManager } = getQueryService();
 
-  // we should move searchSource creation inside courier request handler
+  // create search source with query parameters
   const searchSource = new SearchSource();
   searchSource.setField('index', aggs.indexPattern);
-  searchSource.setField('size', 0);
+  const hitsSize = (visParams.hitsSize !== undefined ? visParams.hitsSize : 0);
+  searchSource.setField('size', hitsSize);
+
+  // specific request params for "field columns"
+  if (visParams.fieldColumns !== undefined) {
+    if (!visParams.fieldColumns.some(fieldColumn => fieldColumn.field.name === '_source')) {
+      searchSource.setField('_source', visParams.fieldColumns.map(fieldColumn => fieldColumn.field.name));
+    }
+    searchSource.setField('docvalue_fields', visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.readFromDocValues).map(fieldColumn => fieldColumn.field.name));
+    const scriptFields = {};
+    visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.scripted).forEach(fieldColumn => {
+      scriptFields[fieldColumn.field.name] = {
+        script: {
+          source: fieldColumn.field.script
+        }
+      };
+    });
+    searchSource.setField('script_fields', scriptFields);
+  }
+
+  // set search sort
+  if (visParams.sortField !== undefined) {
+    searchSource.setField('sort', [{
+      [visParams.sortField.name]: {
+        order: visParams.sortOrder
+      }
+    }]);
+  }
+
+  // add 'count' metric if there is no input column
+  if (aggs.aggs.length === 0) {
+    aggs.createAggConfig({
+      id: '1',
+      enabled: true,
+      type: 'count',
+      schema: 'metric',
+      params: {}
+    });
+  }
 
   inspectorAdapters.requests = new RequestAdapter();
   inspectorAdapters.data = new DataAdapter();
 
+  // execute elasticsearch query
   const response = await handleCourierRequest({
     searchSource,
     aggs,
@@ -58,6 +98,11 @@ export async function enhancedTableRequestHandler ({
     filterManager
   });
 
+  // enrich elasticsearch response and return it
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
+  if (visParams.fieldColumns !== undefined) {
+    response.fieldColumns = visParams.fieldColumns;
+    response.hits = _.get(searchSource, 'finalResponse.hits.hits', []);
+  }
   return response;
 }
