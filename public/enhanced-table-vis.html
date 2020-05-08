@@ -1,4 +1,4 @@
-<div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis">
+<div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis" ng-class="{'theme-dark': isDarkTheme}">
 
   <div ng-show="visState.params.showFilterBar && tableGroups && (hasSomeRows || activeFilter !== '')">
     <div ng-hide="showFilterInput()" align="right">
