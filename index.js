@@ -26,7 +26,8 @@ export default function (kibana) {
     id: 'enhanced-table',
     uiExports: {
       visTypes: [
-        'plugins/enhanced-table/enhanced-table-vis'
+        'plugins/enhanced-table/enhanced-table-vis',
+        'plugins/enhanced-table/document-table-vis'
       ],
       hacks: [
         'plugins/enhanced-table/enhanced-table-vis-hack'

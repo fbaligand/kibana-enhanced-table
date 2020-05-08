@@ -26,7 +26,7 @@ import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { legacyTableResponseHandler } from './legacy_response_handler';
+import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 
 // we need to load the css ourselves
 
@@ -52,7 +52,7 @@ function EnhancedTableVisTypeProvider(Private) {
     type: 'table',
     name: 'enhanced-table',
     title: i18n.translate('tableVis.enhancedTableVisTitle', {
-      defaultMessage: 'Enhanced Table',
+      defaultMessage: 'Enhanced Table'
     }),
     icon: 'visTable',
     description: i18n.translate('tableVis.enhancedTableVisDescription', {
@@ -90,7 +90,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'metrics',
           name: 'metric',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.metricTitle', {
-            defaultMessage: 'Metric',
+            defaultMessage: 'Metric'
           }),
           aggFilter: ['!geo_centroid', '!geo_bounds'],
           min: 1,
@@ -102,7 +102,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'split',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
-            defaultMessage: 'Split Table',
+            defaultMessage: 'Split Table'
           }),
           aggFilter: ['!filter']
         },
@@ -110,7 +110,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'bucket',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
-            defaultMessage: 'Split Rows',
+            defaultMessage: 'Split Rows'
           }),
           aggFilter: ['!filter']
         },
@@ -118,7 +118,7 @@ function EnhancedTableVisTypeProvider(Private) {
           group: 'buckets',
           name: 'splitcols',
           title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
-            defaultMessage: 'Split Cols',
+            defaultMessage: 'Split Cols'
           }),
           aggFilter: ['!filter'],
           max: 1,
@@ -126,7 +126,7 @@ function EnhancedTableVisTypeProvider(Private) {
         }
       ])
     },
-    responseHandler: legacyTableResponseHandler,
+    responseHandler: enhancedTableResponseHandler,
     responseHandlerConfig: {
       asAggConfigResults: true
     },

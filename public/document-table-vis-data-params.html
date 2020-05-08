@@ -1,0 +1,140 @@
+<div class="visEditorSidebar__config enhanced-table-vis-params">
+
+  <!-- FIELD COLUMNS SECTION -->
+  <div class="sidebar-item visEditorAggGroup__wrapper">
+
+    <div class="sidebar-item-title visEditorAggGroup__title">
+        Columns
+    </div>
+
+    <div draggable-container="editorState.params.fieldColumns" class="visEditorAggGroup">
+      <div ng-repeat="fieldColumn in editorState.params.fieldColumns"
+           ng-init="editorOpen = initEditorOpen()"
+           draggable-item="fieldColumn">
+          <div class="visEditorAggHeader">
+
+              <!-- open/close editor -->
+              <button
+                    aria-label="{{editorOpen ? 'Close' : 'Open'}} Editor"
+                    ng-click="editorOpen = !editorOpen"
+                    type="button"
+                    class="visEditorAggHeader__toggle kuiButton kuiButton--primary kuiButton--small">
+                <i aria-hidden="true" ng-class="{ 'fa-caret-down': editorOpen, 'fa-caret-right': !editorOpen }" class="fa"></i>
+              </button>
+
+              <!-- title -->
+              <span class="visEditorAggHeader__title" ng-class="{'visEditorAggHeader__title--grow': editorOpen}">
+                    Column
+              </span>
+
+              <!-- description -->
+              <span ng-if="!editorOpen" class="visEditorAggHeader__description" title="{{computedColumn.label || computedColumn.formula}}">
+                {{fieldColumn.label || fieldColumn.field.name}}
+              </span>
+
+              <!-- buttons -->
+              <div class="visEditorAggHeader__controls kuiButtonGroup kuiButtonGroup--united">
+
+                  <!-- enable/disable column -->
+                  <button
+                    ng-if="editorState.params.fieldColumns.length > 1"
+                    ng-click="fieldColumn.enabled = !fieldColumn.enabled"
+                    aria-label="{{fieldColumn.enabled ? 'Disable' : 'Enable'}} Column"
+                    tooltip="{{fieldColumn.enabled ? 'Disable' : 'Enable'}} Column"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    class="kuiButton kuiButton--basic kuiButton--small">
+                       <i aria-hidden="true" class="fa fa-toggle-{{fieldColumn.enabled ? 'on' : 'off'}}"></i>
+                  </button>
+
+                  <!-- drag handle -->
+                  <button draggable-handle
+                      ng-show="editorState.params.fieldColumns.length > 1"
+                      aria-label="Modify Order by Dragging"
+                      tooltip="Modify Order by Dragging"
+                      tooltip-append-to-body="true"
+                      type="button"
+                      class="kuiButton kuiButton--basic kuiButton--small">
+                    <i aria-hidden="true" class="fa fa-arrows-v"></i>
+                  </button>
+
+                  <!-- remove fieldColumn -->
+                  <button
+                    ng-if="editorState.params.fieldColumns.length > 1"
+                    ng-click="removeFieldColumn(fieldColumn, editorState.params.fieldColumns)"
+                      aria-label="Remove Column"
+                      tooltip="Remove Column"
+                      tooltip-append-to-body="true"
+                      type="button"
+                      class="kuiButton kuiButton--danger kuiButton--small">
+                    <i aria-hidden="true" class="fa fa-times"></i>
+                  </button>
+
+              </div>
+          </div>
+
+          <!-- editor -->
+          <div ng-if="editorOpen">
+              <div class="form-group">
+                <label>Field</label>
+                <ui-select ng-model="fieldColumn.field" required ng-class="{ 'display-error': visualizeEditor.errorCount() > 0 && visualizeEditor.errorCount() === visualizeEditor.softErrorCount() }">
+                  <ui-select-match placeholder="Select a field">{{$select.selected.name}}</ui-select-match>
+                  <ui-select-choices repeat="field in vis.indexPattern.fields | filter: { name: $select.search } | orderBy:'name'">
+                    <span ng-bind-html="field.name | highlight: $select.search"></span>
+                  </ui-select-choices>
+                </ui-select>
+              </div>
+
+              <div class="form-group">
+                <label>Label</label>
+                <input type="text" ng-model="fieldColumn.label" class="form-control">
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div ng-click="addFieldColumn(editorState.params.fieldColumns)" class="eui-textCenter">
+      <div>
+        <div class="kuiButton kuiButton--secondary kuiButton--small">
+          Add column
+        </div>
+      </div>
+    </div>
+
+  <!-- QUERY PARAMETERS SECTION -->
+  <div class="sidebar-item visEditorAggGroup__wrapper">
+
+    <div class="sidebar-item-title visEditorAggGroup__title">
+        Query Parameters
+    </div>
+
+    <div class="form-group">
+      <label
+        for="datatableVisualizationHitsSize"
+        i18n-id="tableVis.params.hitsSize"
+        i18n-default-message="Hits size"
+      ></label>
+      <input type="number" ng-model="editorState.params.hitsSize" class="form-control" id="datatableVisualizationHitsSize">
+    </div>
+
+    <div class="form-group">
+      <label>Sort Field</label>
+      <ui-select ng-model="editorState.params.sortField">
+        <ui-select-match placeholder="Select a field">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="field in getSortableFields() | filter: { name: $select.search } | orderBy:'name'" position="up">
+          <span ng-bind-html="field.name | highlight: $select.search"></span>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+
+    <div class="form-group">
+      <label>Sort Order</label>
+      <select ng-model="editorState.params.sortOrder" class="form-control">
+        <option value="desc">Descending</option>
+        <option value="asc">Ascending</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>
