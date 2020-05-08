@@ -19,46 +19,37 @@
 
 import './enhanced-table-vis-controller';
 import './enhanced-table-vis-params';
+import './document-table-vis-data-params';
 import './agg_table';
 import './agg_table/agg_table_group';
+import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
+import { documentTableResponseHandler } from './data_load/document-table-response-handler';
+
 import { i18n } from '@kbn/i18n';
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 import { VisFiltersProvider } from 'ui/vis/vis_filters';
 
-// we need to load the css ourselves
-
-// we also need to load the controller and used by the template
-
-// our params are a bit complex so we will manage them with a directive
-
-// require the directives that we use as well
-
 // register the provider with the visTypes registry
-VisTypesRegistryProvider.register(EnhancedTableVisTypeProvider);
+VisTypesRegistryProvider.register(DocumentTableVisTypeProvider);
 
 // define the TableVisType
-function EnhancedTableVisTypeProvider(Private) {
+function DocumentTableVisTypeProvider(Private) {
   const VisFactory = Private(VisFactoryProvider);
   const visFilters = Private(VisFiltersProvider);
 
-  // define the EnhancedTableVisTypeProvider which is used in the template
-  // by angular's ng-controller directive
-
-  // return the visType object, which kibana will use to display and configure new
-  // Vis object of this type.
+  // return the visType object, which kibana will use to display and configure new Vis object of this type.
   return VisFactory.createAngularVisualization({
     type: 'table',
-    name: 'enhanced-table',
+    name: 'document-table',
     title: i18n.translate('tableVis.enhancedTableVisTitle', {
-      defaultMessage: 'Enhanced Table'
+      defaultMessage: 'Document Table'
     }),
     icon: 'visTable',
-    description: i18n.translate('tableVis.enhancedTableVisDescription', {
-      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
+    description: i18n.translate('tableVis.documentTableVisDescription', {
+      defaultMessage: 'Same functionality than Data Table, but for single documents (not aggregations) and with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visConfig: {
       defaults: {
@@ -81,56 +72,46 @@ function EnhancedTableVisTypeProvider(Private) {
         filterAsYouType: false,
         filterTermsSeparately: false,
         filterHighlightResults: false,
-        filterBarWidth: '25%'
+        filterBarWidth: '25%',
+        /* document-table specific options*/
+        fieldColumns: [
+          {
+            label: '',
+            field: {
+              name: '_source',
+            },
+            enabled: true
+          }
+        ],
+        hitsSize: 10,
+        sortField: {
+          name: '_score',
+        },
+        sortOrder: 'desc'
       },
       template: tableVisTemplate
     },
     editorConfig: {
-      optionsTemplate: '<enhanced-table-vis-params></enhanced-table-vis-params>',
-      schemas: new Schemas([
+      optionTabs: [
         {
-          group: 'metrics',
-          name: 'metric',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.metricTitle', {
-            defaultMessage: 'Metric'
+          name: 'fieldColumns',
+          title: i18n.translate('visTypeTable.tabs.dataText', {
+            defaultMessage: 'Data',
           }),
-          aggFilter: ['!geo_centroid', '!geo_bounds'],
-          min: 1,
-          defaults: [
-            { type: 'count', schema: 'metric' }
-          ]
+          editor: '<document-table-vis-data-params></document-table-vis-data-params>'
         },
         {
-          group: 'buckets',
-          name: 'split',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
-            defaultMessage: 'Split Table'
+          name: 'options',
+          title: i18n.translate('visTypeTable.tabs.optionsText', {
+            defaultMessage: 'Options',
           }),
-          min: 0,
-          max: 1,
-          aggFilter: ['!filter']
-        },
-        {
-          group: 'buckets',
-          name: 'bucket',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
-            defaultMessage: 'Split Rows'
-          }),
-          aggFilter: ['!filter']
-        },
-        {
-          group: 'buckets',
-          name: 'splitcols',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
-            defaultMessage: 'Split Cols'
-          }),
-          aggFilter: ['!filter'],
-          max: 1,
-          editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
+          editor: '<enhanced-table-vis-params></enhanced-table-vis-params>'
         }
-      ])
+      ],
+      schemas: new Schemas([])
     },
-    responseHandler: enhancedTableResponseHandler,
+    requestHandler: enhancedTableRequestHandler,
+    responseHandler: documentTableResponseHandler,
     events: {
       filterBucket: {
         defaultAction: function (event, { simulate = false } = {}) {
@@ -145,4 +126,4 @@ function EnhancedTableVisTypeProvider(Private) {
   });
 }
 
-export default EnhancedTableVisTypeProvider;
+export default DocumentTableVisTypeProvider;
