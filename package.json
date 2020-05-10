@@ -19,5 +19,8 @@
   "dependencies": {
     "expr-eval": "2.0.2",
     "dragula": "3.7.2"
+  },
+  "devDependencies": {
+    "ui-select": "0.19.8"
   }
 }
