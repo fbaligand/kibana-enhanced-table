@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "expr-eval": "2.0.2",
-    "dragula": "3.7.2"
+    "dragula": "3.7.2",
+    "ui-select": "0.19.8"
   }
 }
