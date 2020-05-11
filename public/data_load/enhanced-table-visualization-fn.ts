@@ -88,8 +88,6 @@ export const visualization = (): ExpressionFunctionVisualization => ({
     },
   },
   async fn(context, args, handlers) {
-    try {
-      console.log('visualization function ');
     const $injector = await chrome.dangerouslyGetActiveInjector();
     const Private = $injector.get('Private') as any;
     const visTypes = Private(VisTypesRegistryProvider);
@@ -136,10 +134,5 @@ export const visualization = (): ExpressionFunctionVisualization => ({
         visConfig: visConfigParams
       }
     };
-    }
-    catch (e) {
-      console.log('visualization function error:');
-      console.log(e);
-    }
   }
 });
