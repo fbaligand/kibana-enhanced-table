@@ -363,7 +363,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // create new column object
     const newColumn = {
-      aggConfig: new AggConfig($scope.vis.aggs, {schema: aggSchema, type: aggType}),
+      aggConfig: new AggConfig($scope.vis.aggs, { schema: aggSchema, type: aggType }),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
@@ -395,8 +395,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // process "computeTotalUsingFormula" option
     if (showTotal && computedColumn.computeTotalUsingFormula) {
-      const totalFormula = computedColumn.formula.replace(/col(\[|\d+)/g, 'total$1');
-      newColumn.totalFormula = createFormula(totalFormula, 'computed column', splitColIndex, columns, totalFunc);
+      const totalFormula = computedColumn.formula.replace(/col(\[|\d+)/g, 'total$1')
+        .replace(/col\s*\(\s*(\d+)[^)]*\)/g, 'total$1');
+      newColumn.totalFormula = createFormula(totalFormula, 'computed total', splitColIndex, columns, totalFunc);
     }
 
     // add "total" formatter function
