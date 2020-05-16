@@ -41,7 +41,7 @@ function DocumentTableVisTypeProvider() {
   // return the visType object, which kibana will use to display and configure new Vis object of this type.
   return visFactory.createBaseVisualization({
     type: 'table',
-    name: 'document-table',
+    name: 'document_table',
     title: i18n.translate('tableVis.enhancedTableVisTitle', {
       defaultMessage: 'Document Table'
     }),
