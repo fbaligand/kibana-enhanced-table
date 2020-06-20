@@ -2,6 +2,8 @@
 
 This Kibana visualization plugin is like a Data Table, but with enhanced features like computed columns, filter bar and pivot table.
 
+**NEW:** Now the plugin contains a second visualization named 'Document Table'. This visualization does the same thing than 'Enhanced Table' visualization, but for single documents (not aggregations). It especially allows to have enhanced features, compared to a saved search (like column custom labels, computed columns and filter bar)
+
 ## Features
 
 - Add computed columns, based on other columns :
@@ -13,6 +15,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
   - Ability to reference a column total (ex: `col['Sales by month'] / total['Sales by month']`)
   - Ability to define/reference arrays, do variable assignment and define custom functions in expressions
+  - Ability to compute column total using formula
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
   - Support for column alignment (ex: `left`, `right`)
@@ -20,6 +23,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
   - Template can reference another column by its label (ex: `<span style="color: {{col['color']}}">{{value}}</span>`)
   - Template can encode a value to render it as a URL parameter (ex: `<a href="my-dashboard?param={{{encodeURIComponent value}}}">{{value}}</a>`)
+  - Support for computed column filtering (Filter for/out value) if formula simply references a column value (ex: `col0`)
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
 - Filter table lines based on a computed formula (ex: `col0 > 0`)
   - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
@@ -40,7 +44,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column (ex: `Total:`)
 - Ability to display striped rows
-- Kibana supported versions : all versions from 5.5 to 7.6
+- Kibana supported versions : all versions from 5.5 to 7.7
 
 ## Demo
 
