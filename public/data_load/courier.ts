@@ -1,38 +1,30 @@
 import { get, has } from 'lodash';
 import { i18n } from '@kbn/i18n';
-import { AggConfigs } from 'ui/agg_types/agg_configs';
-
-// need to get rid of angular from these
-// @ts-ignore
 import {
-  Query,
-  TimeRange,
-  esFilters,
-  getTime,
-  FilterManager
-} from '../../../../src/plugins/data/public';
-import { 
-  SearchSource,
-  ISearchSource,
-  getRequestInspectorStats,
-  getResponseInspectorStats
-  } from 'ui/courier';
-// @ts-ignore
+  KibanaContext,
+  KibanaDatatable,
+  ExpressionFunctionDefinition,
+  KibanaDatatableColumn,
+} from '../../../../src/plugins/expressions/public';
+import { calculateObjectHash } from '../../../../src/plugins/kibana_utils/public';
+import { PersistedState } from '../../../../src/plugins/visualizations/public';
+import { Adapters } from '../../../../src/plugins/inspector/public';
 
-import { buildTabularInspectorData } from 'ui/inspector/build_tabular_inspector_data';
-import { calculateObjectHash } from '../../../../src/legacy/core_plugins/visualizations/public';
-// @ts-ignore
-import { tabifyAggResponse } from 'ui/agg_response/tabify/tabify';
-import { PersistedState } from 'ui/persisted_state';
-import { Adapters } from 'plugins/inspector/public';
-import { start as data } from 'data/legacy';
+import { IAggConfigs } from '../../../../src/plugins/data/public/search/aggs';
+import { ISearchSource, SearchSource } from '../../../../src/plugins/data/public/search/search_source';
+import { tabifyAggResponse } from '../../../../src/plugins/data/public/search/tabify';
+import { Filter, Query, serializeFieldFormat, TimeRange } from '../../../../src/plugins/data/common';
+import { FilterManager, getTime } from '../../../../src/plugins/data/public/query';
+import { getSearchService, getQueryService, getIndexPatterns } from '../../../../src/plugins/data/public/services';
+import { buildTabularInspectorData } from '../../../../src/plugins/data/public/search/expressions/build_tabular_inspector_data';
+import { getRequestInspectorStats, getResponseInspectorStats, serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
 
 export interface RequestHandlerParams {
   searchSource: ISearchSource;
-  aggs: AggConfigs;
+  aggs: IAggConfigs;
   timeRange?: TimeRange;
   query?: Query;
-  filters?: esFilters.Filter[];
+  filters?: Filter[];
   forceFetch: boolean;
   filterManager: FilterManager;
   uiState?: PersistedState;

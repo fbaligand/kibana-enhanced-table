@@ -19,10 +19,10 @@
 
 import _ from 'lodash';
 import { handleCourierRequest } from './courier';
-import { SearchSource } from 'ui/courier';
-import { RequestAdapter, DataAdapter } from 'ui/inspector/adapters';
-import { getQueryService } from '../../../../src/plugins/data/public/services';
-
+import { SearchSource } from '../../../../src/plugins/data/public/search/search_source';
+import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
+import { getSearchService, getQueryService } from '../../../../src/plugins/data/public/services';
+import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -33,10 +33,13 @@ export async function enhancedTableRequestHandler ({
   filters,
   inspectorAdapters,
   forceFetch,
-  aggs
+  aggConfigsState,
+  index
 }) {
 
   const { filterManager } = getQueryService();
+  const searchService = getSearchService();
+  const aggs = searchService.aggs.createAggConfigs(index, aggConfigsState);
 
   // create search source with query parameters
   const searchSource = new SearchSource();
@@ -98,8 +101,18 @@ export async function enhancedTableRequestHandler ({
     filterManager
   });
 
+  // set 'split tables' direction
+  const splitAggs = aggs.bySchemaName('split');
+  if (splitAggs.length > 0) {
+    splitAggs[0].params.row = visParams.row;
+  }
+
   // enrich elasticsearch response and return it
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
+  response.aggs = aggs;
+  response.columns.forEach(column => {
+    column.meta = serializeAggConfig(column.aggConfig);
+  });
   if (visParams.fieldColumns !== undefined) {
     response.fieldColumns = visParams.fieldColumns;
     response.hits = _.get(searchSource, 'finalResponse.hits.hits', []);

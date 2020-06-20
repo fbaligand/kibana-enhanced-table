@@ -17,17 +17,20 @@
  * under the License.
  */
 
-import { uiModules } from 'ui/modules';
+import { PluginInitializerContext } from 'kibana/public';
+import { npSetup, npStart } from './legacy_imports';
+import { plugin } from '.';
 
-uiModules
-  .get('kibana')
-  .directive('draggableHandle', function () {
-    return {
-      restrict: 'A',
-      require: '^draggableItem',
-      link($scope, $el, attr, ctrl) {
-        ctrl.registerHandle($el);
-        $el.addClass('gu-handle');
-      }
-    };
-  });
+import { TablePluginSetupDependencies } from './plugin';
+import { setup as visualizationsSetup } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
+
+
+const plugins: Readonly<TablePluginSetupDependencies> = {
+  expressions: npSetup.plugins.expressions,
+  visualizations: visualizationsSetup,
+};
+
+const pluginInstance = plugin({} as PluginInitializerContext);
+
+export const setup = pluginInstance.setup(npSetup.core, plugins);
+export const start = pluginInstance.start(npStart.core);

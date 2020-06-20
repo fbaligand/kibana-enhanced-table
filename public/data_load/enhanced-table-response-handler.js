@@ -46,7 +46,7 @@ function splitRowsOnColumn(rows, columnId) {
 }
 
 function splitTable(columns, rows, $parent) {
-  const splitColumn = columns.find(column => get(column, 'aggConfig.schema.name') === 'split');
+  const splitColumn = columns.find(column => get(column, 'aggConfig.schema') === 'split');
 
   if (!splitColumn) {
     return [{
@@ -102,6 +102,6 @@ function splitTable(columns, rows, $parent) {
   });
 }
 
-export function enhancedTableResponseHandler(table) {
-  return { tables: splitTable(table.columns, table.rows, null), totalHits: table.totalHits, newResponse: true };
+export function enhancedTableResponseHandler(response) {
+  return { tables: splitTable(response.columns, response.rows, null), totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
 }

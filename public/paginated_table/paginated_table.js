@@ -22,8 +22,6 @@ import _ from 'lodash';
 import AggConfigResult from '../data_load/agg_config_result';
 import paginatedTableTemplate from './paginated_table.html';
 
-import 'ui/directives/paginate';
-
 export function EnhancedPaginatedTable($filter) {
   const orderBy = $filter('orderBy');
 

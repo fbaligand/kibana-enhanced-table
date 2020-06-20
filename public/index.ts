@@ -17,6 +17,9 @@
  * under the License.
  */
 
-import './draggable_container';
-import './draggable_handle';
-import './draggable_item';
+import { PluginInitializerContext } from '../../../src/core/public';
+import { EnhancedTablePlugin as Plugin } from './plugin';
+
+export function plugin(initializerContext: PluginInitializerContext) {
+  return new Plugin(initializerContext);
+}

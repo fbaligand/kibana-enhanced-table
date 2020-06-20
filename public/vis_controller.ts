@@ -20,10 +20,11 @@
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { Vis, VisParams } from 'src/plugins/visualizations/public';
+import { VisParams } from 'src/plugins/visualizations/public';
 import { npStart } from './legacy_imports';
 import { getAngularModule } from './get_inner_angular';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
+import { ExprVis } from 'src/plugins/visualizations/public/np_ready/public/expressions/vis';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
@@ -31,12 +32,12 @@ export class EnhancedTableVisualizationController {
   private tableVisModule: IModule | undefined;
   private injector: auto.IInjectorService | undefined;
   el: JQuery<Element>;
-  vis: Vis;
+  vis: ExprVis;
   $rootScope: IRootScopeService | null = null;
   $scope: (IScope & { [key: string]: any }) | undefined;
   $compile: ICompileService | undefined;
 
-  constructor(domeElement: Element, vis: Vis) {
+  constructor(domeElement: Element, vis: ExprVis) {
     this.el = $(domeElement);
     this.vis = vis;
   }
@@ -59,7 +60,7 @@ export class EnhancedTableVisualizationController {
     }
   }
 
-  async render(esResponse: object, visParams: VisParams, status: { [key: string]: boolean }) {
+  async render(esResponse: object, visParams: VisParams) {
     this.initLocalAngular();
 
     return new Promise(async (resolve, reject) => {
@@ -73,13 +74,13 @@ export class EnhancedTableVisualizationController {
           return;
         }
         this.$scope.vis = this.vis;
-        this.$scope.visState = this.vis.getState();
+        this.$scope.visState = { params: visParams };
         this.$scope.esResponse = esResponse;
+
         this.$scope.visParams = visParams;
         this.$scope.renderComplete = resolve;
         this.$scope.renderFailed = reject;
         this.$scope.resize = Date.now();
-        this.$scope.updateStatus = status;
         this.$scope.$apply();
       };
 
@@ -87,7 +88,7 @@ export class EnhancedTableVisualizationController {
         this.$scope = this.$rootScope.$new();
         this.$scope.uiState = this.vis.getUiState();
         updateScope();
-        this.el.find('div').append(this.$compile(this.vis.type.visConfig.template)(this.$scope));
+        this.el.find('div').append(this.$compile(this.vis.type!.visConfig.template)(this.$scope));
         this.$scope.$apply();
       } else {
         updateScope();

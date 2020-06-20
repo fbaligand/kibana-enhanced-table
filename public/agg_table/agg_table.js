@@ -103,14 +103,14 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
           const field = agg.getField();
           const formattedColumn = {
             title: col.title,
-            filterable: field && field.filterable && agg.schema.group === 'buckets',
+            filterable: field && field.filterable && agg.type.type === 'buckets',
             titleAlignmentClass: col.titleAlignmentClass,
             totalAlignmentClass: col.totalAlignmentClass
           };
 
           const last = i === (table.columns.length - 1);
 
-          if (last || (agg.schema.group === 'metrics')) {
+          if (last || (agg.type.type === 'metrics')) {
             formattedColumn.class = 'visualize-table-right';
           }
 

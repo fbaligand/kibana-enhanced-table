@@ -19,18 +19,27 @@
 
 import { resolve } from 'path';
 import { existsSync } from 'fs';
+import { Legacy } from 'kibana';
 
-export default function (kibana) {
+import { LegacyPluginApi, LegacyPluginInitializer } from '../../src/legacy/types';
 
-  return new kibana.Plugin({
-    id: 'enhanced-table',
+const enhancedTablePluginInitializer: LegacyPluginInitializer = ({ Plugin }: LegacyPluginApi) =>
+  new Plugin({
+    id: 'enhancedTable',
+    require: ['kibana', 'elasticsearch'],
+    publicDir: resolve(__dirname, 'public'),
     uiExports: {
-      visTypes: [
-        'plugins/enhanced-table/enhanced-table-vis',
-        'plugins/enhanced-table/document-table-vis'
-      ],
-      styleSheetPaths: [resolve(__dirname, 'public/index.scss'), resolve(__dirname, 'public/index.css')].find(p => existsSync(p))
-    }
-  });
+      styleSheetPaths: [resolve(__dirname, 'public/index.scss'), resolve(__dirname, 'public/index.css')].find(p => existsSync(p)),
+      hacks: [resolve(__dirname, 'public/legacy')],
+      injectDefaultVars: server => ({}),
+    },
+    init: (server: Legacy.Server) => ({}),
+    config(Joi: any) {
+      return Joi.object({
+        enabled: Joi.boolean().default(true),
+      }).default();
+    },
+  } as Legacy.PluginSpecOptions);
 
-}
+// eslint-disable-next-line import/no-default-export
+export default enhancedTablePluginInitializer;

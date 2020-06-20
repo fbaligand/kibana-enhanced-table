@@ -23,7 +23,8 @@ import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 
 import { npStart } from 'ui/new_platform';
-import { AggConfig } from 'ui/agg_types/agg_config';
+import { AggConfig } from '../../../src/plugins/data/public/search/aggs';
+
 import { toastNotifications } from 'ui/notify';
 
 // third-party dependencies
@@ -66,7 +67,7 @@ function EnhancedTableVisController ($scope, Private, config) {
 
   const findSplitColIndex = function (table) {
     if (table !== null) {
-      return _.findIndex(table.columns, col => col.aggConfig.schema.name === 'splitcols');
+      return _.findIndex(table.columns, col => col.aggConfig.schema === 'splitcols');
     }
     else {
       return -1;
@@ -352,7 +353,7 @@ function EnhancedTableVisController ($scope, Private, config) {
   };
 
   /** create a new data table column for specified computed column */
-  const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns, showTotal, totalFunc) {
+  const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns, showTotal, totalFunc, aggs) {
 
     const fieldFormats = npStart.plugins.data.fieldFormats;
     const FieldFormat = fieldFormats.getType(computedColumn.format);
@@ -368,13 +369,16 @@ function EnhancedTableVisController ($scope, Private, config) {
     // create new column object
     const newColumn = {
       id: `computed-col-${index}`,
-      aggConfig: new AggConfig($scope.vis.aggs, { schema: aggSchema, type: aggType }),
+      aggConfig: aggs.createAggConfig({ schema: aggSchema, type: aggType }),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
       formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns, totalFunc),
       template: createTemplate(computedColumn, splitColIndex, columns, totalFunc)
     };
+
+    // remove the created AggConfig from real aggs
+    aggs.aggs.pop();
 
     // if computed column formula is just a simple column reference (ex: col0), then copy its aggConfig to get filtering feature
     const simpleColRefMatch = newColumn.formula.expression.toString().match(/^\s*col(\d+)\s*$/);
@@ -694,22 +698,6 @@ function EnhancedTableVisController ($scope, Private, config) {
     return result;
   };
 
-  const setFullAggConfig = function(table, aggConfigs) {
-    if (table.tables) {
-      if (table.aggConfig) {
-        table.aggConfig = aggConfigs.bySchemaName('split')[0];
-      }
-      table.tables.forEach(subTable => {
-        setFullAggConfig(subTable, aggConfigs);
-      });
-    }
-    else {
-      table.columns.forEach(column => {
-        column.aggConfig = aggConfigs.byId(column.aggConfig.id) || aggConfigs.byId(column.aggConfig.parentId) || column.aggConfig;
-      });
-    }
-  };
-
   // filter scope methods
   $scope.doFilter = function () {
     $scope.activeFilter = $scope.vis.filterInput;
@@ -745,8 +733,7 @@ function EnhancedTableVisController ($scope, Private, config) {
 
     if ($scope.tableGroups !== undefined) {
       let tableGroups = $scope.esResponse;
-      const vis = $scope.vis;
-      const params = vis.params;
+      const params = $scope.visParams;
 
       // init filterInput & filterHighlightRegex
       if ($scope.vis.filterInput === undefined) {
@@ -838,17 +825,14 @@ function EnhancedTableVisController ($scope, Private, config) {
         $scope.esResponse.newResponse = false;
         const tableGroups = $scope.esResponse;
         const totalHits = $scope.esResponse.totalHits;
-        const vis = $scope.vis;
+        const aggs = $scope.esResponse.aggs;
         const params = $scope.visParams;
-
-        // set the full AggConfig object on each split table and each column
-        setFullAggConfig(tableGroups, vis.aggs);
 
         // validate that 'Split cols' is the last bucket
         const firstTable = findFirstDataTable(tableGroups);
         let splitColIndex = findSplitColIndex(firstTable);
         if (splitColIndex !== -1) {
-          const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.schema.group === 'buckets');
+          const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.type.type === 'buckets');
           if (splitColIndex !== lastBucketIndex) {
             throw new EnhancedTableError('"Split cols" bucket must be the last one');
           }
@@ -868,7 +852,7 @@ function EnhancedTableVisController ($scope, Private, config) {
         // add computed columns
         _.forEach(params.computedColumns, function (computedColumn, index) {
           if (computedColumn.enabled) {
-            const newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc);
+            const newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc, aggs);
             addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
           }
         });

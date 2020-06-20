@@ -19,14 +19,15 @@
 
 import { get } from 'lodash';
 import { i18n } from '@kbn/i18n';
-import chrome from 'ui/chrome';
-import { FilterBarQueryFilterProvider } from 'ui/filter_manager/query_filter';
-import { PersistedState } from 'ui/persisted_state';
-import { VisResponseValue } from 'src/plugins/visualizations/public';
-import { ExpressionFunction, Render } from 'src/plugins/expressions/public';
-import { npStart } from 'ui/new_platform';
-import { start as visualizations } from '../../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
-import { AggConfigs } from 'ui/agg_types/agg_configs';
+import {
+  VisResponseValue,
+} from '../../../../src/plugins/visualizations/public';
+import {
+  ExpressionFunctionDefinition,
+  Render,
+} from '../../../../src/plugins/expressions/public';
+import { getTypes, getIndexPatterns, getFilterManager } from '../../../../src/legacy/core_plugins/visualizations/public/np_ready/public/services';
+
 
 interface Arguments {
   index?: string | null;
@@ -39,24 +40,22 @@ interface Arguments {
   aggConfigs?: string;
 }
 
-export type ExpressionFunctionVisualization = ExpressionFunction<
-  'visualization',
+export type ExpressionFunctionVisualization = ExpressionFunctionDefinition<
+  'enhanced_table_visualization',
   any,
   Arguments,
   Promise<Render<VisResponseValue>>
 >;
 
-export const visualization = (): ExpressionFunctionVisualization => ({
+export const createEnhancedVisualizationFn = (): ExpressionFunctionVisualization => ({
   name: 'enhanced_table_visualization',
   type: 'render',
-  help: i18n.translate('visualizations.functions.visualization.help', {
+  help: i18n.translate('visualizations.functions.enhanced_visualization.help', {
     defaultMessage: 'enhanced table visualization',
   }),
   args: {
-    // TODO: Below `help` keys should be internationalized once this function
-    // TODO: is moved to visualizations plugin.
     index: {
-      types: ['string', 'null'],
+      types: ['string', null],
       default: null,
       help: 'Index',
     },
@@ -96,48 +95,40 @@ export const visualization = (): ExpressionFunctionVisualization => ({
       help: 'Aggregation configurations',
     },
   },
-  async fn(context, args, handlers) {
-    const $injector = await chrome.dangerouslyGetActiveInjector();
-    const Private = $injector.get('Private') as any;
-    const indexPatterns = npStart.plugins.data.indexPatterns;
-    const queryFilter = Private(FilterBarQueryFilterProvider);
+  async fn(input, args, { inspectorAdapters }) {
 
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
-    const schemas = args.schemas ? JSON.parse(args.schemas) : {};
-    const visType = visualizations.types.get(args.type || 'histogram') as any;
-    const indexPattern = args.index ? await indexPatterns.get(args.index) : null;
+    const visType = getTypes().get(args.type || 'histogram') as any;
+    const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
 
-    const uiStateParams = args.uiState ? JSON.parse(args.uiState) : {};
-    const uiState = new PersistedState(uiStateParams);
+
     const aggConfigsState = JSON.parse(args.aggConfigs);
-    const aggs = new AggConfigs(indexPattern, aggConfigsState);
 
     if (typeof visType.requestHandler === 'function') {
-      context = await visType.requestHandler({
+      input = await visType.requestHandler({
         partialRows: args.partialRows,
         metricsAtAllLevels: args.metricsAtAllLevels,
         index: indexPattern,
         visParams: visConfigParams,
-        timeRange: get(context, 'timeRange', null),
-        query: get(context, 'query', null),
-        filters: get(context, 'filters', null),
-        uiState,
-        inspectorAdapters: handlers.inspectorAdapters,
-        queryFilter,
+        timeRange: get(input, 'timeRange', null),
+        query: get(input, 'query', null),
+        filters: get(input, 'filters', null),
+        inspectorAdapters,
+        queryFilter: getFilterManager(),
         forceFetch: true,
-        aggs
+        aggConfigsState
       });
     }
 
     if (typeof visType.responseHandler === 'function') {
-      context = await visType.responseHandler(context, visConfigParams.dimensions);
+      input = await visType.responseHandler(input, visConfigParams.dimensions);
     }
 
     return {
       type: 'render',
       as: 'visualization',
       value: {
-        visData: context,
+        visData: input,
         visType: args.type || '',
         visConfig: visConfigParams,
       },

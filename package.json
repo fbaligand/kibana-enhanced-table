@@ -17,10 +17,10 @@
     "build": "../../node_modules/.bin/plugin-helpers build"
   },
   "dependencies": {
-    "expr-eval": "2.0.2",
-    "dragula": "3.7.2"
+    "expr-eval": "2.0.2"
   },
   "devDependencies": {
+    "dragula": "3.7.2",
     "ui-select": "0.19.8"
   }
 }
