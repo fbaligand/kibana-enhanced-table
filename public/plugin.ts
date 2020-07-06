@@ -17,13 +17,22 @@
  * under the License.
  */
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
-import { VisualizationsSetup } from '../../../../src/legacy/core_plugins/visualizations/public';
+import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
 
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 
-import { createEnhancedVisualizationFn } from './data_load/enhanced-table-visualization-fn.ts';
+import { createEnhancedVisualizationFn } from './data_load/enhanced-table-visualization-fn';
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
+
+import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { setFormatService } from '../../../src/plugins/vis_type_table/public/services';
+import { getFieldFormats } from '../../../src/plugins/data/public/services'
+
+/** @internal */
+export interface TablePluginStartDependencies {
+  data: DataPublicPluginStart;
+}
 
 /** @internal */
 export interface TablePluginSetupDependencies {
@@ -34,6 +43,7 @@ export interface TablePluginSetupDependencies {
 /** @internal */
 export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
   initializerContext: PluginInitializerContext;
+  createBaseVisualization: any;
 
   constructor(initializerContext: PluginInitializerContext) {
     this.initializerContext = initializerContext;
@@ -45,11 +55,17 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
   ) {
     expressions.registerFunction(createEnhancedVisualizationFn);
 
-    visualizations.createBaseVisualization(enhancedTableVisTypeDefinition);
-    visualizations.createBaseVisualization(documentTableVisTypeDefinition);
+    visualizations.createBaseVisualization(
+      enhancedTableVisTypeDefinition(core, this.initializerContext)
+    );
+
+    visualizations.createBaseVisualization(
+      documentTableVisTypeDefinition(core, this.initializerContext)
+      );
   }
 
-  public start(core: CoreStart) {
-    // nothing to do here yet
+  public start(core: CoreStart, { data }: TablePluginStartDependencies) {
+    const fieldFormats = getFieldFormats();
+    setFormatService(fieldFormats);
   }
 }

@@ -24,12 +24,12 @@ import { FormattedMessage } from '@kbn/i18n/react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiIconTip, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
 import { IAggConfigs } from '../../../../src/plugins/data/public';
-import { VisOptionsProps } from '../../../../src/legacy/core_plugins/vis_default_editor/public';
-import { NumberInputOption, SelectOption } from '../../../../src/legacy/core_plugins/vis_type_vislib/public';
+import { VisOptionsProps } from '../../../../src/plugins/vis_default_editor/public';
+import { NumberInputOption, SelectOption } from '../../../../src/plugins/charts/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
-import { totalAggregations } from '../../../../src/legacy/core_plugins/vis_type_table/public/components/utils';
-import { AggTypes } from '../../../../src/legacy/core_plugins/vis_type_table/public/types';
+import { totalAggregations } from '../../../../src/plugins/vis_type_table/public/components/utils';
+import { AggTypes } from '../../../../src/plugins/vis_type_table/public/types';
 import { ComputedColumn, ComputedColumnEditor } from './computed_column';
 
 

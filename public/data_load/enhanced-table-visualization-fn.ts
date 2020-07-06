@@ -26,7 +26,7 @@ import {
   ExpressionFunctionDefinition,
   Render,
 } from '../../../../src/plugins/expressions/public';
-import { getTypes, getIndexPatterns, getFilterManager } from '../../../../src/legacy/core_plugins/visualizations/public/np_ready/public/services';
+import { getTypes, getIndexPatterns, getFilterManager } from '../../../../src/plugins/visualizations/public/services';
 
 
 interface Arguments {
@@ -100,7 +100,6 @@ export const createEnhancedVisualizationFn = (): ExpressionFunctionVisualization
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
     const visType = getTypes().get(args.type || 'histogram') as any;
     const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
-
 
     const aggConfigsState = JSON.parse(args.aggConfigs);
 

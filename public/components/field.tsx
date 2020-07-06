@@ -24,7 +24,7 @@ import { EuiComboBox, EuiComboBoxOptionOption, EuiFormRow } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 
 import { IndexPatternField } from '../../../../src/plugins/data/public';
-import { ComboBoxGroupedOptions } from '../../../../src/legacy/core_plugins/vis_default_editor/public/utils';
+import { ComboBoxGroupedOptions } from '../../../../src/plugins/vis_default_editor/public/utils';
 
 const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {
   defaultMessage: 'Field',

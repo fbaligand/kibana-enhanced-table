@@ -17,20 +17,27 @@
  * under the License.
  */
 
-import { PluginInitializerContext } from 'kibana/public';
+import { PluginInitializerContext  } from '../../../src/core/public';
 import { npSetup, npStart } from './legacy_imports';
 import { plugin } from '.';
 
 import { TablePluginSetupDependencies } from './plugin';
-import { setup as visualizationsSetup } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
+import { TablePluginStartDependencies } from './plugin';
+import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+//import { plugin as VisualizationsSetup } from '../../../src/plugins/visualizations/public/plugin';
+//import { setup as visualizationsSetup } from '../../../src/plugins/visualizations/public/legacy';
 
 
 const plugins: Readonly<TablePluginSetupDependencies> = {
   expressions: npSetup.plugins.expressions,
-  visualizations: visualizationsSetup,
+  visualizations: npSetup.plugins.visualizations,
 };
+
+const startData: Readonly<TablePluginStartDependencies> = {
+  data: DataPublicPluginStart
+}
 
 const pluginInstance = plugin({} as PluginInitializerContext);
 
 export const setup = pluginInstance.setup(npSetup.core, plugins);
-export const start = pluginInstance.start(npStart.core);
+export const start = pluginInstance.start(npStart.core, startData);
