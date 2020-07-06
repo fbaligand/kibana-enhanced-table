@@ -28,7 +28,7 @@ import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
 
-const toExpression = (vis) => {
+function toExpression(vis) {
   const visConfig = { ...vis.params };
   const { indexPattern, aggs } = vis.data;
   let pipeline = `kibana | enhanced_table_visualization type='${vis.type.name}'
@@ -40,7 +40,7 @@ const toExpression = (vis) => {
     pipeline += `${prepareString('index', indexPattern.id)}`;
   }
   return pipeline;
-};
+}
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
 export function enhancedTableVisTypeDefinition (core, context) {
