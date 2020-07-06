@@ -27,24 +27,23 @@ import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-
 import { documentTableResponseHandler } from './data_load/document-table-response-handler';
 import { DocumentTableData } from './components/document_table_vis_data';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 
-const toExpression = (vis, params) => {
+const toExpression = (vis) => {
   const visConfig = { ...vis.params };
-    const { indexPattern, aggs } = vis.data;
-    let pipeline = `kibana | enhanced_table_visualization type='${vis.type.name}'
-      ${prepareJson('visConfig', visConfig)}
-      ${prepareJson('aggConfigs', aggs.aggs)}
-      metricsAtAllLevels=${vis.isHierarchical()}
-      partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
-    if (indexPattern) {
-      pipeline += `${prepareString('index', indexPattern.id)}`;
-    }
-    return pipeline;
-}
+  const { indexPattern, aggs } = vis.data;
+  let pipeline = `kibana | enhanced_table_visualization type='${vis.type.name}'
+    ${prepareJson('visConfig', visConfig)}
+    ${prepareJson('aggConfigs', aggs.aggs)}
+    metricsAtAllLevels=${vis.isHierarchical()}
+    partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
+  if (indexPattern) {
+    pipeline += `${prepareString('index', indexPattern.id)}`;
+  }
+  return pipeline;
+};
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
-export function documentTableVisTypeDefinition (core: CoreSetup, context: PluginInitializerContext) {
+export function documentTableVisTypeDefinition (core, context) {
   return {
     type: 'table',
     name: 'document_table',
@@ -117,15 +116,15 @@ export function documentTableVisTypeDefinition (core: CoreSetup, context: Plugin
     },
     requestHandler: enhancedTableRequestHandler,
     responseHandler: documentTableResponseHandler,
-    hierarchicalData: (vis: any) => {
+    hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     },
     toExpression: toExpression,
-    setup: (vis, params) =>{
-      vis.type.toExpression = toExpression
-      return new Promise( (resolve, reject)=>{
-        resolve(vis)
-      })
+    setup: (vis) =>{
+      vis.type.toExpression = toExpression;
+      return new Promise( (resolve) =>{
+        resolve(vis);
+      });
     }
-  }
-};
+  };
+}

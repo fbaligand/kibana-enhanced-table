@@ -24,15 +24,12 @@ import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/p
 import { getSearchService, getQueryService } from '../../../../src/plugins/data/public/services';
 import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
 import { npStart } from '../legacy_imports';
-import { search } from '../../../../src/plugins/data/public'
 
 export async function enhancedTableRequestHandler ({
   partialRows,
   metricsAtAllLevels,
   visParams,
   timeRange,
-  timeFields,
-  indexPattern,
   query,
   filters,
   inspectorAdapters,
@@ -47,8 +44,8 @@ export async function enhancedTableRequestHandler ({
 
   // create search source with query parameters
 
-  let searchSourceDeps = npStart.core;
-  searchSourceDeps.search = searchService.search
+  const searchSourceDeps = npStart.core;
+  searchSourceDeps.search = searchService.search;
 
   const searchSource = new SearchSource({}, searchSourceDeps);
   searchSource.setField('index', aggs.indexPattern);

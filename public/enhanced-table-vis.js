@@ -27,9 +27,8 @@ import { getEnhancedTableVisualizationController } from './vis_controller';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 
-const toExpression = (vis, params) => {
+const toExpression = (vis) => {
   const visConfig = { ...vis.params };
   const { indexPattern, aggs } = vis.data;
   let pipeline = `kibana | enhanced_table_visualization type='${vis.type.name}'
@@ -41,10 +40,10 @@ const toExpression = (vis, params) => {
     pipeline += `${prepareString('index', indexPattern.id)}`;
   }
   return pipeline;
-}
+};
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
-export function enhancedTableVisTypeDefinition (core: CoreSetup, context: PluginInitializerContext) {
+export function enhancedTableVisTypeDefinition (core, context) {
   return {
     type: 'table',
     name: 'enhanced-table',
@@ -131,15 +130,15 @@ export function enhancedTableVisTypeDefinition (core: CoreSetup, context: Plugin
     },
     requestHandler: enhancedTableRequestHandler,
     responseHandler: enhancedTableResponseHandler,
-    hierarchicalData: (vis: any)=>{
+    hierarchicalData: (vis)=>{
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     },
     toExpression: toExpression,
-    setup: (vis, params) =>{
-      vis.type.toExpression = toExpression
-      return new Promise( (resolve, reject)=>{
-        resolve(vis)
-      })
+    setup: (vis) =>{
+      vis.type.toExpression = toExpression;
+      return new Promise( (resolve) =>{
+        resolve(vis);
+      });
     }
-  }
-};
+  };
+}

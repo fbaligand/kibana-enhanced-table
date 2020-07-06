@@ -22,7 +22,6 @@ import $ from 'jquery';
 
 import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
-//import { npStart } from './legacy_imports';
 import { getAngularModule } from './get_inner_angular';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 

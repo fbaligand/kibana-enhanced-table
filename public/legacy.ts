@@ -24,9 +24,6 @@ import { plugin } from '.';
 import { TablePluginSetupDependencies } from './plugin';
 import { TablePluginStartDependencies } from './plugin';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-//import { plugin as VisualizationsSetup } from '../../../src/plugins/visualizations/public/plugin';
-//import { setup as visualizationsSetup } from '../../../src/plugins/visualizations/public/legacy';
-
 
 const plugins: Readonly<TablePluginSetupDependencies> = {
   expressions: npSetup.plugins.expressions,
