@@ -31,7 +31,7 @@ import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
 function toExpression(vis) {
   const visConfig = { ...vis.params };
   const { indexPattern, aggs } = vis.data;
-  let pipeline = `kibana | enhanced_table_visualization type='${vis.type.name}'
+  let pipeline = `enhanced_table_visualization type='${vis.type.name}'
     ${prepareJson('visConfig', visConfig)}
     ${prepareJson('aggConfigs', aggs.aggs)}
     metricsAtAllLevels=${vis.isHierarchical()}
