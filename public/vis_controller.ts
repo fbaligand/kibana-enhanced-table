@@ -20,86 +20,92 @@
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { VisParams } from 'src/plugins/visualizations/public';
-import { npStart } from './legacy_imports';
+import { CoreSetup, PluginInitializerContext } from 'kibana/public';
+import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
-import { ExprVis } from 'src/plugins/visualizations/public/np_ready/public/expressions/vis';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
-export class EnhancedTableVisualizationController {
-  private tableVisModule: IModule | undefined;
-  private injector: auto.IInjectorService | undefined;
-  el: JQuery<Element>;
-  vis: ExprVis;
-  $rootScope: IRootScopeService | null = null;
-  $scope: (IScope & { [key: string]: any }) | undefined;
-  $compile: ICompileService | undefined;
+export function getEnhancedTableVisualizationController(
+  core: CoreSetup,
+  context: PluginInitializerContext
+) {
+  return class EnhancedTableVisualizationController {
+    private tableVisModule: IModule | undefined;
+    private injector: auto.IInjectorService | undefined;
+    el: JQuery<Element>;
+    vis: ExprVis;
+    $rootScope: IRootScopeService | null = null;
+    $scope: (IScope & { [key: string]: any }) | undefined;
+    $compile: ICompileService | undefined;
 
-  constructor(domeElement: Element, vis: ExprVis) {
-    this.el = $(domeElement);
-    this.vis = vis;
-  }
-
-  getInjector() {
-    if (!this.injector) {
-      const mountpoint = document.createElement('div');
-      mountpoint.setAttribute('style', 'height: 100%; width: 100%;');
-      this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
-      this.el.append(mountpoint);
+    constructor(domeElement: Element, vis: ExprVis) {
+      this.el = $(domeElement);
+      this.vis = vis;
     }
 
-    return this.injector;
-  }
-
-  initLocalAngular() {
-    if (!this.tableVisModule) {
-      this.tableVisModule = getAngularModule(innerAngularName, npStart.core);
-      initTableVisLegacyModule(this.tableVisModule);
-    }
-  }
-
-  async render(esResponse: object, visParams: VisParams) {
-    this.initLocalAngular();
-
-    return new Promise(async (resolve, reject) => {
-      if (!this.$rootScope) {
-        const $injector = this.getInjector();
-        this.$rootScope = $injector.get('$rootScope');
-        this.$compile = $injector.get('$compile');
+    getInjector() {
+      if (!this.injector) {
+        const mountpoint = document.createElement('div');
+        mountpoint.setAttribute('style', 'height: 100%; width: 100%;');
+        this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
+        this.el.append(mountpoint);
       }
-      const updateScope = () => {
-        if (!this.$scope) {
-          return;
+
+      return this.injector;
+    }
+
+    async initLocalAngular() {
+      if (!this.tableVisModule) {
+        const [coreStart] = await core.getStartServices();
+        this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
+
+        initTableVisLegacyModule(this.tableVisModule);
+      }
+    }
+
+    async render(esResponse: object, visParams: VisParams) {
+      await this.initLocalAngular();
+
+      return new Promise(async (resolve, reject) => {
+        if (!this.$rootScope) {
+          const $injector = this.getInjector();
+          this.$rootScope = $injector.get('$rootScope');
+          this.$compile = $injector.get('$compile');
         }
-        this.$scope.vis = this.vis;
-        this.$scope.visState = { params: visParams };
-        this.$scope.esResponse = esResponse;
+        const updateScope = () => {
+          if (!this.$scope) {
+            return;
+          }
+          this.$scope.vis = this.vis;
+          this.$scope.visState = { params: visParams };
+          this.$scope.esResponse = esResponse;
 
-        this.$scope.visParams = visParams;
-        this.$scope.renderComplete = resolve;
-        this.$scope.renderFailed = reject;
-        this.$scope.resize = Date.now();
-        this.$scope.$apply();
-      };
+          this.$scope.visParams = visParams;
+          this.$scope.renderComplete = resolve;
+          this.$scope.renderFailed = reject;
+          this.$scope.resize = Date.now();
+          this.$scope.$apply();
+        };
 
-      if (!this.$scope && this.$compile) {
-        this.$scope = this.$rootScope.$new();
-        this.$scope.uiState = this.vis.getUiState();
-        updateScope();
-        this.el.find('div').append(this.$compile(this.vis.type!.visConfig.template)(this.$scope));
-        this.$scope.$apply();
-      } else {
-        updateScope();
-      }
-    });
-  }
-
-  destroy() {
-    if (this.$rootScope) {
-      this.$rootScope.$destroy();
-      this.$rootScope = null;
+        if (!this.$scope && this.$compile) {
+          this.$scope = this.$rootScope.$new();
+          this.$scope.uiState = this.vis.getUiState();
+          updateScope();
+          this.el.find('div').append(this.$compile(this.vis.type!.visConfig.template)(this.$scope));
+          this.$scope.$apply();
+        } else {
+          updateScope();
+        }
+      });
     }
-  }
+
+    destroy() {
+      if (this.$rootScope) {
+        this.$rootScope.$destroy();
+        this.$rootScope = null;
+      }
+    }
+  };
 }

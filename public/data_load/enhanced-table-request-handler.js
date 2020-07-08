@@ -23,6 +23,7 @@ import { SearchSource } from '../../../../src/plugins/data/public/search/search_
 import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
 import { getSearchService, getQueryService } from '../../../../src/plugins/data/public/services';
 import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
+import { npStart } from '../legacy_imports';
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -42,7 +43,11 @@ export async function enhancedTableRequestHandler ({
   const aggs = searchService.aggs.createAggConfigs(index, aggConfigsState);
 
   // create search source with query parameters
-  const searchSource = new SearchSource();
+
+  const searchSourceDeps = npStart.core;
+  searchSourceDeps.search = searchService.search;
+
+  const searchSource = new SearchSource({}, searchSourceDeps);
   searchSource.setField('index', aggs.indexPattern);
   const hitsSize = (visParams.hitsSize !== undefined ? visParams.hitsSize : 0);
   searchSource.setField('size', hitsSize);

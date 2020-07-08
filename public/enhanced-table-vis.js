@@ -19,117 +19,126 @@
 
 import { i18n } from '@kbn/i18n';
 import { AggGroupNames } from '../../../src/plugins/data/public';
-import { Schemas } from '../../../src/legacy/core_plugins/vis_default_editor/public';
-import { prepareJson, prepareString } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy/build_pipeline';
+import { Schemas } from '../../../src/plugins/vis_default_editor/public';
+import { prepareJson, prepareString } from '../../../src/plugins/visualizations/public/legacy/build_pipeline';
 
 import tableVisTemplate from './enhanced-table-vis.html';
-import { EnhancedTableVisualizationController } from './vis_controller';
+import { getEnhancedTableVisualizationController } from './vis_controller';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
 
+function toExpression(vis) {
+  const visConfig = { ...vis.params };
+  const { indexPattern, aggs } = vis.data;
+  let pipeline = `enhanced_table_visualization type='${vis.type.name}'
+    ${prepareJson('visConfig', visConfig)}
+    ${prepareJson('aggConfigs', aggs.aggs)}
+    metricsAtAllLevels=${vis.isHierarchical()}
+    partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
+  if (indexPattern) {
+    pipeline += `${prepareString('index', indexPattern.id)}`;
+  }
+  return pipeline;
+}
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
-export const enhancedTableVisTypeDefinition = {
-  type: 'table',
-  name: 'enhanced-table',
-  title: i18n.translate('visTypeEnhancedTable.visTitle', {
-    defaultMessage: 'Enhanced Table'
-  }),
-  icon: 'visTable',
-  description: i18n.translate('visTypeDocumentTable.visDescription', {
-    defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
-  }),
-  visualization: EnhancedTableVisualizationController,
-  visConfig: {
-    defaults: {
-      perPage: 10,
-      showPartialRows: false,
-      showMetricsAtAllLevels: false,
-      sort: {
-        columnIndex: null,
-        direction: null
-      },
-      showTotal: false,
-      totalFunc: 'sum',
-      computedColumns: [],
-      computedColsPerSplitCol: false,
-      hideExportLinks: false,
-      stripedRows: false,
-      showFilterBar: false,
-      filterCaseSensitive: false,
-      filterBarHideable: false,
-      filterAsYouType: false,
-      filterTermsSeparately: false,
-      filterHighlightResults: false,
-      filterBarWidth: '25%'
-    },
-    template: tableVisTemplate
-  },
-  editorConfig: {
-    optionsTemplate: EnhancedTableOptions,
-    schemas: new Schemas([
-      {
-        group: AggGroupNames.Metrics,
-        name: 'metric',
-        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.metricTitle', {
-          defaultMessage: 'Metric'
-        }),
-        aggFilter: ['!geo_centroid', '!geo_bounds'],
-        aggSettings: {
-          top_hits: {
-            allowStrings: true
-          }
+export function enhancedTableVisTypeDefinition (core, context) {
+  return {
+    type: 'table',
+    name: 'enhanced-table',
+    title: i18n.translate('visTypeEnhancedTable.visTitle', {
+      defaultMessage: 'Enhanced Table'
+    }),
+    icon: 'visTable',
+    description: i18n.translate('visTypeDocumentTable.visDescription', {
+      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
+    }),
+    visualization: getEnhancedTableVisualizationController(core, context),
+    visConfig: {
+      defaults: {
+        perPage: 10,
+        showPartialRows: false,
+        showMetricsAtAllLevels: false,
+        sort: {
+          columnIndex: null,
+          direction: null
         },
-        min: 1,
-        defaults: [{ type: 'count', schema: 'metric' }]
+        showTotal: false,
+        totalFunc: 'sum',
+        computedColumns: [],
+        computedColsPerSplitCol: false,
+        hideExportLinks: false,
+        stripedRows: false,
+        showFilterBar: false,
+        filterCaseSensitive: false,
+        filterBarHideable: false,
+        filterAsYouType: false,
+        filterTermsSeparately: false,
+        filterHighlightResults: false,
+        filterBarWidth: '25%'
       },
-      {
-        group: AggGroupNames.Buckets,
-        name: 'split',
-        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitTitle', {
-          defaultMessage: 'Split table'
-        }),
-        min: 0,
-        max: 1,
-        aggFilter: ['!filter']
-      },
-      {
-        group: AggGroupNames.Buckets,
-        name: 'bucket',
-        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.bucketTitle', {
-          defaultMessage: 'Split rows'
-        }),
-        aggFilter: ['!filter']
-      },
-      {
-        group: AggGroupNames.Buckets,
-        name: 'splitcols',
-        title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
-          defaultMessage: 'Split cols'
-        }),
-        aggFilter: ['!filter'],
-        max: 1,
-        editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
-      }
-    ])
-  },
-  requestHandler: enhancedTableRequestHandler,
-  responseHandler: enhancedTableResponseHandler,
-  hierarchicalData: function (vis) {
-    return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
-  },
-  toExpression: function (vis) {
-    const visConfig = { ...vis.params };
-    const { indexPattern, aggs } = vis.data;
-    let pipeline = `enhanced_table_visualization type='${vis.type.name}'
-      ${prepareJson('visConfig', visConfig)}
-      ${prepareJson('aggConfigs', aggs.aggs)}
-      metricsAtAllLevels=${vis.isHierarchical()}
-      partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
-    if (indexPattern) {
-      pipeline += `${prepareString('index', indexPattern.id)}`;
+      template: tableVisTemplate
+    },
+    editorConfig: {
+      optionsTemplate: EnhancedTableOptions,
+      schemas: new Schemas([
+        {
+          group: AggGroupNames.Metrics,
+          name: 'metric',
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.metricTitle', {
+            defaultMessage: 'Metric'
+          }),
+          aggFilter: ['!geo_centroid', '!geo_bounds'],
+          aggSettings: {
+            top_hits: {
+              allowStrings: true
+            }
+          },
+          min: 1,
+          defaults: [{ type: 'count', schema: 'metric' }]
+        },
+        {
+          group: AggGroupNames.Buckets,
+          name: 'split',
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitTitle', {
+            defaultMessage: 'Split table'
+          }),
+          min: 0,
+          max: 1,
+          aggFilter: ['!filter']
+        },
+        {
+          group: AggGroupNames.Buckets,
+          name: 'bucket',
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.bucketTitle', {
+            defaultMessage: 'Split rows'
+          }),
+          aggFilter: ['!filter']
+        },
+        {
+          group: AggGroupNames.Buckets,
+          name: 'splitcols',
+          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
+            defaultMessage: 'Split cols'
+          }),
+          aggFilter: ['!filter'],
+          max: 1,
+          editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
+        }
+      ])
+    },
+    requestHandler: enhancedTableRequestHandler,
+    responseHandler: enhancedTableResponseHandler,
+    hierarchicalData: (vis)=>{
+      return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
+    },
+    toExpression: toExpression,
+    setup: (vis) =>{
+      vis.type.toExpression = toExpression;
+      return new Promise( (resolve) =>{
+        resolve(vis);
+      });
     }
-    return pipeline;
-  }
-};
+  };
+}

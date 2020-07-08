@@ -23,7 +23,7 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n/react';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
 
-import { SelectOption } from '../../../../src/legacy/core_plugins/vis_type_vislib/public';
+import { SelectOption } from '../../../../src/plugins/charts/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 
@@ -275,7 +275,7 @@ function ComputedColumnEditor({
                 value={computedColumn.label}
                 setValue={setValue}
               />
-              
+
               <TextInputOption
                 label={
                   <>
