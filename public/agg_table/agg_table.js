@@ -149,7 +149,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
                 return prev + curr[i].value;
               }, 0);
             };
-            const formatter = agg.fieldFormatter('text');
+            const formatter = col.totalFormatter ? col.totalFormatter('text') : agg.fieldFormatter('text');
 
             if (col.totalFormula !== undefined) {
               formattedColumn.total = formatter(col.total);

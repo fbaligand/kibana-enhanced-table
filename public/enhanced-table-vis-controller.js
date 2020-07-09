@@ -23,7 +23,6 @@ import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 
 import { npStart } from 'ui/new_platform';
-import { AggConfig } from '../../../src/plugins/data/public/search/aggs';
 
 import { toastNotifications } from 'ui/notify';
 
@@ -380,19 +379,20 @@ function EnhancedTableVisController ($scope, Private, config) {
     // remove the created AggConfig from real aggs
     aggs.aggs.pop();
 
+    // define aggConfig identifiers
+    newColumn.aggConfig.id = `1.computed-column-${index}`;
+    newColumn.aggConfig.key = `computed-column-${index}`;
+
     // if computed column formula is just a simple column reference (ex: col0), then copy its aggConfig to get filtering feature
     const simpleColRefMatch = newColumn.formula.expression.toString().match(/^\s*col(\d+)\s*$/);
     if (simpleColRefMatch) {
       const simpleColRefIndex = simpleColRefMatch[1];
       const simpleColRef = columns[simpleColRefIndex];
       if (simpleColRef.aggConfig.isFilterable()) {
-        newColumn.aggConfig = new AggConfig(simpleColRef.aggConfig.aggConfigs, simpleColRef.aggConfig);
+        newColumn.aggConfig = simpleColRef.aggConfig;
+        newColumn.meta = simpleColRef.meta;
       }
     }
-
-    // define aggConfig identifiers
-    newColumn.aggConfig.id = `1.computed-column-${index}`;
-    newColumn.aggConfig.key = `computed-column-${index}`;
 
     // add alignment options
     if (computedColumn.applyAlignmentOnTotal) {
@@ -410,7 +410,7 @@ function EnhancedTableVisController ($scope, Private, config) {
     }
 
     // add "total" formatter function
-    newColumn.aggConfig.fieldFormatter = function (contentType) {
+    newColumn.totalFormatter = function (contentType) {
       return function (value) {
         const self = { value: value, column: newColumn };
         if (computedColumn.applyTemplate && computedColumn.applyTemplateOnTotal) {
