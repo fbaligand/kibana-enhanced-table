@@ -44,7 +44,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total line first column (ex: `Total:`)
 - Ability to display striped rows
-- Kibana supported versions : all versions from 5.5 to 7.7
+- Kibana supported versions : all versions from 5.5 to 7.8
 
 ## Demo
 
