@@ -34,16 +34,13 @@ export async function enhancedTableRequestHandler ({
   filters,
   inspectorAdapters,
   forceFetch,
-  aggConfigsState,
-  index
+  aggs
 }) {
 
   const { filterManager } = getQueryService();
-  const searchService = getSearchService();
-  const aggs = searchService.aggs.createAggConfigs(index, aggConfigsState);
 
   // create search source with query parameters
-
+  const searchService = getSearchService();
   const searchSourceDeps = npStart.core;
   searchSourceDeps.search = searchService.search;
 

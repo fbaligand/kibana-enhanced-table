@@ -21,7 +21,6 @@ import { VisualizationsSetup } from '../../../src/plugins/visualizations/public'
 
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 
-import { createEnhancedVisualizationFn } from './data_load/enhanced-table-visualization-fn';
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
@@ -53,8 +52,6 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
     core: CoreSetup,
     { expressions, visualizations }: TablePluginSetupDependencies
   ) {
-    expressions.registerFunction(createEnhancedVisualizationFn);
-
     visualizations.createBaseVisualization(
       enhancedTableVisTypeDefinition(core, this.initializerContext)
     );

@@ -19,7 +19,6 @@
 
 import { i18n } from '@kbn/i18n';
 import { Schemas } from '../../../src/plugins/vis_default_editor/public';
-import { prepareJson, prepareString } from '../../../src/plugins/visualizations/public/legacy/build_pipeline';
 
 import tableVisTemplate from './enhanced-table-vis.html';
 import { getEnhancedTableVisualizationController } from './vis_controller';
@@ -28,19 +27,6 @@ import { documentTableResponseHandler } from './data_load/document-table-respons
 import { DocumentTableData } from './components/document_table_vis_data';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
 
-function toExpression(vis) {
-  const visConfig = { ...vis.params };
-  const { indexPattern, aggs } = vis.data;
-  let pipeline = `enhanced_table_visualization type='${vis.type.name}'
-    ${prepareJson('visConfig', visConfig)}
-    ${prepareJson('aggConfigs', aggs.aggs)}
-    metricsAtAllLevels=${vis.isHierarchical()}
-    partialRows=${vis.type.requiresPartialRows || vis.params.showPartialRows || false} `;
-  if (indexPattern) {
-    pipeline += `${prepareString('index', indexPattern.id)}`;
-  }
-  return pipeline;
-}
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
 export function documentTableVisTypeDefinition (core, context) {
@@ -118,13 +104,6 @@ export function documentTableVisTypeDefinition (core, context) {
     responseHandler: documentTableResponseHandler,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
-    },
-    toExpression: toExpression,
-    setup: (vis) =>{
-      vis.type.toExpression = toExpression;
-      return new Promise( (resolve) =>{
-        resolve(vis);
-      });
     }
   };
 }
