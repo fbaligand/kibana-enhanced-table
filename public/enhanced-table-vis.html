@@ -1,6 +1,6 @@
 <div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis" ng-class="{'theme-dark': isDarkTheme}">
 
-  <div ng-show="visState.params.showFilterBar && tableGroups && (hasSomeRows || activeFilter !== '')">
+  <div ng-show="visState.params.showFilterBar && tableGroups && (hasSomeRows || activeFilter !== '')" class="filterBar">
     <div ng-hide="showFilterInput()" align="right">
       <a ng-click="enableFilterInput()" class="filterText">Filter</a>
     </div>
