@@ -18,7 +18,6 @@
  */
 
 import { i18n } from '@kbn/i18n';
-import { Schemas } from '../../../src/plugins/vis_default_editor/public';
 
 import tableVisTemplate from './enhanced-table-vis.html';
 import { getEnhancedTableVisualizationController } from './vis_controller';
@@ -97,8 +96,7 @@ export function documentTableVisTypeDefinition (core, context) {
           }),
           editor: EnhancedTableOptions
         }
-      ],
-      schemas: new Schemas([])
+      ]
     },
     requestHandler: enhancedTableRequestHandler,
     responseHandler: documentTableResponseHandler,
