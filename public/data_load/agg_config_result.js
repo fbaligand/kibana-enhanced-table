@@ -17,7 +17,11 @@
  * under the License.
  */
 
-import chrome from 'ui/chrome';
+function computeBasePath(pathname) {
+  const endIndex = pathname ? pathname.indexOf('/app/kibana') : -1;
+  const basePath = endIndex !== -1 ? pathname.substring(0, endIndex) : '';
+  return basePath;
+}
 
 // eslint-disable-next-line import/no-default-export
 export default function AggConfigResult(aggConfig, parent, value, key, filters) {
@@ -58,7 +62,7 @@ AggConfigResult.prototype.toString = function (contentType) {
   const parsedUrl = {
     origin: window.location.origin,
     pathname: window.location.pathname,
-    basePath: chrome.getBasePath(),
+    basePath: computeBasePath(window.location.pathname),
   };
   const options = { parsedUrl };
   return this.aggConfig.fieldFormatter(contentType)(this.value, options);
