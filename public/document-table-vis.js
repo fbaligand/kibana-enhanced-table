@@ -36,11 +36,11 @@ import { documentTableResponseHandler } from './data_load/document-table-respons
 const tableVisTypeDefinition = {
   type: 'table',
   name: 'document_table',
-  title: i18n.translate('tableVis.enhancedTableVisTitle', {
+  title: i18n.translate('visTypeDocumentTable.visTitle', {
     defaultMessage: 'Document Table'
   }),
   icon: 'visTable',
-  description: i18n.translate('tableVis.documentTableVisDescription', {
+  description: i18n.translate('visTypeDocumentTable.visDescription', {
     defaultMessage: 'Same functionality than Data Table, but for single documents (not aggregations) and with enhanced features like computed columns, filter bar and pivot table.'
   }),
   visualization: EnhancedTableVisualizationController,
@@ -88,14 +88,14 @@ const tableVisTypeDefinition = {
     optionTabs: [
       {
         name: 'fieldColumns',
-        title: i18n.translate('visTypeTable.tabs.dataText', {
+        title: i18n.translate('visTypeDocumentTable.tabs.dataText', {
           defaultMessage: 'Data',
         }),
         editor: '<document-table-vis-data-params></document-table-vis-data-params>'
       },
       {
         name: 'options',
-        title: i18n.translate('visTypeTable.tabs.optionsText', {
+        title: i18n.translate('visTypeDocumentTable.tabs.optionsText', {
           defaultMessage: 'Options',
         }),
         editor: '<enhanced-table-vis-params></enhanced-table-vis-params>'
