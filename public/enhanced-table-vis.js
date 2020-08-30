@@ -37,7 +37,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
       defaultMessage: 'Enhanced Table'
     }),
     icon: 'visTable',
-    description: i18n.translate('visTypeDocumentTable.visDescription', {
+    description: i18n.translate('visTypeEnhancedTable.visDescription', {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visualization: getEnhancedTableVisualizationController(core, context),
@@ -105,7 +105,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
         {
           group: AggGroupNames.Buckets,
           name: 'splitcols',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitcolsTitle', {
             defaultMessage: 'Split cols'
           }),
           aggFilter: ['!filter'],
