@@ -2,12 +2,12 @@
 
   <div ng-show="vis.params.showFilterBar && tableGroups && (hasSomeRows || activeFilter !== '')">
     <div ng-hide="showFilterInput()" align="right">
-      <a ng-click="enableFilterInput()" class="filterText">Filter</a>
+      <a ng-click="enableFilterInput()" class="filterText" i18n-id="visTypeTable.vis.filterLink" i18n-default-message="Filter"></a>
     </div>
 
     <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{vis.params.filterBarWidth}}">
       <div class="kuiLocalSearchAssistedInput">
-        <input type="text" ng-model="vis.filterInput" ng-keyup="(vis.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="Filter..." class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="Filter input">
+        <input type="text" ng-model="vis.filterInput" ng-keyup="(vis.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="{{ ::'visTypeTable.vis.filterPlaceholder' | i18n: {defaultMessage: 'Filter...'} }}" class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="{{ ::'visTypeTable.vis.filterAriaLabel' | i18n: {defaultMessage: 'Filter input'} }}">
       </div>
       <button ng-click="doFilter()" aria-label="Filter" class="kuiButton kuiLocalSearchButton filterButton" ng-disabled="vis.params.filterAsYouType">
         <span class="fa fa-search" aria-hidden="true"></span>
