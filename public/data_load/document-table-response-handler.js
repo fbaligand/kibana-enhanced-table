@@ -18,6 +18,7 @@
  */
 
 import { get } from 'lodash';
+import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
 import AggConfigResult from './agg_config_result';
 
 function createColumn(fieldColumn, index, response, aggConfigs) {
@@ -40,6 +41,8 @@ function createColumn(fieldColumn, index, response, aggConfigs) {
     name: columnTitle,
     title: columnTitle
   };
+  newColumn.meta = serializeAggConfig(newColumn.aggConfig);
+  newColumn.aggConfig.isFilterable = () => newColumn.aggConfig.params.field.aggregatable;
 
   return newColumn;
 }
