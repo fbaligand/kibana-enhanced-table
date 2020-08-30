@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
@@ -60,7 +59,6 @@ export function getEnhancedTableVisualizationController(
       if (!this.tableVisModule) {
         const [coreStart] = await core.getStartServices();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
-
         initTableVisLegacyModule(this.tableVisModule);
       }
     }

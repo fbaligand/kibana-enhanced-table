@@ -16,27 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
-import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
-
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
+import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
 
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService } from '../../../src/plugins/vis_type_table/public/services';
-import { getFieldFormats } from '../../../src/plugins/data/public/services'
+import { setFormatService, setNotifications } from './services';
+
+/** @internal */
+export interface TablePluginSetupDependencies {
+  visualizations: VisualizationsSetup;
+}
 
 /** @internal */
 export interface TablePluginStartDependencies {
   data: DataPublicPluginStart;
-}
-
-/** @internal */
-export interface TablePluginSetupDependencies {
-  expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
-  visualizations: VisualizationsSetup;
 }
 
 /** @internal */
@@ -50,7 +46,7 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
 
   public async setup(
     core: CoreSetup,
-    { expressions, visualizations }: TablePluginSetupDependencies
+    { visualizations }: TablePluginSetupDependencies
   ) {
     visualizations.createBaseVisualization(
       enhancedTableVisTypeDefinition(core, this.initializerContext)
@@ -62,7 +58,7 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
   }
 
   public start(core: CoreStart, { data }: TablePluginStartDependencies) {
-    const fieldFormats = getFieldFormats();
-    setFormatService(fieldFormats);
+    setFormatService(data.fieldFormats);
+    setNotifications(core.notifications);
   }
 }

@@ -18,20 +18,18 @@
  */
 
 import { PluginInitializerContext  } from '../../../src/core/public';
-import { npSetup, npStart } from './legacy_imports';
+import { npSetup, npStart } from 'ui/new_platform';
 import { plugin } from '.';
 
 import { TablePluginSetupDependencies } from './plugin';
 import { TablePluginStartDependencies } from './plugin';
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 
 const plugins: Readonly<TablePluginSetupDependencies> = {
-  expressions: npSetup.plugins.expressions,
   visualizations: npSetup.plugins.visualizations,
 };
 
 const startData: Readonly<TablePluginStartDependencies> = {
-  data: DataPublicPluginStart
+  data: npStart.plugins.data
 }
 
 const pluginInstance = plugin({} as PluginInitializerContext);

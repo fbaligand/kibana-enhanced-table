@@ -21,17 +21,14 @@ import _ from 'lodash';
 
 import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
-
-import { npStart } from 'ui/new_platform';
-
-import { toastNotifications } from 'ui/notify';
+import { getNotifications, getFormatService } from './services';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
 // EnhancedTableVis AngularJS controller
-function EnhancedTableVisController ($scope, Private, config) {
+function EnhancedTableVisController ($scope, config) {
 
   class EnhancedTableError {
     constructor(message) {
@@ -354,7 +351,7 @@ function EnhancedTableVisController ($scope, Private, config) {
   /** create a new data table column for specified computed column */
   const createColumn = function (computedColumn, index, totalHits, splitColIndex, columns, showTotal, totalFunc, aggs) {
 
-    const fieldFormats = npStart.plugins.data.fieldFormats;
+    const fieldFormats = getFormatService();
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
       'string': {},
@@ -679,7 +676,8 @@ function EnhancedTableVisController ($scope, Private, config) {
   };
 
   const notifyError = function(errorMessage) {
-    toastNotifications.addDanger(errorMessage);
+    const title = $scope.vis.type.title + ' Error';
+    getNotifications().toasts.addDanger({title, text: errorMessage});
   };
 
   const colToStringWithHighlightResults = function(initialToString, scope, contentType) {

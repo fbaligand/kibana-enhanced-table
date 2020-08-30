@@ -17,5 +17,14 @@
  * under the License.
  */
 
-export { npSetup, npStart } from 'ui/new_platform';
-export { getFormat } from 'ui/visualize/loader/pipeline_helpers/utilities';
+import { createGetterSetter } from '../../../src/plugins/kibana_utils/public';
+import { NotificationsStart } from '../../../src/core/public';
+import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+
+export const [getNotifications, setNotifications] = createGetterSetter<NotificationsStart>(
+  'Notifications'
+);
+
+export const [getFormatService, setFormatService] = createGetterSetter<
+  DataPublicPluginStart['fieldFormats']
+>('table data.fieldFormats');

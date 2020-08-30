@@ -19,10 +19,10 @@
 
 import _ from 'lodash';
 import aggTableTemplate from './agg_table.html';
-import { npStart } from 'ui/new_platform';
+import { getFormatService } from '../services';
 
 export function KbnEnhancedAggTable(config, RecursionHelper) {
-  const fieldFormats = npStart.plugins.data.fieldFormats;
+  const fieldFormats = getFormatService();
   const numberFormatter = fieldFormats.getDefaultInstance('number').getConverterFor('text');
 
   return {

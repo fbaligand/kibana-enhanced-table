@@ -19,11 +19,9 @@
 
 import _ from 'lodash';
 import { handleCourierRequest } from './courier';
-import { SearchSource } from '../../../../src/plugins/data/public/search/search_source';
 import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
 import { getSearchService, getQueryService } from '../../../../src/plugins/data/public/services';
 import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
-import { npStart } from '../legacy_imports';
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -41,10 +39,7 @@ export async function enhancedTableRequestHandler ({
 
   // create search source with query parameters
   const searchService = getSearchService();
-  const searchSourceDeps = npStart.core;
-  searchSourceDeps.search = searchService.search;
-
-  const searchSource = new SearchSource({}, searchSourceDeps);
+  const searchSource = searchService.searchSource.create();
   searchSource.setField('index', aggs.indexPattern);
   const hitsSize = (visParams.hitsSize !== undefined ? visParams.hitsSize : 0);
   searchSource.setField('size', hitsSize);
