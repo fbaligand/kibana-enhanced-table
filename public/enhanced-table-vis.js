@@ -43,11 +43,11 @@ function EnhancedTableVisTypeProvider(Private) {
   return VisFactory.createAngularVisualization({
     type: 'table',
     name: 'enhanced-table',
-    title: i18n.translate('tableVis.enhancedTableVisTitle', {
+    title: i18n.translate('visTypeEnhancedTable.visTitle', {
       defaultMessage: 'Enhanced Table'
     }),
     icon: 'visTable',
-    description: i18n.translate('tableVis.enhancedTableVisDescription', {
+    description: i18n.translate('visTypeEnhancedTable.visDescription', {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visConfig: {
@@ -81,7 +81,7 @@ function EnhancedTableVisTypeProvider(Private) {
         {
           group: 'metrics',
           name: 'metric',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.metricTitle', {
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.metricTitle', {
             defaultMessage: 'Metric'
           }),
           aggFilter: ['!geo_centroid', '!geo_bounds'],
@@ -96,7 +96,7 @@ function EnhancedTableVisTypeProvider(Private) {
         {
           group: 'buckets',
           name: 'split',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitTitle', {
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitTitle', {
             defaultMessage: 'Split table'
           }),
           min: 0,
@@ -106,7 +106,7 @@ function EnhancedTableVisTypeProvider(Private) {
         {
           group: 'buckets',
           name: 'bucket',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.bucketTitle', {
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.bucketTitle', {
             defaultMessage: 'Split rows'
           }),
           aggFilter: ['!filter']
@@ -114,7 +114,7 @@ function EnhancedTableVisTypeProvider(Private) {
         {
           group: 'buckets',
           name: 'splitcols',
-          title: i18n.translate('tableVis.tableVisEditorConfig.schemas.splitcolsTitle', {
+          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitcolsTitle', {
             defaultMessage: 'Split cols'
           }),
           aggFilter: ['!filter'],
