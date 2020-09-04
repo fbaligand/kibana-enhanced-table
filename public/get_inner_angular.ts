@@ -21,9 +21,11 @@
 // these are necessary to bootstrap the local angular.
 // They can stay even after NP cutover
 import angular from 'angular';
+// required for `ngSanitize` angular module
+import 'angular-sanitize';
 import 'angular-recursion';
 import { i18nDirective, i18nFilter, I18nProvider } from '@kbn/i18n/angular';
-import { CoreStart, IUiSettingsClient, PluginInitializerContext, LegacyCoreStart } from 'kibana/public';
+import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
 import {
   initAngularBootstrap,
   PaginateDirectiveProvider,
@@ -40,7 +42,7 @@ const thirdPartyAngularDependencies = ['ngSanitize', 'ui.bootstrap', 'RecursionH
 
 export function getAngularModule(name: string, core: CoreStart, context: PluginInitializerContext) {
   const uiModule = getInnerAngular(name, core);
-  configureAppAngularModule(uiModule, core as LegacyCoreStart, true);
+  configureAppAngularModule(uiModule, { core, env: context.env }, true);
   return uiModule;
 }
 
@@ -71,7 +73,7 @@ function createLocalPrivateModule() {
 }
 
 function createLocalConfigModule(uiSettings: IUiSettingsClient) {
-  angular.module('tableVisConfig', []).provider('config', function() {
+  angular.module('tableVisConfig', []).provider('config', function () {
     return {
       $get: () => ({
         get: (value: string) => {

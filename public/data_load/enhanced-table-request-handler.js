@@ -20,7 +20,7 @@
 import _ from 'lodash';
 import { handleCourierRequest } from './courier';
 import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
-import { getSearchService, getQueryService } from '../../../../src/plugins/data/public/services';
+import { getSearchService, getQueryService } from '../services';
 import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
 
 export async function enhancedTableRequestHandler ({

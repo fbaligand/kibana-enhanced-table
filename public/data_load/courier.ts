@@ -1,23 +1,16 @@
-import { get, has } from 'lodash';
+import { has } from 'lodash';
 import { i18n } from '@kbn/i18n';
-import {
-  KibanaContext,
-  KibanaDatatable,
-  ExpressionFunctionDefinition,
-  KibanaDatatableColumn,
-} from '../../../../src/plugins/expressions/public';
 import { calculateObjectHash } from '../../../../src/plugins/kibana_utils/public';
 import { PersistedState } from '../../../../src/plugins/visualizations/public';
 import { Adapters } from '../../../../src/plugins/inspector/public';
 
 import { IAggConfigs } from '../../../../src/plugins/data/public/search/aggs';
-import { ISearchSource, SearchSource } from '../../../../src/plugins/data/public/search/search_source';
+import { ISearchSource } from '../../../../src/plugins/data/public/search/search_source';
 import { tabifyAggResponse } from '../../../../src/plugins/data/public/search/tabify';
-import { Filter, Query, serializeFieldFormat, TimeRange } from '../../../../src/plugins/data/common';
+import { Filter, Query, TimeRange } from '../../../../src/plugins/data/common';
 import { FilterManager, getTime } from '../../../../src/plugins/data/public/query';
-import { getSearchService, getQueryService, getIndexPatterns } from '../../../../src/plugins/data/public/services';
 import { buildTabularInspectorData } from '../../../../src/plugins/data/public/search/expressions/build_tabular_inspector_data';
-import { getRequestInspectorStats, getResponseInspectorStats, serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
+import { getRequestInspectorStats, getResponseInspectorStats } from '../../../../src/plugins/data/public/search/expressions/utils';
 
 export interface RequestHandlerParams {
   searchSource: ISearchSource;

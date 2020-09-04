@@ -10,10 +10,10 @@
     "kbn": "node ../../scripts/kbn",
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
-    "start": "../../node_modules/.bin/plugin-helpers start --oss --no-watch",
+    "start": "cd ../.. && node scripts/kibana --dev --oss",
     "test:server": "../../node_modules/.bin/plugin-helpers test:server",
     "test:browser": "../../node_modules/.bin/plugin-helpers test:browser",
-    "build": "../../node_modules/.bin/plugin-helpers build"
+    "build": "node ../../scripts/build_kibana_platform_plugins.js --dist --no-examples --no-core --oss && ../../node_modules/.bin/plugin-helpers build"
   },
   "dependencies": {
     "expr-eval": "2.0.2"

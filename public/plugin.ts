@@ -23,7 +23,7 @@ import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService, setNotifications } from './services';
+import { setNotifications, setFormatService, setQueryService, setSearchService } from './services';
 
 /** @internal */
 export interface TablePluginSetupDependencies {
@@ -58,7 +58,9 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
   }
 
   public start(core: CoreStart, { data }: TablePluginStartDependencies) {
-    setFormatService(data.fieldFormats);
     setNotifications(core.notifications);
+    setFormatService(data.fieldFormats);
+    setQueryService(data.query);
+    setSearchService(data.search);
   }
 }

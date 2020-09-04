@@ -1,0 +1,10 @@
+{
+  "id": "enhancedTable",
+  "version": "kibana",
+  "server": false,
+  "ui": true,
+  "requiredPlugins": [
+    "visualizations",
+    "data"
+  ]
+}

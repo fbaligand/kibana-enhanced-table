@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+import './index.scss';
 import { PluginInitializerContext } from 'kibana/public';
 import { EnhancedTablePlugin as Plugin } from './plugin';
 
