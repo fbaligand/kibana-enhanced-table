@@ -529,13 +529,16 @@ function EnhancedTableVisController ($scope, Private, config) {
   };
 
   const rowContainsFilterTerm = function (row, termToFind, filterCaseSensitive) {
-    return row.some(function (col) {
-      let colValue = col.toString();
-      if (typeof colValue === 'string') {
+    return row.some(function (cell) {
+      if (cell.column && cell.column.id === 'add-row-numbers-col') {
+        return false;
+      }
+      let cellValue = cell.toString();
+      if (typeof cellValue === 'string') {
         if (!filterCaseSensitive) {
-          colValue = colValue.toLowerCase();
+          cellValue = cellValue.toLowerCase();
         }
-        return colValue.includes(termToFind);
+        return cellValue.includes(termToFind);
       }
       return false;
     });
@@ -684,7 +687,7 @@ function EnhancedTableVisController ($scope, Private, config) {
 
   const colToStringWithHighlightResults = function(initialToString, scope, contentType) {
     let result = initialToString.call(this, contentType);
-    if ($scope.filterHighlightRegex !== null && contentType === 'html') {
+    if ($scope.filterHighlightRegex !== null && contentType === 'html' && (!this.column || this.column.id !== 'add-row-numbers-col')) {
       if (typeof result === 'string') {
         result = { 'markup': result };
       }
@@ -696,6 +699,35 @@ function EnhancedTableVisController ($scope, Private, config) {
       });
     }
     return result;
+  };
+
+  const addRowNumberColumn = function (table, aggs) {
+    if (table.tables) {
+      table.tables.forEach(subTable => addRowNumberColumn(subTable, aggs));
+    }
+    else {
+      // add row number column in first position
+      const fieldFormats = npStart.plugins.data.fieldFormats;
+      const fieldFormat = fieldFormats.getInstance('number');
+      const newColumn = {
+        id: 'add-row-numbers-col',
+        aggConfig: aggs.createAggConfig({ schema: 'bucket', type: 'filter' }),
+        title: '#',
+        fieldFormatter: fieldFormat,
+        dataAlignmentClass: 'text-left'
+      };
+      table.columns.unshift(newColumn);
+      let i = 1;
+      // add row number cells in first position
+      table.rows.forEach(row => {
+        const newCell = new AggConfigResult(newColumn.aggConfig, null, i, i);
+        newCell.column = newColumn;
+        newCell.toString = renderCell;
+        row.unshift(newCell);
+        row[newColumn.id] = newCell.value;
+        ++i;
+      });
+    }
   };
 
   // filter scope methods
@@ -882,6 +914,11 @@ function EnhancedTableVisController ($scope, Private, config) {
             else
               table.totalLabel = params.totalLabel;
           });
+        }
+
+        // add row number column
+        if (params.addRowNumberColumn) {
+          addRowNumberColumn(tableGroups, aggs);
         }
 
         // prepare filter highlight results rendering
