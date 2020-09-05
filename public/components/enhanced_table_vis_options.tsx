@@ -46,6 +46,7 @@ interface EnhancedTableVisParams {
   computedColsPerSplitCol: boolean;
   hideExportLinks: boolean;
   stripedRows: boolean;
+  addRowNumberColumn: boolean;
 
   // Basic Settings
   perPage: number | '';
@@ -255,6 +256,15 @@ function EnhancedTableOptions({
           })}
           paramName="stripedRows"
           value={stateParams.stripedRows}
+          setValue={setValue}
+        />
+
+        <SwitchOption
+          label={i18n.translate('visTypeEnhancedTable.params.addRowNumberColumn', {
+            defaultMessage: 'Add row number column',
+          })}
+          paramName="addRowNumberColumn"
+          value={stateParams.addRowNumberColumn}
           setValue={setValue}
         />
 
