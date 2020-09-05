@@ -65,6 +65,7 @@ function DocumentTableVisTypeProvider() {
         computedColsPerSplitCol: false,
         hideExportLinks: false,
         stripedRows: false,
+        addRowNumberColumn: false,
         showFilterBar: false,
         filterCaseSensitive: false,
         filterBarHideable: false,
