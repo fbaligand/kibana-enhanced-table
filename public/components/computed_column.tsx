@@ -284,7 +284,7 @@ function ComputedColumnEditor({
                       defaultMessage="Formula"
                     />
                     &nbsp;(
-                      <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-column-formula--lines-computed-filter-documentation" target="_blank">documentation</a>
+                      <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
                     )
                   </>
                 }

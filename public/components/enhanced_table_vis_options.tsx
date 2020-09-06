@@ -190,13 +190,13 @@ function EnhancedTableOptions({
             <>
               <FormattedMessage
                 id="visTypeEnhancedTable.params.linesComputedFilter"
-                defaultMessage="Lines computed filter"
+                defaultMessage="Rows computed filter"
               />
               &nbsp;(
-              <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-column-formula--lines-computed-filter-documentation" target="_blank">documentation</a>
+              <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
               )&nbsp;
               <EuiIconTip
-                content="Example: when 'col0 &gt; 10', only table lines having first column value greater than 10 are displayed"
+                content="Example: when 'col0 &gt; 10', only table rows having first column value greater than 10 are displayed"
                 position="right"
               />
             </>
@@ -423,7 +423,7 @@ function EnhancedTableOptions({
                 defaultMessage: 'Filter each term separately',
               })}
               icontip={i18n.translate('visTypeEnhancedTable.params.filterTermsSeparatelyTooltip', {
-                defaultMessage: 'Example with filter set to \'term1 term2\': when this option is enabled, lines with one column containing \'term1\' and another column containing \'term2\' will be displayed. If disabled, only lines with one column containing \'term1 term2\' will be displayed.',
+                defaultMessage: 'Example with filter set to \'term1 term2\': when this option is enabled, rows with one column containing \'term1\' and another column containing \'term2\' will be displayed. If disabled, only rows with one column containing \'term1 term2\' will be displayed.',
               })}
               paramName="filterTermsSeparately"
               value={stateParams.filterTermsSeparately}
