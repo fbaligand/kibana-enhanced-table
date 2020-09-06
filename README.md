@@ -24,9 +24,9 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Template can reference another column by its label (ex: `<span style="color: {{col['color']}}">{{value}}</span>`)
   - Template can encode a value to render it as a URL parameter (ex: `<a href="my-dashboard?param={{{encodeURIComponent value}}}">{{value}}</a>`)
   - Support for computed column filtering (Filter for/out value) if formula simply references a column value (ex: `col0`)
-  - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
-- Filter table lines based on a computed formula (ex: `col0 > 0`)
-  - More documentation [here](#computed-column-formula--lines-computed-filter-documentation)
+  - More documentation [here](#computed-column-formula--rows-computed-filter-documentation)
+- Filter table rows based on a computed formula (ex: `col0 > 0`)
+  - More documentation [here](#computed-column-formula--rows-computed-filter-documentation)
 - Hide some table columns (ex: `0,1,Col2 Label` hides columns 0, 1 and the column labeled 'Col2 Label')
   - Note that the column label must be written as is (including whitespaces), with no surrounding quotes.
   - Column labels containing commas are not supported since the comma is used to separate the columns
@@ -42,7 +42,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Support for a new bucket type : 'Split Cols'. It lets to create a pivot table
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
-- Add a total label on total line first column (ex: `Total:`)
+- Add a total label on total row first column (ex: `Total:`)
 - Ability to display striped rows
 - Kibana supported versions : all versions from 5.5 to 7.8
 
@@ -65,9 +65,13 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 - restart Kibana
 
 
-## Computed Column Formula / Lines Computed Filter documentation
+## Computed Settings documentation
 
-Common features available for 'Computed Column Formula' and 'Lines Computed Filter':
+This is the common documentation for all computed settings:
+- Computed Column Formula
+- Rows Computed Filter
+
+Available features are:
 - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
 - Support for features brought by expr-eval 2.0:
   - Ability to reference arrays. Especially useful to reference a 'Top Hits' metric column: `col1[0]`

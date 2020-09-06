@@ -889,7 +889,7 @@ function EnhancedTableVisController ($scope, config) {
 
         // process lines computed filter
         if (params.linesComputedFilter) {
-          const linesComputedFilterFormula = createFormula(params.linesComputedFilter, 'Lines computed filter', splitColIndex, firstTable.columns, params.totalFunc);
+          const linesComputedFilterFormula = createFormula(params.linesComputedFilter, 'Rows computed filter', splitColIndex, firstTable.columns, params.totalFunc);
           tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
         }
 
