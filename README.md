@@ -70,6 +70,7 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 This is the common documentation for all computed settings:
 - Computed Column Formula
 - Rows Computed Filter
+- Rows Computed CSS
 
 Available features are:
 - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
