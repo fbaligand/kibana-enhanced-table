@@ -42,6 +42,7 @@ interface EnhancedTableVisParams {
 
   // Enhanced Settings
   linesComputedFilter: string;
+  rowsComputedCss: string;
   hiddenColumns: string;
   computedColsPerSplitCol: boolean;
   hideExportLinks: boolean;
@@ -204,6 +205,28 @@ function EnhancedTableOptions({
           placeholder="col0 > 10"
           paramName="linesComputedFilter"
           value={stateParams.linesComputedFilter}
+          setValue={setValue}
+        />
+
+        <TextInputOption
+          label={
+            <>
+              <FormattedMessage
+                id="visTypeEnhancedTable.params.rowsComputedCss"
+                defaultMessage="Rows computed CSS"
+              />
+              &nbsp;(
+              <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
+              )&nbsp;
+              <EuiIconTip
+                content="This option lets to define dynamically table row CSS (like background-color CSS property), based on its column values"
+                position="right"
+              />
+            </>
+          }
+          placeholder="col1 < 0 ? &quot;background-color: red&quot; : &quot;&quot;"
+          paramName="rowsComputedCss"
+          value={stateParams.rowsComputedCss}
           setValue={setValue}
         />
 
