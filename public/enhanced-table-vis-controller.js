@@ -106,7 +106,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       return getOriginalColIndex(columnIndex, splitColIndex);
     }
     else {
-      throw new EnhancedTableError(`In ${inputType} "${input}", column with label '${colTitle}' does not exist`);
+      throw new EnhancedTableError(`Column with label '${colTitle}' does not exist, in ${inputType}: ${input}`);
     }
   };
 
@@ -132,7 +132,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       let colIndex = parseInt(regexMatch[1]);
       if (colIndex >= currentCol) {
         colIndex = getOriginalColIndex(colIndex, splitColIndex);
-        throw new EnhancedTableError(`In computed column "${inputFormula}", column number ${colIndex} does not exist`);
+        throw new EnhancedTableError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
       }
       formulaParamsCols.push(colIndex);
     }
@@ -153,7 +153,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
     // check 'sumSplitCols/countSplitCols' functions condition
     if ((realFormula.indexOf('sumSplitCols') !== -1 || realFormula.indexOf('countSplitCols') !== -1) && splitColIndex === -1) {
-      throw new EnhancedTableError(`In computed column "${inputFormula}", sumSplitCols() and countSplitCols() functions must be used with a "Split cols" bucket`);
+      throw new EnhancedTableError(`sumSplitCols() and countSplitCols() functions must be used with a "Split cols" bucket, in ${formulaType}: ${inputFormula}`);
     }
 
     // extract formula param totals
@@ -162,7 +162,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       let colIndex = parseInt(regexMatch[1]);
       if (colIndex >= currentCol) {
         colIndex = getOriginalColIndex(colIndex, splitColIndex);
-        throw new EnhancedTableError(`In computed column "${inputFormula}", column number ${colIndex} does not exist`);
+        throw new EnhancedTableError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
       }
       formulaParamsTotals.push(colIndex);
     }
@@ -260,7 +260,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       };
     }
     catch (e) {
-      throw new EnhancedTableError(`Invalid computed column formula "${inputFormula}" (${e.message})`);
+      throw new EnhancedTableError(`${e.message}, invalid expression in ${formulaType}: ${inputFormula}`);
     }
   };
 
