@@ -135,6 +135,9 @@ export function KbnEnhancedRows($compile) {
 
         rows.forEach(function (row) {
           const $tr = $(document.createElement('tr')).appendTo($el);
+          if (row.cssStyle) {
+            $tr.attr('style', row.cssStyle);
+          }
           $scope.columns.forEach(function (column, iColumn) {
             const value = row[iColumn];
             addCell($tr, value, iColumn, row);
