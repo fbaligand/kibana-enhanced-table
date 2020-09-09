@@ -469,6 +469,33 @@ function EnhancedTableVisController ($scope, Private, config) {
     });
   };
 
+  const processRowsComputedCss = function (table, rowsComputedCssFormula, totalHits) {
+    if (table.tables) {
+      table.tables.forEach(function(subTable) {
+        processRowsComputedCss(subTable, rowsComputedCssFormula, totalHits);
+      });
+    }
+    else {
+      table.rows.forEach(function (row) {
+        row.cssStyle = computeFormulaValue(rowsComputedCssFormula, row, totalHits, table);
+      });
+    }
+  };
+
+  const processRowsComputedOptions = function (tableGroups, columns, params, splitColIndex, totalHits) {
+    // process lines computed filter
+    if (params.linesComputedFilter) {
+      const linesComputedFilterFormula = createFormula(params.linesComputedFilter, 'Rows computed filter', splitColIndex, columns, params.totalFunc);
+      tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
+    }
+
+    // process rows computed CSS
+    if (params.rowsComputedCss) {
+      const rowsComputedCssFormula = createFormula(params.rowsComputedCss, 'Rows computed CSS', splitColIndex, columns, params.totalFunc);
+      processRowsComputedCss(tableGroups, rowsComputedCssFormula, totalHits);
+    }
+  };
+
   const isInt = (item) => {
     return /^ *[0-9]+ *$/.test(item);
   };
@@ -905,10 +932,9 @@ function EnhancedTableVisController ($scope, Private, config) {
           }
         });
 
-        // process lines computed filter
-        if (params.linesComputedFilter) {
-          const linesComputedFilterFormula = createFormula(params.linesComputedFilter, 'Rows computed filter', splitColIndex, firstTable.columns, params.totalFunc);
-          tableGroups.tables = processLinesComputedFilter(tableGroups.tables, linesComputedFilterFormula, totalHits);
+        // process rows computed options : lines computed filter and rows computed CSS (no split cols)
+        if (splitColIndex === -1) {
+          processRowsComputedOptions(tableGroups, firstTable.columns, params, splitColIndex, totalHits);
         }
 
         // remove hidden columns
@@ -920,6 +946,11 @@ function EnhancedTableVisController ($scope, Private, config) {
         if (splitColIndex !== -1 && params.computedColsPerSplitCol) {
           splitColIndex = findSplitColIndex(firstTable);
           splitCols(tableGroups, splitColIndex, totalHits);
+        }
+
+        // process rows computed options : lines computed filter and rows computed CSS (split cols)
+        if (splitColIndex !== -1) {
+          processRowsComputedOptions(tableGroups, firstTable.columns, params, -1, totalHits);
         }
 
         // add total label
