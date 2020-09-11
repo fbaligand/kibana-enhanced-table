@@ -253,7 +253,9 @@ function EnhancedTableVisController ($scope, config) {
         expression: parser.parse(realFormula),
         paramsCols: formulaParamsCols,
         paramsTotals: formulaParamsTotals,
-        totalFunc: totalFunc
+        totalFunc: totalFunc,
+        formulaType: formulaType,
+        inputFormula: inputFormula
       };
     }
     catch (e) {
@@ -262,23 +264,28 @@ function EnhancedTableVisController ($scope, config) {
   };
 
   const computeFormulaValue = function (formula, row, totalHits, table) {
-    const formulaParams = { total: totalHits, row: row };
+    try {
+      const formulaParams = { total: totalHits, row: row };
 
-    // inject column value references
-    _.forEach(formula.paramsCols, function (formulaParamCol) {
-      formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
-    });
+      // inject column value references
+      _.forEach(formula.paramsCols, function (formulaParamCol) {
+        formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
+      });
 
-    // inject column total references
-    _.forEach(formula.paramsTotals, function (formulaParamTotal) {
-      if (table.columns[formulaParamTotal].total === undefined) {
-        table.columns[formulaParamTotal].total = computeColumnTotal(formulaParamTotal, formula.totalFunc, table);
-      }
-      formulaParams[`total${formulaParamTotal}`] = table.columns[formulaParamTotal].total;
-    });
+      // inject column total references
+      _.forEach(formula.paramsTotals, function (formulaParamTotal) {
+        if (table.columns[formulaParamTotal].total === undefined) {
+          table.columns[formulaParamTotal].total = computeColumnTotal(formulaParamTotal, formula.totalFunc, table);
+        }
+        formulaParams[`total${formulaParamTotal}`] = table.columns[formulaParamTotal].total;
+      });
 
-    const value = formula.expression.evaluate(formulaParams);
-    return value;
+      const value = formula.expression.evaluate(formulaParams);
+      return value;
+    }
+    catch(e) {
+      throw new EnhancedTableError(`${e.message}, invalid expression in ${formula.formulaType}: ${formula.inputFormula}`);
+    }
   };
 
   const createTemplate = function (computedColumn, splitColIndex, columns, totalFunc) {
