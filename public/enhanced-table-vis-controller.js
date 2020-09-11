@@ -220,7 +220,8 @@ function EnhancedTableVisController ($scope, Private, config) {
         }
         if (colIndex < currentCol) {
           colIndex = getRealColIndex(colIndex, splitColIndex);
-          return row[colIndex].value;
+          const colValue = row[colIndex].value;
+          return colValue !== undefined ? colValue : defaultValue;
         }
         else {
           return defaultValue;
