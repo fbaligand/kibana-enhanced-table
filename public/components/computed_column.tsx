@@ -41,6 +41,7 @@ export interface ComputedColumn {
   applyTemplate: boolean;
   applyTemplateOnTotal: boolean;
   template: string;
+  cellComputedCss: string;
   enabled: boolean;
   brandNew?: boolean;
 }
@@ -421,6 +422,28 @@ function ComputedColumnEditor({
                   setValue={setValue}
                 />
               }
+
+              <TextInputOption
+                label={
+                  <>
+                    <FormattedMessage
+                      id="visTypeEnhancedTable.params.computedColumns.cellComputedCss"
+                      defaultMessage="Cell computed CSS"
+                    />
+                    &nbsp;(
+                    <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
+                    )&nbsp;
+                    <EuiIconTip
+                      content="This option lets to define dynamically table cell CSS (like background-color CSS property), based on this column value and previous column values"
+                      position="right"
+                    />
+                  </>
+                }
+                placeholder="value < 0 ? &quot;background-color: red&quot; : &quot;&quot;"
+                paramName="cellComputedCss"
+                value={computedColumn.cellComputedCss}
+                setValue={setValue}
+              />
 
             </>
           </EuiAccordion>
