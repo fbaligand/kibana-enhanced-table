@@ -108,6 +108,10 @@ function EnhancedTableVisController ($scope, config) {
 
   const createFormula = function (inputFormula, formulaType, splitColIndex, columns, totalFunc) {
 
+    if (!inputFormula) {
+      return undefined;
+    }
+
     let realFormula = inputFormula;
 
     // convert col[0] syntax to col0 syntax
@@ -263,9 +267,9 @@ function EnhancedTableVisController ($scope, config) {
     }
   };
 
-  const computeFormulaValue = function (formula, row, totalHits, table) {
+  const computeFormulaValue = function (formula, row, totalHits, table, cellValue) {
     try {
-      const formulaParams = { total: totalHits, row: row };
+      const formulaParams = { total: totalHits, row: row, value: cellValue };
 
       // inject column value references
       _.forEach(formula.paramsCols, function (formulaParamCol) {
@@ -378,7 +382,8 @@ function EnhancedTableVisController ($scope, config) {
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
       formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns, totalFunc),
-      template: createTemplate(computedColumn, splitColIndex, columns, totalFunc)
+      template: createTemplate(computedColumn, splitColIndex, columns, totalFunc),
+      cellComputedCssFormula: createFormula(computedColumn.cellComputedCss, 'Cell computed CSS', splitColIndex, columns, totalFunc)
     };
 
     // remove the created AggConfig from real aggs
@@ -435,6 +440,9 @@ function EnhancedTableVisController ($scope, config) {
     newCell.column = column;
     if (column.template !== undefined) {
       newCell.templateContext = createTemplateContext(column, row, totalHits, table);
+    }
+    if (column.cellComputedCssFormula !== undefined) {
+      newCell.cssStyle = computeFormulaValue(column.cellComputedCssFormula, row, totalHits, table, value);
     }
     newCell.toString = renderCell;
     return newCell;
