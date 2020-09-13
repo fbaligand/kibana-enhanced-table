@@ -48,6 +48,7 @@ uiModules.get('kibana/enhanced-table')
             applyTemplate: false,
             applyTemplateOnTotal: true,
             template: '{{value}}',
+            cellComputedCss: '',
             enabled: true
           });
         };
