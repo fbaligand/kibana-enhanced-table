@@ -111,7 +111,7 @@
                 <input type="text" ng-model="computedColumn.label" class="form-control">
               </div>
               <div class="form-group">
-                <label>Formula (<a ng-href="<a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>" target="_blank">documentation</a>)</label>
+                <label>Formula (<a ng-href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>)</label>
                 <input type="text" ng-model="computedColumn.formula" class="form-control" />
               </div>
               <div class="checkbox">
@@ -173,6 +173,15 @@
                 <label>Template (<a ng-href="https://handlebarsjs.com/guide/expressions.html" target="_blank">Handlebars</a> syntax)</label>
                 <input type="text" ng-model="computedColumn.template" class="form-control">
               </div>
+              <div class="form-group">
+                <label>Cell computed CSS (<a ng-href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>)&nbsp;
+                  <icon-tip
+                    content="'This option lets to define dynamically table cell CSS (like background-color CSS property), based on this column value and previous column values'"
+                    position="'right'"
+                  ></icon-tip>
+                </label>
+                <input type="text" ng-model="computedColumn.cellComputedCss" class="form-control" placeholder="value &lt; 0 ? &quot;background-color: red&quot; : &quot;&quot;" />
+              </div>
           </div>
       </div>
     </div>
@@ -185,7 +194,7 @@
 
     <div class="euiSpacer euiSpacer--s"></div>
     <div class="form-group">
-      <label>Rows computed filter (<a ng-href="<a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>" target="_blank">documentation</a>)&nbsp;
+      <label>Rows computed filter (<a ng-href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>)&nbsp;
         <icon-tip
           content="'Example: when \'col0 &gt; 10\', only table rows having first column value greater than 10 are displayed'"
           position="'right'"
@@ -196,7 +205,7 @@
 
     <div class="euiSpacer euiSpacer--s"></div>
     <div class="form-group">
-      <label>Rows computed CSS (<a ng-href="<a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>" target="_blank">documentation</a>)&nbsp;
+      <label>Rows computed CSS (<a ng-href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>)&nbsp;
         <icon-tip
           content="'This option lets to define dynamically table row CSS (like background-color CSS property), based on its column values'"
           position="'right'"

@@ -74,6 +74,10 @@ module.directive('kbnEnhancedRows', function ($compile) {
             $cell = $cellContent = createCell();
           }
 
+          if (contents.cssStyle) {
+            $cell.attr('style', contents.cssStyle);
+          }
+
           // An AggConfigResult can "enrich" cell contents by applying a field formatter,
           // which we want to do if possible.
           contents = contents.toString('html');
@@ -88,9 +92,6 @@ module.directive('kbnEnhancedRows', function ($compile) {
         }
 
         if (_.isObject(contents)) {
-          if (contents.attr) {
-            $cellContent.attr(contents.attr);
-          }
 
           if (contents.class) {
             $cellContent.addClass(contents.class);
