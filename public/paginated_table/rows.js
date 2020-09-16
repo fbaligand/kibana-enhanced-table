@@ -70,8 +70,15 @@ export function KbnEnhancedRows($compile) {
             $cell = $cellContent = createCell();
           }
 
-          if (contents.cssStyle) {
-            $cell.attr('style', contents.cssStyle);
+          if (row.cssStyle !== undefined || contents.cssStyle  !== undefined) {
+            let cssStyle = (row.cssStyle !== undefined) ? row.cssStyle : '';
+            if (contents.cssStyle  !== undefined) {
+              cssStyle += '; ' + contents.cssStyle;
+            }
+            $cell.attr('style', cssStyle);
+            if (cssStyle.indexOf('background') !== -1) {
+              $cell.addClass('cell-custom-background-hover');
+            }
           }
 
           // An AggConfigResult can "enrich" cell contents by applying a field formatter,
@@ -136,9 +143,6 @@ export function KbnEnhancedRows($compile) {
 
         rows.forEach(function (row) {
           const $tr = $(document.createElement('tr')).appendTo($el);
-          if (row.cssStyle) {
-            $tr.attr('style', row.cssStyle);
-          }
           $scope.columns.forEach(function (column, iColumn) {
             const value = row[iColumn];
             addCell($tr, value, iColumn, row);
