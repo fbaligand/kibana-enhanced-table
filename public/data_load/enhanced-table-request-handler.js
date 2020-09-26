@@ -18,10 +18,10 @@
  */
 
 import _ from 'lodash';
-import { handleCourierRequest } from './courier';
 import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
 import { getSearchService, getQueryService } from '../services';
-import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
+import { handleCourierRequest } from './kibana_cloned_code/courier';
+import { serializeAggConfig } from './kibana_cloned_code/utils';
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -39,7 +39,7 @@ export async function enhancedTableRequestHandler ({
 
   // create search source with query parameters
   const searchService = getSearchService();
-  const searchSource = searchService.searchSource.create();
+  const searchSource = await searchService.searchSource.create();
   searchSource.setField('index', aggs.indexPattern);
   const hitsSize = (visParams.hitsSize !== undefined ? visParams.hitsSize : 0);
   searchSource.setField('size', hitsSize);

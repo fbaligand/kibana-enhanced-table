@@ -25,7 +25,8 @@ import tableVisTemplate from './enhanced-table-vis.html';
 import { getEnhancedTableVisualizationController } from './vis_controller';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
-import { EnhancedTableOptions } from './components/enhanced_table_vis_options';
+import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
+import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
@@ -41,6 +42,9 @@ export function enhancedTableVisTypeDefinition (core, context) {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visualization: getEnhancedTableVisualizationController(core, context),
+    getSupportedTriggers: () => {
+      return [VIS_EVENT_TO_TRIGGER.filter];
+    },
     visConfig: {
       defaults: {
         perPage: 10,
@@ -117,7 +121,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
     },
     requestHandler: enhancedTableRequestHandler,
     responseHandler: enhancedTableResponseHandler,
-    hierarchicalData: (vis)=>{
+    hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     }
   };

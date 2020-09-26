@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { fieldFormatter } from '../field_formatter';
 
 function computeBasePath(pathname) {
   const endIndex = pathname ? pathname.indexOf('/app/kibana') : -1;
@@ -65,7 +66,7 @@ AggConfigResult.prototype.toString = function (contentType) {
     basePath: computeBasePath(window.location.pathname),
   };
   const options = { parsedUrl };
-  return this.aggConfig.fieldFormatter(contentType)(this.value, options);
+  return fieldFormatter(this.aggConfig, contentType)(this.value, options);
 };
 
 AggConfigResult.prototype.valueOf = function () {

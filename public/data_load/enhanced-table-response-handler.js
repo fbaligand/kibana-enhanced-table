@@ -19,6 +19,7 @@
 
 import { get, findLastIndex } from 'lodash';
 import AggConfigResult from './agg_config_result';
+import { fieldFormatter } from '../field_formatter';
 
 /**
  * Takes an array of tabified rows and splits them by column value:
@@ -94,7 +95,7 @@ function splitTable(columns, rows, $parent) {
     return {
       $parent: $newParent,
       aggConfig: splitColumn.aggConfig,
-      title: `${splitColumn.aggConfig.fieldFormatter()(splitValue)}: ${splitColumn.aggConfig.makeLabel()}`,
+      title: `${fieldFormatter(splitColumn.aggConfig)(splitValue)}: ${splitColumn.aggConfig.makeLabel()}`,
       key: splitValue,
       // Recurse with filtered data to continue the search for additional split columns.
       tables: splitTable(filteredColumns, splitRows.rowsGroupedByResult[splitValue], $newParent),

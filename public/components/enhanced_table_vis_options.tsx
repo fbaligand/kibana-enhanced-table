@@ -28,12 +28,11 @@ import { VisOptionsProps } from '../../../../src/plugins/vis_default_editor/publ
 import { NumberInputOption, SelectOption } from '../../../../src/plugins/charts/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
-import { totalAggregations } from '../../../../src/plugins/vis_type_table/public/components/utils';
-import { AggTypes } from '../../../../src/plugins/vis_type_table/public/types';
+import { totalAggregations, AggTypes } from './utils';
 import { ComputedColumn, ComputedColumnEditor } from './computed_column';
 
 
-interface EnhancedTableVisParams {
+export interface EnhancedTableVisParams {
   type: 'table';
 
   // Computed Columns
@@ -481,4 +480,6 @@ function EnhancedTableOptions({
   );
 }
 
-export { EnhancedTableOptions };
+// default export required for React.Lazy
+// eslint-disable-next-line import/no-default-export
+export { EnhancedTableOptions as default };

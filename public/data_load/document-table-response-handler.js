@@ -18,7 +18,7 @@
  */
 
 import { get } from 'lodash';
-import { serializeAggConfig } from '../../../../src/plugins/data/public/search/expressions/utils';
+import { serializeAggConfig } from './kibana_cloned_code/utils';
 import AggConfigResult from './agg_config_result';
 
 function createColumn(fieldColumn, index, response, aggConfigs) {

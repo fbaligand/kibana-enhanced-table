@@ -1,21 +1,37 @@
-import { has } from 'lodash';
+import { hasIn } from 'lodash';
 import { i18n } from '@kbn/i18n';
-import { calculateObjectHash } from '../../../../src/plugins/kibana_utils/public';
-import { PersistedState } from '../../../../src/plugins/visualizations/public';
-import { Adapters } from '../../../../src/plugins/inspector/public';
 
-import { IAggConfigs } from '../../../../src/plugins/data/public/search/aggs';
-import { ISearchSource } from '../../../../src/plugins/data/public/search/search_source';
-import { tabifyAggResponse } from '../../../../src/plugins/data/public/search/tabify';
-import { Filter, Query, TimeRange } from '../../../../src/plugins/data/common';
-import { FilterManager, getTime } from '../../../../src/plugins/data/public/query';
-import { buildTabularInspectorData } from '../../../../src/plugins/data/public/search/expressions/build_tabular_inspector_data';
-import { getRequestInspectorStats, getResponseInspectorStats } from '../../../../src/plugins/data/public/search/expressions/utils';
+import { calculateObjectHash } from '../../../../../src/plugins/kibana_utils/public';
+import { PersistedState } from '../../../../../src/plugins/visualizations/public';
+import { Adapters } from '../../../../../src/plugins/inspector/public';
 
-export interface RequestHandlerParams {
+import { IAggConfigs } from '../../../../../src/plugins/data/public/search/aggs';
+import { ISearchSource } from '../../../../../src/plugins/data/public/search/search_source';
+import {
+  calculateBounds,
+  Filter,
+  getTime,
+  IIndexPattern,
+  isRangeFilter,
+  Query,
+  TimeRange,
+} from '../../../../../src/plugins/data/common';
+import { FilterManager } from '../../../../../src/plugins/data/public/query';
+import { buildTabularInspectorData } from './build_tabular_inspector_data';
+import { search } from '../../../../../src/plugins/data/public';
+
+import { getFormatService as getFieldFormats } from '../../services';
+
+/**
+ * Clone of: ../../../../../src/plugins/data/public/search/expressions/esaggs.ts
+ * Components: RequestHandlerParams and handleCourierRequest
+ */
+interface RequestHandlerParams {
   searchSource: ISearchSource;
   aggs: IAggConfigs;
   timeRange?: TimeRange;
+  timeFields?: string[];
+  indexPattern?: IIndexPattern;
   query?: Query;
   filters?: Filter[];
   forceFetch: boolean;
@@ -32,6 +48,8 @@ export const handleCourierRequest = async ({
   searchSource,
   aggs,
   timeRange,
+  timeFields,
+  indexPattern,
   query,
   filters,
   forceFetch,
@@ -64,7 +82,7 @@ export const handleCourierRequest = async ({
     },
   });
 
-  requestSearchSource.setField('aggs', function() {
+  requestSearchSource.setField('aggs', function () {
     return aggs.toDsl(metricsAtAllLevels);
   });
 
@@ -72,9 +90,19 @@ export const handleCourierRequest = async ({
     return aggs.onSearchRequestStart(paramSearchSource, options);
   });
 
-  if (timeRange) {
+  // If timeFields have been specified, use the specified ones, otherwise use primary time field of index
+  // pattern if it's available.
+  const defaultTimeField = indexPattern?.getTimeField?.();
+  const defaultTimeFields = defaultTimeField ? [defaultTimeField.name] : [];
+  const allTimeFields = timeFields && timeFields.length > 0 ? timeFields : defaultTimeFields;
+
+  // If a timeRange has been specified and we had at least one timeField available, create range
+  // filters for that those time fields
+  if (timeRange && allTimeFields.length > 0) {
     timeFilterSearchSource.setField('filter', () => {
-      return getTime(searchSource.getField('index'), timeRange);
+      return allTimeFields
+        .map((fieldName) => getTime(indexPattern, timeRange, { fieldName }))
+        .filter(isRangeFilter);
     });
   }
 
@@ -101,14 +129,14 @@ export const handleCourierRequest = async ({
         }),
       }
     );
-    request.stats(getRequestInspectorStats(requestSearchSource));
+    request.stats(search.getRequestInspectorStats(requestSearchSource));
 
     try {
       const response = await requestSearchSource.fetch({ abortSignal });
 
       (searchSource as any).lastQuery = queryHash;
 
-      request.stats(getResponseInspectorStats(searchSource, response)).ok({ json: response });
+      request.stats(search.getResponseInspectorStats(searchSource, response)).ok({ json: response });
 
       (searchSource as any).rawResponse = response;
     } catch (e) {
@@ -128,13 +156,13 @@ export const handleCourierRequest = async ({
   // response data incorrectly in the inspector.
   let resp = (searchSource as any).rawResponse;
   for (const agg of aggs.aggs) {
-    if (has(agg, 'type.postFlightRequest')) {
+    if (hasIn(agg, 'type.postFlightRequest')) {
       resp = await agg.type.postFlightRequest(
         resp,
         aggs,
         agg,
         requestSearchSource,
-        inspectorAdapters,
+        inspectorAdapters.requests,
         abortSignal
       );
     }
@@ -142,11 +170,13 @@ export const handleCourierRequest = async ({
 
   (searchSource as any).finalResponse = resp;
 
-  const parsedTimeRange = timeRange ? getTime(aggs.indexPattern, timeRange) : null;
+  const parsedTimeRange = timeRange ? calculateBounds(timeRange) : null;
   const tabifyParams = {
     metricsAtAllLevels,
     partialRows,
-    timeRange: parsedTimeRange ? parsedTimeRange.range : undefined,
+    timeRange: parsedTimeRange
+      ? { from: parsedTimeRange.min, to: parsedTimeRange.max, timeFields: allTimeFields }
+      : undefined,
   };
 
   const tabifyCacheHash = calculateObjectHash({ tabifyAggs: aggs, ...tabifyParams });
@@ -156,7 +186,7 @@ export const handleCourierRequest = async ({
 
   if (shouldCalculateNewTabify) {
     (searchSource as any).lastTabifyHash = tabifyCacheHash;
-    (searchSource as any).tabifiedResponse = tabifyAggResponse(
+    (searchSource as any).tabifiedResponse = search.tabifyAggResponse(
       aggs,
       (searchSource as any).finalResponse,
       tabifyParams
@@ -164,7 +194,11 @@ export const handleCourierRequest = async ({
   }
 
   inspectorAdapters.data.setTabularLoader(
-    () => buildTabularInspectorData((searchSource as any).tabifiedResponse, filterManager),
+    () =>
+      buildTabularInspectorData((searchSource as any).tabifiedResponse, {
+        queryFilter: filterManager,
+        deserializeFieldFormat: getFieldFormats().deserialize,
+      }),
     { returnsFormattedValues: true }
   );
 

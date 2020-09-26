@@ -23,7 +23,9 @@ import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setNotifications, setFormatService, setQueryService, setSearchService } from './services';
+import { setFormatService, setKibanaLegacy, setNotifications, setQueryService, setSearchService } from './services';
+import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
+
 
 /** @internal */
 export interface TablePluginSetupDependencies {
@@ -33,6 +35,7 @@ export interface TablePluginSetupDependencies {
 /** @internal */
 export interface TablePluginStartDependencies {
   data: DataPublicPluginStart;
+  kibanaLegacy: KibanaLegacyStart;
 }
 
 /** @internal */
@@ -57,9 +60,10 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
       );
   }
 
-  public start(core: CoreStart, { data }: TablePluginStartDependencies) {
-    setNotifications(core.notifications);
+  public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {
     setFormatService(data.fieldFormats);
+    setKibanaLegacy(kibanaLegacy);
+    setNotifications(core.notifications);
     setQueryService(data.query);
     setSearchService(data.search);
   }

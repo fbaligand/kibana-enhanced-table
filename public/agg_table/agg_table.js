@@ -18,8 +18,10 @@
  */
 
 import _ from 'lodash';
+import { CSV_SEPARATOR_SETTING, CSV_QUOTE_VALUES_SETTING } from '../../../../src/plugins/share/public';
 import aggTableTemplate from './agg_table.html';
 import { getFormatService } from '../services';
+import { fieldFormatter } from '../field_formatter';
 
 export function KbnEnhancedAggTable(config, RecursionHelper) {
   const fieldFormats = getFormatService();
@@ -48,8 +50,8 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
 
       self._saveAs = require('@elastic/filesaver').saveAs;
       self.csv = {
-        separator: config.get('csv:separator'),
-        quoteValues: config.get('csv:quoteValues')
+        separator: config.get(CSV_SEPARATOR_SETTING),
+        quoteValues: config.get(CSV_QUOTE_VALUES_SETTING)
       };
 
       self.exportAsCsv = function (formatted) {
@@ -96,7 +98,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
           return;
         }
 
-        self.csv.filename = ($scope.exportTitle || table.title || 'table') + '.csv';
+        self.csv.filename = ($scope.exportTitle || table.title || 'unsaved') + '.csv';
         $scope.rows = table.rows;
         $scope.formattedColumns = table.columns.map(function (col, i) {
           const agg = col.aggConfig;
@@ -149,7 +151,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
                 return prev + curr[i].value;
               }, 0);
             };
-            const formatter = col.totalFormatter ? col.totalFormatter('text') : agg.fieldFormatter('text');
+            const formatter = col.totalFormatter ? col.totalFormatter('text') : fieldFormatter(agg, 'text');
 
             if (col.totalFormula !== undefined) {
               formattedColumn.total = formatter(col.total);
