@@ -216,10 +216,19 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       return encodeURIComponent(str);
     };
     parser.functions.sort = function (array, compareFunction) {
+      if (!Array.isArray(array)) {
+        array = [array];
+      }
       return array.sort(compareFunction);
     };
     parser.functions.uniq = function (array) {
+      if (!Array.isArray(array)) {
+        array = [array];
+      }
       return _.uniq(array);
+    };
+    parser.functions.isArray = function (value) {
+      return Array.isArray(value);
     };
     parser.functions.col = function (row, colRef, defaultValue) {
       try {
