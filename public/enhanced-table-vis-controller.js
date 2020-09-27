@@ -403,6 +403,11 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       cellComputedCssFormula: createFormula(computedColumn.cellComputedCss, 'Cell computed CSS', splitColIndex, columns, totalFunc)
     };
 
+    // check that computed column formula is defined
+    if (newColumn.formula === undefined) {
+      throw new EnhancedTableError(`Computed column 'Formula' is required`);
+    }
+
     // if computed column formula is just a simple column reference (ex: col0), then copy its aggConfig to get filtering feature
     const simpleColRefMatch = newColumn.formula.expression.toString().match(/^\s*col(\d+)\s*$/);
     if (simpleColRefMatch) {
