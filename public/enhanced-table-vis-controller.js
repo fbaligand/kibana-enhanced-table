@@ -110,6 +110,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
   const createFormula = function (inputFormula, formulaType, splitColIndex, columns, totalFunc) {
 
+    if (!inputFormula) {
+      return undefined;
+    }
+
     let realFormula = inputFormula;
 
     // convert col[0] syntax to col0 syntax
@@ -374,6 +378,11 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns, totalFunc),
       template: createTemplate(computedColumn, splitColIndex, columns, totalFunc)
     };
+
+    // check that computed column formula is defined
+    if (newColumn.formula === undefined) {
+      throw new EnhancedTableError(`Computed column 'Formula' is required`);
+    }
 
     // if computed column formula is just a simple column reference (ex: col0), then copy its aggConfig to get filtering feature
     const simpleColRefMatch = newColumn.formula.expression.toString().match(/^\s*col(\d+)\s*$/);
