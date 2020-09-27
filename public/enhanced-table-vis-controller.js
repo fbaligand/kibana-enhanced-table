@@ -398,6 +398,11 @@ function EnhancedTableVisController ($scope, Private, config) {
       cellComputedCssFormula: createFormula(computedColumn.cellComputedCss, 'Cell computed CSS', splitColIndex, columns, totalFunc)
     };
 
+    // check that computed column formula is defined
+    if (newColumn.formula === undefined) {
+      throw new EnhancedTableError(`Computed column 'Formula' is required`);
+    }
+
     // remove the created AggConfig from real aggs
     aggs.aggs.pop();
 
