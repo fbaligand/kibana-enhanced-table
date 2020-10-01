@@ -7,7 +7,7 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 ## Features
 
 - Add computed columns, based on other columns :
-  - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
+  - Computed formula based on [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions (more documentation [here](#computed-settings-documentation))
   - Support for numeric columns (ex: `col0 + col1` or `col[0] + col[1]`)
   - Support for string columns, including HTML (ex: `col0 > 0 ? 'OK' : 'KO'`)
   - Support for date columns
@@ -23,10 +23,13 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
   - Template can reference another column by its label (ex: `<span style="color: {{col['color']}}">{{value}}</span>`)
   - Template can encode a value to render it as a URL parameter (ex: `<a href="my-dashboard?param={{{encodeURIComponent value}}}">{{value}}</a>`)
+  - Support for cell computed CSS based on a computed formula (ex: `value < 0 ? "background-color: red" : ""`)
+    - More documentation [here](#computed-settings-documentation)
   - Support for computed column filtering (Filter for/out value) if formula simply references a column value (ex: `col0`)
-  - More documentation [here](#computed-column-formula--rows-computed-filter-documentation)
 - Filter table rows based on a computed formula (ex: `col0 > 0`)
-  - More documentation [here](#computed-column-formula--rows-computed-filter-documentation)
+  - More documentation [here](#computed-settings-documentation)
+- Set dynamically row CSS based on a computed formula (ex: `col0 < 0 ? "background-color: red" : ""`)
+  - More documentation [here](#computed-settings-documentation)
 - Hide some table columns (ex: `0,1,Col2 Label` hides columns 0, 1 and the column labeled 'Col2 Label')
   - Note that the column label must be written as is (including whitespaces), with no surrounding quotes.
   - Column labels containing commas are not supported since the comma is used to separate the columns
@@ -44,7 +47,8 @@ This Kibana visualization plugin is like a Data Table, but with enhanced feature
 - Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
 - Add a total label on total row first column (ex: `Total:`)
 - Ability to display striped rows
-- Kibana supported versions : all versions from 5.5 to 7.8
+- Ability to add a row number column
+- Kibana supported versions : all versions from 5.5 to 7.9
 
 ## Demo
 
