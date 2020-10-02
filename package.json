@@ -8,11 +8,11 @@
   },
   "scripts": {
     "lint": "../../node_modules/.bin/eslint .",
-    "start": "plugin-helpers start --no-watch",
-    "test:server": "plugin-helpers test:server",
-    "test:browser": "plugin-helpers test:browser",
-    "build": "plugin-helpers build",
-    "postinstall": "plugin-helpers postinstall"
+    "start": "../../node_modules/.bin/plugin-helpers start --no-watch",
+    "test:server": "../../node_modules/.bin/plugin-helpers test:server",
+    "test:browser": "../../node_modules/.bin/plugin-helpers test:browser",
+    "build": "../../node_modules/.bin/plugin-helpers build",
+    "postinstall": "../../node_modules/.bin/plugin-helpers postinstall"
   },
   "devDependencies": {
     "@elastic/plugin-helpers": "^6.0.0"
