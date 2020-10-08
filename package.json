@@ -14,7 +14,7 @@
     "test:server": "../../node_modules/.bin/plugin-helpers test:server",
     "test:browser": "../../node_modules/.bin/plugin-helpers test:browser",
     "build": "../../node_modules/.bin/plugin-helpers build",
-    "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --oss --no-core --scan-dir . --filter enhancedTable"
+    "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --scan-dir ."
   },
   "dependencies": {
     "expr-eval": "2.0.2"

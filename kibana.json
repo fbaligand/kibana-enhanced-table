@@ -8,5 +8,11 @@
     "data",
     "inspector",
     "kibanaLegacy"
+  ],
+  "requiredBundles": [
+    "kibanaUtils",
+    "kibanaReact",
+    "share",
+    "charts"
   ]
 }
