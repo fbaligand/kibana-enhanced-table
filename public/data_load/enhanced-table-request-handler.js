@@ -88,6 +88,7 @@ export async function enhancedTableRequestHandler ({
   const response = await handleCourierRequest({
     searchSource,
     aggs,
+    indexPattern: aggs.indexPattern,
     timeRange,
     query,
     filters,
