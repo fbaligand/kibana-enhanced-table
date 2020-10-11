@@ -56,7 +56,9 @@ This project is a Kibana plugin that provides two visualizations:
 ![Demo](docs/demo.gif)
 
 
-## Install
+## Getting Started
+
+### Install
 
 Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
@@ -68,6 +70,27 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
   - locally after manual download :
 `./bin/kibana-plugin install file:///path/to/enhanced-table-X.Y.Z_A.B.C.zip`
 - restart Kibana
+
+### First Use
+
+- Open Kibana URL in your browser (by default: [http://localhost:5601](http://localhost:5601))
+- Go to "Visualize" app
+- Click on "Create visualization" button
+- Choose "Enhanced Table"
+- Select your index-pattern, and then your buckets & metrics
+- Go to "Options" tab, and enjoy the enhanced features: computed columns, hidden columns, filter bar, and so on...
+
+### Troubleshooting
+
+If you don't see 'Enhanced Table' (when you go to "Create visualization" screen) or if you see any error, try these actions:
+- in your browser, force Kibana page reload: Shift+F5 or Ctrl+F5
+- if it still doesn't work, empty your browser cache, and then, reload Kibana page
+- if it still doesn't work:
+  - stop Kibana
+  - delete `$KIBANA_HOME/optimize` folder
+  - start Kibana
+  - empty again your browser cache
+  - reload Kibana page in your browser
 
 
 ## Computed Settings documentation
