@@ -902,6 +902,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         // no data to display
         if (totalHits === 0 || firstTable === null) {
           $scope.hasSomeRows = false;
+          $scope.renderComplete();
           return;
         }
 
