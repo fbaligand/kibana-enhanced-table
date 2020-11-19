@@ -930,6 +930,7 @@ function EnhancedTableVisController ($scope, Private, config) {
         // no data to display
         if (totalHits === 0 || firstTable === null) {
           $scope.hasSomeRows = false;
+          $scope.renderComplete();
           return;
         }
 
