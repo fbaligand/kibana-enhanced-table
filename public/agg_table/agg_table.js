@@ -96,7 +96,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
           return;
         }
 
-        self.csv.filename = ($scope.exportTitle || table.title || 'table') + '.csv';
+        self.csv.filename = ($scope.exportTitle || table.title || 'export') + '.csv';
         $scope.rows = table.rows;
         $scope.formattedColumns = table.columns.map(function (col, i) {
           const agg = col.aggConfig;
