@@ -315,6 +315,16 @@
       <input type="number" ng-model="editorState.params.perPage" class="form-control" id="datatableVisualizationPerPage">
     </div>
 
+    <div class="form-group">
+      <label for="datatableVisualizationCsvEncoding">CSV export encoding (<a href="https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings" target="_blank">supported encodings</a>)&nbsp;
+        <icon-tip
+          content="'Define here the content encoding you wish for CSV exports. Default value is &quot;utf-8&quot;.'"
+          position="'right'"
+        ></icon-tip>
+      </label>
+      <input type="text" ng-model="editorState.params.csvEncoding" class="form-control" id="datatableVisualizationCsvEncoding">
+    </div>
+
     <div class="checkbox">
       <label>
         <input type="checkbox" ng-model="editorState.params.hideExportLinks">
