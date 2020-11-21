@@ -68,6 +68,7 @@ function EnhancedTableVisTypeProvider() {
         hideExportLinks: false,
         stripedRows: false,
         addRowNumberColumn: false,
+        csvEncoding: 'utf-8',
         showFilterBar: false,
         filterCaseSensitive: false,
         filterBarHideable: false,

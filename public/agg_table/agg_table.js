@@ -24,6 +24,7 @@ import _ from 'lodash';
 import { uiModules } from 'ui/modules';
 import aggTableTemplate from './agg_table.html';
 import { fieldFormats } from 'ui/registry/field_formats';
+import { encode } from 'iconv-lite';
 
 uiModules
   .get('kibana', ['RecursionHelper'])
@@ -42,6 +43,7 @@ uiModules
         showTotal: '=',
         totalFunc: '=',
         filter: '=',
+        csvEncoding: '='
       },
       controllerAs: 'aggTable',
       compile: function ($el) {
@@ -59,7 +61,12 @@ uiModules
         };
 
         self.exportAsCsv = function (formatted) {
-          const csv = new Blob([self.toCsv(formatted)], { type: 'text/plain;charset=utf-8' });
+          const csvEncoding = $scope.csvEncoding || 'utf-8';
+          let csvContent = self.toCsv(formatted);
+          if (csvEncoding.toLowerCase() !== 'utf-8') {
+            csvContent = encode(csvContent, csvEncoding);
+          }
+          const csv = new Blob([csvContent], { type: 'text/plain;charset=' + csvEncoding });
           self._saveAs(csv, self.csv.filename);
         };
 
