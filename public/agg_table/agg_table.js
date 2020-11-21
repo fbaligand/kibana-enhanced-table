@@ -20,6 +20,7 @@
 import _ from 'lodash';
 import aggTableTemplate from './agg_table.html';
 import { npStart } from 'ui/new_platform';
+import { encode } from 'iconv-lite';
 
 export function KbnEnhancedAggTable(config, RecursionHelper) {
   const fieldFormats = npStart.plugins.data.fieldFormats;
@@ -36,6 +37,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
       showTotal: '=',
       totalFunc: '=',
       filter: '=',
+      csvEncoding: '='
     },
     controllerAs: 'aggTable',
     compile: function ($el) {
@@ -53,7 +55,12 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
       };
 
       self.exportAsCsv = function (formatted) {
-        const csv = new Blob([self.toCsv(formatted)], { type: 'text/plain;charset=utf-8' });
+        const csvEncoding = $scope.csvEncoding || 'utf-8';
+        let csvContent = self.toCsv(formatted);
+        if (csvEncoding.toLowerCase() !== 'utf-8') {
+          csvContent = encode(csvContent, csvEncoding);
+        }
+        const csv = new Blob([csvContent], { type: 'text/plain;charset=' + csvEncoding });
         self._saveAs(csv, self.csv.filename);
       };
 

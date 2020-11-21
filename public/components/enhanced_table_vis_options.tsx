@@ -48,6 +48,7 @@ interface EnhancedTableVisParams {
   hideExportLinks: boolean;
   stripedRows: boolean;
   addRowNumberColumn: boolean;
+  csvEncoding: string;
 
   // Basic Settings
   perPage: number | '';
@@ -289,6 +290,27 @@ function EnhancedTableOptions({
           })}
           paramName="addRowNumberColumn"
           value={stateParams.addRowNumberColumn}
+          setValue={setValue}
+        />
+
+        <TextInputOption
+          label={
+            <>
+              <FormattedMessage
+                id="visTypeEnhancedTable.params.csvEncoding"
+                defaultMessage="CSV export encoding"
+              />
+              &nbsp;(
+              <a href="https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings" target="_blank">supported encodings</a>
+              )&nbsp;
+              <EuiIconTip
+                content="Define here the content encoding you wish for CSV exports. Default value is 'utf-8'."
+                position="right"
+              />
+            </>
+          }
+          paramName="csvEncoding"
+          value={stateParams.csvEncoding}
           setValue={setValue}
         />
 
