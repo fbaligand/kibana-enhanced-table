@@ -31,6 +31,7 @@ export function KbnEnhancedAggTableGroup(RecursionHelper) {
       showTotal: '=',
       totalFunc: '=',
       filter: '=',
+      csvExportWithTotal: '=',
       csvEncoding: '='
     },
     compile: function ($el) {
