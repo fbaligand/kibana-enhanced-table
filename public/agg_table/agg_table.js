@@ -25,6 +25,7 @@ import { uiModules } from 'ui/modules';
 import aggTableTemplate from './agg_table.html';
 import { fieldFormats } from 'ui/registry/field_formats';
 import { encode } from 'iconv-lite';
+import { computeColumnTotal } from '../column_total_computer';
 
 uiModules
   .get('kibana', ['RecursionHelper'])
@@ -43,6 +44,7 @@ uiModules
         showTotal: '=',
         totalFunc: '=',
         filter: '=',
+        csvExportWithTotal: '=',
         csvEncoding: '='
       },
       controllerAs: 'aggTable',
@@ -95,6 +97,13 @@ uiModules
             return escape(col.title);
           }));
 
+          // add total row (if requested)
+          if ($scope.showTotal && $scope.csvExportWithTotal) {
+            csvRows.push(columns.map(function (col) {
+              return col.total !== undefined ? escape(col.total) : '';
+            }));
+          }
+
           return csvRows.map(function (row) {
             return row.join(self.csv.separator) + '\r\n';
           }).join('');
@@ -127,75 +136,20 @@ uiModules
               formattedColumn.class = 'visualize-table-right';
             }
 
-            let isFieldNumeric = false;
-            let isFieldDate = false;
-            const aggType = agg.type;
-            if (aggType && aggType.type === 'metrics') {
-              if (aggType.name === 'top_hits') {
-                if (agg.params.aggregate.value !== 'concat') {
-                // all other aggregate types for top_hits output numbers
-                // so treat this field as numeric
-                  isFieldNumeric = true;
-                }
-              } else if(aggType.name === 'cardinality') {
-                // Unique count aggregations always produce a numeric value
-                isFieldNumeric = true;
-              } else if (field) {
-              // if the metric has a field, check if it is either number or date
-                isFieldNumeric = field.type === 'number';
-                isFieldDate = field.type === 'date';
-              } else {
-              // if there is no field, then it is count or similar so just say number
-                isFieldNumeric = true;
+            if ($scope.showTotal) {
+              if (col.total === undefined) {
+                col.total = computeColumnTotal(i, $scope.totalFunc, table);
               }
-            } else if (field) {
-              isFieldNumeric = field.type === 'number';
-              isFieldDate = field.type === 'date';
-            }
 
-            if (isFieldNumeric || isFieldDate || $scope.totalFunc === 'count') {
-              const sum = function (tableRows) {
-                return _.reduce(tableRows, function (prev, curr) {
-                // some metrics return undefined for some of the values
-                // derivative is an example of this as it returns undefined in the first row
-                  if (curr[i].value === undefined) return prev;
-                  return prev + curr[i].value;
-                }, 0);
-              };
-              const formatter = agg.fieldFormatter('text');
-
-              if (col.totalFormula !== undefined) {
+              if (col.total !== undefined) {
+                const formatter = col.totalFormatter ? col.totalFormatter('text') : ($scope.totalFunc !== 'count' ? agg.fieldFormatter('text') : numberFormatter);
                 formattedColumn.total = formatter(col.total);
               }
-              else {
-                switch ($scope.totalFunc) {
-                case 'sum':
-                  if (!isFieldDate) {
-                    formattedColumn.total = formatter(sum(table.rows));
-                  }
-                  break;
-                case 'avg':
-                  if (!isFieldDate) {
-                    formattedColumn.total = formatter(sum(table.rows) / table.rows.length);
-                  }
-                  break;
-                case 'min':
-                  formattedColumn.total = formatter(_.chain(table.rows).map(i).map('value').min().value());
-                  break;
-                case 'max':
-                  formattedColumn.total = formatter(_.chain(table.rows).map(i).map('value').max().value());
-                  break;
-                case 'count':
-                  formattedColumn.total = numberFormatter(table.rows.length);
-                  break;
-                default:
-                  break;
-                }
-              }
-            }
 
-            if (i === 0 && table.totalLabel !== undefined && table.columns.length > 0 && formattedColumn.total === undefined) {
-              formattedColumn.total = table.totalLabel;
+              if (i === 0 && table.totalLabel !== undefined && table.columns.length > 0 && formattedColumn.total === undefined) {
+                col.total = table.totalLabel;
+                formattedColumn.total = table.totalLabel;
+              }
             }
 
             return formattedColumn;

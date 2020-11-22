@@ -329,6 +329,13 @@
 
     <div class="checkbox">
       <label>
+        <input type="checkbox" ng-model="editorState.params.csvExportWithTotal" ng-disabled="!editorState.params.showTotal">
+        CSV export with total row
+      </label>
+    </div>
+
+    <div class="checkbox">
+      <label>
         <input type="checkbox" ng-model="editorState.params.stripedRows">
         Striped rows
       </label>
