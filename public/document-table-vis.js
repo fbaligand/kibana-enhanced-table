@@ -58,6 +58,7 @@ const tableVisTypeDefinition = {
       computedColumns: [],
       computedColsPerSplitCol: false,
       hideExportLinks: false,
+      csvExportWithTotal: false,
       stripedRows: false,
       addRowNumberColumn: false,
       csvEncoding: 'utf-8',
