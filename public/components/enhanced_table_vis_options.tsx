@@ -45,6 +45,7 @@ export interface EnhancedTableVisParams {
   hiddenColumns: string;
   computedColsPerSplitCol: boolean;
   hideExportLinks: boolean;
+  csvExportWithTotal: boolean;
   stripedRows: boolean;
   addRowNumberColumn: boolean;
   csvEncoding: string;
@@ -272,6 +273,16 @@ function EnhancedTableOptions({
           paramName="hideExportLinks"
           value={stateParams.hideExportLinks}
           setValue={setValue}
+        />
+
+        <SwitchOption
+          label={i18n.translate('visTypeEnhancedTable.params.csvExportWithTotal', {
+            defaultMessage: 'CSV export with total row',
+          })}
+          paramName="csvExportWithTotal"
+          value={stateParams.csvExportWithTotal}
+          setValue={setValue}
+          disabled={!stateParams.showTotal}
         />
 
         <SwitchOption
