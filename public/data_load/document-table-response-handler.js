@@ -20,7 +20,7 @@
 import { get } from 'lodash';
 import AggConfigResult from './agg_config_result';
 
-function createColumn(fieldColumn, index, response, aggConfigs) {
+function createColumn(fieldColumn, index, aggConfigs) {
 
   const aggConfigOptions = {
     id: `${index}`,
@@ -46,7 +46,7 @@ function createColumn(fieldColumn, index, response, aggConfigs) {
 
 const createCell = function (hit, column, parent) {
   let value = get(hit._source, column.aggConfig.fieldName(), null);
-  if (value === null) {
+  if (value === null || column.aggConfig.getField().type !== 'string') {
     if ((column.aggConfig.getField().readFromDocValues || column.aggConfig.getField().scripted) && hit.fields !== undefined) {
       value = get(hit.fields, column.aggConfig.fieldName(), null);
       if (value !== null && value.length === 1) {
@@ -78,7 +78,7 @@ function createTable(response) {
 
   response.fieldColumns.forEach( (fieldColumn, index) => {
     if (fieldColumn.enabled) {
-      const newColumn = createColumn(fieldColumn, index, response, aggConfigs);
+      const newColumn = createColumn(fieldColumn, index, aggConfigs);
       table.columns.push(newColumn);
     }
   });
