@@ -263,6 +263,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       }
       return count;
     };
+    parser.functions.parseDate = function (dateString) {
+      return Date.parse(dateString);
+    };
 
     // parse formula and return final formula object
     try {
