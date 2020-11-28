@@ -259,6 +259,9 @@ function EnhancedTableVisController ($scope, config) {
       }
       return count;
     };
+    parser.functions.parseDate = function (dateString) {
+      return Date.parse(dateString);
+    };
 
     // parse formula and return final formula object
     try {
