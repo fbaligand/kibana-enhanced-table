@@ -757,6 +757,15 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
     }
   };
 
+  const hasRows = function(table) {
+    if (table.tables) {
+      return table.tables.some(hasRows);
+    }
+    else {
+      return table.rows.length > 0;
+    }
+  };
+
   // filter scope methods
   $scope.doFilter = function () {
     $scope.activeFilter = $scope.vis.filterInput;
@@ -824,10 +833,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       }
 
       // check if there are rows to display
-      const hasSomeRows = tableGroups.tables.some(function haveRows(table) {
-        if (table.tables) return table.tables.some(haveRows);
-        return table.rows.length > 0;
-      });
+      const hasSomeRows = hasRows(tableGroups);
 
       // optimize space under table
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
@@ -874,8 +880,8 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       if ($scope.esResponse && !$scope.esResponse.enhanced) {
 
         // init tableGroups
-        $scope.tableGroups = null;
         $scope.hasSomeRows = null;
+        $scope.hasSomeData = null;
         const vis = $scope.vis;
         const params = vis.params;
         const esResponse = $scope.esResponse;
@@ -902,6 +908,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
         // no data to display
         if (totalHits === 0 || firstTable === null) {
           $scope.hasSomeRows = false;
+          $scope.hasSomeData = false;
           $scope.renderComplete();
           return;
         }
@@ -966,6 +973,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
             }
           });
         }
+
+        // compute if there is some data before filtering
+        $scope.hasSomeData = hasRows(tableGroups);
 
         // process filter bar
         processFilterBarAndRefreshTable();
