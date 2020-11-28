@@ -752,6 +752,15 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
   };
 
+  const hasRows = function(table) {
+    if (table.tables) {
+      return table.tables.some(hasRows);
+    }
+    else {
+      return table.rows.length > 0;
+    }
+  };
+
   // filter scope methods
   $scope.doFilter = function () {
     $scope.activeFilter = $scope.vis.filterInput;
@@ -818,10 +827,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       }
 
       // check if there are rows to display
-      const hasSomeRows = tableGroups.tables.some(function haveRows(table) {
-        if (table.tables) return table.tables.some(haveRows);
-        return table.rows.length > 0;
-      });
+      const hasSomeRows = hasRows(tableGroups);
 
       // optimize space under table
       const showPagination = hasSomeRows && params.perPage && shouldShowPagination(tableGroups.tables, params.perPage);
@@ -868,10 +874,11 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       if ($scope.esResponse && !$scope.esResponse.enhanced) {
 
         // init tableGroups
-        $scope.tableGroups = null;
         $scope.hasSomeRows = null;
-        let tableGroups = $scope.esResponse;
-        const totalHits = tableGroups.totalHits;
+        $scope.hasSomeData = null;
+        $scope.tableGroups = null;
+        const tableGroups = $scope.esResponse;
+        const totalHits = $scope.vis.searchSource.rawResponse.hits.total;
         tableGroups.enhanced = true;
         const params = $scope.vis.params;
 
@@ -889,6 +896,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         // no data to display
         if (totalHits === 0 || firstTable === null) {
           $scope.hasSomeRows = false;
+          $scope.hasSomeData = false;
           $scope.renderComplete();
           return;
         }
@@ -953,6 +961,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
             }
           });
         }
+
+        // compute if there is some data before filtering
+        $scope.hasSomeData = hasRows(tableGroups);
 
         // process filter bar
         processFilterBarAndRefreshTable();
