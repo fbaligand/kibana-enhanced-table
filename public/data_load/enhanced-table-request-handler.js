@@ -38,8 +38,9 @@ export async function enhancedTableRequestHandler ({
 }) {
 
   // set hits size
+  const MAX_HITS_SIZE = 10000;
   const searchSourceBody = searchSource.getFields();
-  const hitsSize = (visParams.hitsSize !== undefined ? visParams.hitsSize : 0);
+  let hitsSize = (visParams.hitsSize !== undefined ? Math.min(visParams.hitsSize, MAX_HITS_SIZE) : 0);
   searchSourceBody.size = hitsSize;
 
   // specific request params for "field columns"
@@ -69,6 +70,9 @@ export async function enhancedTableRequestHandler ({
         order: visParams.sortOrder
       }
     }];
+    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) {
+      searchSourceBody.sort.push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
+    }
   }
 
   // add 'count' metric if there is no input column
@@ -89,7 +93,7 @@ export async function enhancedTableRequestHandler ({
   inspectorAdapters.data = new DataAdapter();
 
   // execute elasticsearch query
-  const response = await handleCourierRequest({
+  const request = {
     searchSource,
     aggs,
     timeRange,
@@ -100,13 +104,34 @@ export async function enhancedTableRequestHandler ({
     metricsAtAllLevels,
     inspectorAdapters,
     queryFilter
-  });
+  };
+  const response = await handleCourierRequest(request);
 
   // enrich elasticsearch response and return it
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
+  response.aggs = aggs;
+
+  // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
     response.fieldColumns = visParams.fieldColumns;
     response.hits = _.get(searchSource, 'finalResponse.hits.hits', []);
+
+    // continue requests until expected hits size is reached
+    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE && response.totalHits > MAX_HITS_SIZE) {
+      let remainingSize = visParams.hitsSize;
+      do {
+        remainingSize -= hitsSize;
+        const searchAfter = response.hits[response.hits.length - 1].sort;
+        hitsSize = Math.min(remainingSize, MAX_HITS_SIZE);
+        searchSource.setField('size', hitsSize);
+        searchSource.setField('searchAfter', searchAfter);
+        await handleCourierRequest(request);
+        const nextResponseHits = _.get(searchSource, 'finalResponse.hits.hits', []);
+        for (let i = 0; i < nextResponseHits.length; i++) {
+          response.hits.push(nextResponseHits[i]);
+        }
+      } while (remainingSize > hitsSize);
+    }
   }
   return response;
 }
