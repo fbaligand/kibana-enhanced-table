@@ -40,11 +40,12 @@ export async function enhancedTableRequestHandler ({
   const { filterManager } = getQueryService();
   const searchService = getSearchService();
   const aggs = searchService.aggs.createAggConfigs(index, aggConfigsState);
+  const MAX_HITS_SIZE = 10000;
 
   // create search source with query parameters
   const searchSource = new SearchSource();
   searchSource.setField('index', aggs.indexPattern);
-  const hitsSize = (visParams.hitsSize !== undefined ? visParams.hitsSize : 0);
+  let hitsSize = (visParams.hitsSize !== undefined ? Math.min(visParams.hitsSize, MAX_HITS_SIZE) : 0);
   searchSource.setField('size', hitsSize);
 
   // specific request params for "field columns"
@@ -71,6 +72,9 @@ export async function enhancedTableRequestHandler ({
         order: visParams.sortOrder
       }
     }]);
+    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) {
+      searchSource.getField('sort').push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
+    }
   }
 
   // add 'count' metric if there is no input column
@@ -88,7 +92,7 @@ export async function enhancedTableRequestHandler ({
   inspectorAdapters.data = new DataAdapter();
 
   // execute elasticsearch query
-  const response = await handleCourierRequest({
+  const request = {
     searchSource,
     aggs,
     timeRange,
@@ -99,7 +103,8 @@ export async function enhancedTableRequestHandler ({
     partialRows,
     inspectorAdapters,
     filterManager
-  });
+  };
+  const response = await handleCourierRequest(request);
 
   // set 'split tables' direction
   const splitAggs = aggs.bySchemaName('split');
@@ -116,6 +121,23 @@ export async function enhancedTableRequestHandler ({
   if (visParams.fieldColumns !== undefined) {
     response.fieldColumns = visParams.fieldColumns;
     response.hits = _.get(searchSource, 'finalResponse.hits.hits', []);
+
+    // continue requests until expected hits size is reached
+    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE && response.totalHits > MAX_HITS_SIZE) {
+      let remainingSize = visParams.hitsSize;
+      do {
+        remainingSize -= hitsSize;
+        const searchAfter = response.hits[response.hits.length - 1].sort;
+        hitsSize = Math.min(remainingSize, MAX_HITS_SIZE);
+        searchSource.setField('size', hitsSize);
+        searchSource.setField('search_after', searchAfter);
+        await handleCourierRequest(request);
+        const nextResponseHits = _.get(searchSource, 'finalResponse.hits.hits', []);
+        for (let i = 0; i < nextResponseHits.length; i++) {
+          response.hits.push(nextResponseHits[i]);
+        }
+      } while (remainingSize > hitsSize);
+    }
   }
   return response;
 }
