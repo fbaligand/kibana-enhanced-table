@@ -392,6 +392,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
       template: createTemplate(computedColumn, splitColIndex, columns, totalFunc)
     };
 
+    if (newColumn.aggConfig.schema === undefined) {
+      newColumn.aggConfig.schema = { group: `${aggSchema}s`, name: aggSchema };
+    }
+
     // check that computed column formula is defined
     if (newColumn.formula === undefined) {
       throw new EnhancedTableError(`Computed column 'Formula' is required`);
