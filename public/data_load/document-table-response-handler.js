@@ -36,7 +36,7 @@ function createColumn(fieldColumn, index, aggConfigs) {
   const columnTitle = fieldColumn.label ? fieldColumn.label : fieldColumn.field.name;
   const newColumn = {
     id: `col-${index}`,
-    aggConfig: aggConfigs.createAggConfig(aggConfigOptions),
+    aggConfig: aggConfigs.createAggConfig(aggConfigOptions, { addToAggConfigs: false }),
     name: columnTitle,
     title: columnTitle
   };
