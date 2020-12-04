@@ -389,7 +389,7 @@ function EnhancedTableVisController ($scope, config) {
     // create new column object
     const newColumn = {
       id: `computed-col-${index}`,
-      aggConfig: aggs.createAggConfig({ schema: aggSchema, type: aggType }),
+      aggConfig: aggs.createAggConfig({ schema: aggSchema, type: aggType }, { addToAggConfigs: false }),
       title: computedColumn.label,
       fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
       dataAlignmentClass: `text-${computedColumn.alignment}`,
@@ -402,9 +402,6 @@ function EnhancedTableVisController ($scope, config) {
     if (newColumn.formula === undefined) {
       throw new EnhancedTableError(`Computed column 'Formula' is required`);
     }
-
-    // remove the created AggConfig from real aggs
-    aggs.aggs.pop();
 
     // define aggConfig identifiers
     newColumn.aggConfig.id = `1.computed-column-${index}`;
@@ -769,7 +766,7 @@ function EnhancedTableVisController ($scope, config) {
       const fieldFormat = fieldFormats.getInstance('number');
       const newColumn = {
         id: 'add-row-numbers-col',
-        aggConfig: aggs.createAggConfig({ schema: 'bucket', type: 'filter' }),
+        aggConfig: aggs.createAggConfig({ schema: 'bucket', type: 'filter' }, { addToAggConfigs: false }),
         title: '#',
         fieldFormatter: fieldFormat,
         dataAlignmentClass: 'text-left'
