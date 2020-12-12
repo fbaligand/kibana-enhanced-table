@@ -59,13 +59,20 @@ AggConfigResult.prototype.createFilter = function () {
 };
 
 AggConfigResult.prototype.toString = function (contentType) {
-  const parsedUrl = {
-    origin: window.location.origin,
-    pathname: window.location.pathname,
-    basePath: computeBasePath(window.location.pathname),
-  };
-  const options = { parsedUrl };
-  return this.aggConfig.fieldFormatter(contentType)(this.value, options);
+  contentType = contentType || 'text';
+  let fieldFormatterInstance = this.aggConfig[`${contentType}FieldFormatter`];
+  if (!fieldFormatterInstance) {
+    fieldFormatterInstance = this.aggConfig[`${contentType}FieldFormatter`] = this.aggConfig.fieldFormatter(contentType);
+  }
+  if (!this.aggConfig.formatterOptions) {
+    const parsedUrl = {
+      origin: window.location.origin,
+      pathname: window.location.pathname,
+      basePath: computeBasePath(window.location.pathname),
+    };
+    this.aggConfig.formatterOptions = { parsedUrl };
+  }
+  return fieldFormatterInstance(this.value, this.aggConfig.formatterOptions);
 };
 
 AggConfigResult.prototype.valueOf = function () {
