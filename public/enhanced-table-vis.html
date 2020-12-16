@@ -41,8 +41,11 @@
       sort="sort"
       show-total="visState.params.showTotal"
       total-func="visState.params.totalFunc"
-      csv-export-with-total="visState.params.csvExportWithTotal"
-      csv-encoding="visState.params.csvEncoding">
+      csv-export-with-total="visState.params.csvExportWithTotal && visState.params.showTotal"
+      csv-full-export="visState.params.csvFullExport && visState.params.computedColumns.length === 0 && !visState.params.linesComputedFilter && !visState.params.hiddenColumns && !visState.params.csvExportWithTotal && !visState.params.addRowNumberColumn"
+      csv-encoding="visState.params.csvEncoding || 'utf-8'"
+      field-columns="visState.params.fieldColumns">
+
     </kbn-enhanced-agg-table-group>
   </div>
 </div>

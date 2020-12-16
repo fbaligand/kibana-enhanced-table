@@ -47,6 +47,7 @@ interface EnhancedTableVisParams {
   computedColsPerSplitCol: boolean;
   hideExportLinks: boolean;
   csvExportWithTotal: boolean;
+  csvFullExport: boolean;
   stripedRows: boolean;
   addRowNumberColumn: boolean;
   csvEncoding: string;
@@ -269,7 +270,7 @@ function EnhancedTableOptions({
 
         <SwitchOption
           label={i18n.translate('visTypeEnhancedTable.params.hideExportLinks', {
-            defaultMessage: 'Hide export links',
+            defaultMessage: 'Hide CSV export links',
           })}
           paramName="hideExportLinks"
           value={stateParams.hideExportLinks}
@@ -285,6 +286,21 @@ function EnhancedTableOptions({
           setValue={setValue}
           disabled={!stateParams.showTotal}
         />
+
+        { stateParams.fieldColumns &&
+          <SwitchOption
+            label={i18n.translate('visTypeEnhancedTable.params.csvFullExport', {
+              defaultMessage: 'Full CSV export',
+            })}
+            icontip={i18n.translate('visTypeEnhancedTable.params.csvFullExportTooltip', {
+              defaultMessage: 'If enabled, CSV export will download all data stored in Elasticsearch (not only displayed documents in table). This option is not compatible with \'Computed columns\', \'Rows computed filter\', \'Hidden columns\', \'CSV export with total row\' and \'Add row number column\' options.',
+            })}
+            paramName="csvFullExport"
+            value={stateParams.csvFullExport}
+            setValue={setValue}
+            disabled={stateParams.computedColumns.length > 0 || !!stateParams.linesComputedFilter || !!stateParams.hiddenColumns || stateParams.csvExportWithTotal || stateParams.addRowNumberColumn}
+            />
+        }
 
         <SwitchOption
           label={i18n.translate('visTypeEnhancedTable.params.stripedRows', {

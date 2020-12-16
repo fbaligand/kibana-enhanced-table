@@ -55,6 +55,7 @@ export function documentTableVisTypeDefinition (core, context) {
         computedColsPerSplitCol: false,
         hideExportLinks: false,
         csvExportWithTotal: false,
+        csvFullExport: false,
         stripedRows: false,
         addRowNumberColumn: false,
         csvEncoding: 'utf-8',
