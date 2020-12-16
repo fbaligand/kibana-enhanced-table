@@ -32,7 +32,9 @@ export function KbnEnhancedAggTableGroup(RecursionHelper) {
       totalFunc: '=',
       filter: '=',
       csvExportWithTotal: '=',
-      csvEncoding: '='
+      csvFullExport: '=',
+      csvEncoding: '=',
+      fieldColumns: '='
     },
     compile: function ($el) {
     // Use the compile function from the RecursionHelper,

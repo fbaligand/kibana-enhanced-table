@@ -72,7 +72,7 @@ export async function enhancedTableRequestHandler ({
         order: visParams.sortOrder
       }
     }]);
-    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) {
+    if ((visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) || visParams.csvFullExport) {
       searchSource.getField('sort').push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
     }
   }
@@ -112,12 +112,14 @@ export async function enhancedTableRequestHandler ({
     splitAggs[0].params.row = visParams.row;
   }
 
-  // enrich elasticsearch response and return it
+  // enrich response: total & aggs
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
   response.aggs = aggs;
   response.columns.forEach(column => {
     column.meta = serializeAggConfig(column.aggConfig);
   });
+
+  // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
     response.fieldColumns = visParams.fieldColumns;
     response.hits = _.get(searchSource, 'finalResponse.hits.hits', []);
@@ -138,6 +140,13 @@ export async function enhancedTableRequestHandler ({
         }
       } while (remainingSize > hitsSize);
     }
+
+    // put request on response, if full csv download is enabled
+    if (visParams.csvFullExport) {
+      response.request = request;
+    }
   }
+
+  // return elasticsearch response
   return response;
 }
