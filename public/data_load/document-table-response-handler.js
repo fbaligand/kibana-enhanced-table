@@ -64,7 +64,7 @@ const createCell = function (hit, column, parent) {
   return newCell;
 };
 
-function createRow(hit, response, columns) {
+function createRow(hit, columns) {
   const newRow = [];
   columns.forEach( (column, i) => {
     newRow[i] = createCell(hit, column, newRow.length > 0 && newRow[newRow.length-1]);
@@ -73,8 +73,8 @@ function createRow(hit, response, columns) {
   return newRow;
 }
 
-function createTable(response) {
-  const table = { columns: [], rows: [] };
+export function createTable(response) {
+  const table = { columns: [], rows: [], request: response.request };
 
   const aggConfigs = response.aggs;
   aggConfigs.aggs = [];
@@ -87,7 +87,7 @@ function createTable(response) {
   });
 
   response.hits.forEach( hit => {
-    const newRow = createRow(hit, response, table.columns);
+    const newRow = createRow(hit, table.columns);
     table.rows.push(newRow);
   });
 

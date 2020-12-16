@@ -18,12 +18,16 @@
  */
 
 import _ from 'lodash';
+import { encode } from 'iconv-lite';
+
 import { CSV_SEPARATOR_SETTING, CSV_QUOTE_VALUES_SETTING } from '../../../../src/plugins/share/public';
+
 import aggTableTemplate from './agg_table.html';
 import { getFormatService } from '../services';
-import { fieldFormatter } from '../field_formatter';
-import { encode } from 'iconv-lite';
-import { computeColumnTotal } from '../column_total_computer';
+import { fieldFormatter } from '../field_formatter';import { computeColumnTotal } from '../column_total_computer';
+import { handleCourierRequest } from '../data_load/kibana_cloned_code/courier';
+import { createTable } from '../data_load/document-table-response-handler';
+import { streamSaver } from './stream_saver';
 
 export function KbnEnhancedAggTable(config, RecursionHelper) {
   const fieldFormats = getFormatService();
@@ -41,7 +45,9 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
       totalFunc: '=',
       filter: '=',
       csvExportWithTotal: '=',
-      csvEncoding: '='
+      csvFullExport: '=',
+      csvEncoding: '=',
+      fieldColumns: '='
     },
     controllerAs: 'aggTable',
     compile: function ($el) {
@@ -55,22 +61,75 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
       self._saveAs = require('@elastic/filesaver').saveAs;
       self.csv = {
         separator: config.get(CSV_SEPARATOR_SETTING),
-        quoteValues: config.get(CSV_QUOTE_VALUES_SETTING)
+        quoteValues: config.get(CSV_QUOTE_VALUES_SETTING),
+        maxHitsSize: 10000
       };
 
-      self.exportAsCsv = function (formatted) {
-        const csvEncoding = $scope.csvEncoding || 'utf-8';
-        let csvContent = self.toCsv(formatted);
-        if (csvEncoding.toLowerCase() !== 'utf-8') {
-          csvContent = encode(csvContent, csvEncoding);
+      self.exportAsCsv = async function (formatted) {
+        const table = $scope.table;
+
+        if ($scope.csvFullExport && self.csv.totalHits === undefined) {
+          self.csv.totalHits = _.get(table.request.searchSource, 'finalResponse.hits.total', -1);
         }
-        const csv = new Blob([csvContent], { type: 'text/plain;charset=' + csvEncoding });
-        self._saveAs(csv, self.csv.filename);
+
+        if ($scope.csvFullExport && self.csv.totalHits > table.rows.length) {
+          self.exportFullAsCsv(formatted, table.request);
+        }
+        else {
+          const csvContent = self.toCsv(table, formatted, true);
+          const csvBlob = new Blob([csvContent], { type: 'text/plain;charset=' + $scope.csvEncoding });
+          self._saveAs(csvBlob, self.csv.filename);
+        }
       };
 
-      self.toCsv = function (formatted) {
-        const rows = $scope.table.rows;
-        const columns = formatted ? $scope.formattedColumns : $scope.table.columns;
+      self.exportFullAsCsv = async function (formatted, request) {
+
+        // store initial table last sort value
+        if (self.csv.lastSortValue === undefined) {
+          const initialHits = _.get(request.searchSource, 'finalResponse.hits.hits', []);
+          self.csv.lastSortValue = initialHits[initialHits.length - 1].sort;
+        }
+
+        // write rendered table
+        let csvBuffer = self.toCsv($scope.table, formatted, true);
+        const fileStream = streamSaver.createWriteStream(self.csv.filename, { size: csvBuffer.byteLength * self.csv.totalHits / $scope.table.rows.length });
+        const fileWriter = fileStream.getWriter();
+        fileWriter.write(csvBuffer);
+
+        // abort download if browser tab is closed
+        window.onunload = () => {
+          fileStream.abort();
+        };
+
+        // query and store next hits
+        let remainingSize = self.csv.totalHits - $scope.table.rows.length;
+        let searchAfter = self.csv.lastSortValue;
+        do {
+          let hitsSize = Math.min(remainingSize, self.csv.maxHitsSize);
+          request.searchSource.setField('size', hitsSize);
+          request.searchSource.setField('search_after', searchAfter);
+          const response = await handleCourierRequest(request);
+          response.aggs = request.aggs;
+          response.hits = _.get(request.searchSource, 'finalResponse.hits.hits', []);
+          response.fieldColumns = $scope.fieldColumns;
+          const table = createTable(response);
+          csvBuffer = self.toCsv(table, formatted, false);
+          try {
+            fileWriter.write(csvBuffer);
+          }
+          catch (e) {
+            fileWriter.abort();
+          }
+          remainingSize -= hitsSize;
+          searchAfter = response.hits.length > 0 && response.hits[response.hits.length - 1].sort;
+        } while (remainingSize > 0);
+
+        fileWriter.close();
+    };
+
+      self.toCsv = function (table, formatted, addHeaderColumns) {
+        const rows = table.rows;
+        const columns = formatted ? $scope.formattedColumns : table.columns;
         const nonAlphaNumRE = /[^a-zA-Z0-9]/;
         const allDoubleQuoteRE = /"/g;
 
@@ -88,21 +147,29 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
           return row.map(escape);
         });
 
-        // add the columns to the rows
-        csvRows.unshift(columns.map(function (col) {
-          return escape(col.title);
-        }));
+        // add column headers
+        if (addHeaderColumns) {
+          csvRows.unshift(columns.map(function (col) {
+            return escape(col.title);
+          }));
+        }
 
         // add total row (if requested)
-        if ($scope.showTotal && $scope.csvExportWithTotal) {
+        if ($scope.csvExportWithTotal) {
           csvRows.push(columns.map(function (col) {
             return col.total !== undefined ? escape(col.total) : '';
           }));
         }
 
-        return csvRows.map(function (row) {
+        let csvContent = csvRows.map(function (row) {
           return row.join(self.csv.separator) + '\r\n';
         }).join('');
+
+        // encode csv
+          const csvBuffer = encode(csvContent, $scope.csvEncoding);
+
+        // return csv content as a Buffer
+          return csvBuffer;
       };
 
       $scope.$watch('table', function () {
