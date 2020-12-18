@@ -33,7 +33,7 @@ interface DocumentTableVisDataParams {
 
   fieldColumns?: any[];
 
-  hitsSize: number;
+  hitsSize: number | '';
   sortField: any;
   sortOrder: string;
 }
