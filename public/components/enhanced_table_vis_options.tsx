@@ -88,6 +88,7 @@ function addComputedColumn(computedColumns, setComputedColumns) {
     applyTemplateOnTotal: true,
     template: '{{value}}',
     cellComputedCss: '',
+    customColumnPosition: '',
     enabled: true,
     brandNew: true
   };
