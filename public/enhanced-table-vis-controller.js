@@ -382,7 +382,17 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // check that computed column formula is defined
     if (newColumn.formula === undefined) {
-      throw new EnhancedTableError(`Computed column 'Formula' is required`);
+      throw new EnhancedTableError(`'Formula' is required, in computed column: ${computedColumn.label}`);
+    }
+
+    // check that customColumnPosition is valid
+    if (computedColumn.customColumnPosition || computedColumn.customColumnPosition === 0) {
+      if (typeof computedColumn.customColumnPosition !== 'number') {
+        throw new EnhancedTableError(`'Custom column position' must be a number, in computed column: ${computedColumn.formula}`);
+      }
+      if (computedColumn.customColumnPosition < 0 || computedColumn.customColumnPosition > columns.length) {
+        throw new EnhancedTableError(`'Custom column position' must be between 0 and ${columns.length}, in computed column: ${computedColumn.formula}`);
+      }
     }
 
     // if computed column formula is just a simple column reference (ex: col0), then copy its aggConfig to get filtering feature
@@ -458,19 +468,29 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     return newCell;
   };
 
-  const addComputedColumnToTables = function (tables, index, newColumn, totalHits) {
+  const addComputedColumnToTables = function (tables, newColumn, customColumnPosition, totalHits) {
     _.forEach(tables, function (table) {
       if (table.tables) {
-        addComputedColumnToTables(table.tables, index, newColumn, totalHits);
+        addComputedColumnToTables(table.tables, newColumn, customColumnPosition, totalHits);
         return;
       }
 
       // add new computed column and its cells
       newColumn = _.clone(newColumn);
-      table.columns.push(newColumn);
+      if (customColumnPosition || customColumnPosition === 0) {
+        table.columns.splice(customColumnPosition, 0, newColumn);
+      }
+      else {
+        table.columns.push(newColumn);
+      }
       _.forEach(table.rows, function (row) {
         const newCell = createComputedCell(newColumn, row, totalHits, table);
-        row.push(newCell);
+        if (customColumnPosition || customColumnPosition === 0) {
+          row.splice(customColumnPosition, 0, newCell);
+        }
+        else {
+          row.push(newCell);
+        }
       });
 
       // compute total if totalFormula is present
@@ -906,8 +926,8 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         // add computed columns
         _.forEach(params.computedColumns, function (computedColumn, index) {
           if (computedColumn.enabled) {
-            let newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc);
-            addComputedColumnToTables(tableGroups.tables, index, newColumn, totalHits);
+            const newColumn = createColumn(computedColumn, index, totalHits, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc);
+            addComputedColumnToTables(tableGroups.tables, newColumn, computedColumn.customColumnPosition, totalHits);
           }
         });
 
