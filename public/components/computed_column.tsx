@@ -23,7 +23,7 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n/react';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
 
-import { SelectOption } from '../../../../src/plugins/charts/public';
+import { NumberInputOption, SelectOption } from '../../../../src/plugins/charts/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 
@@ -42,6 +42,7 @@ export interface ComputedColumn {
   applyTemplateOnTotal: boolean;
   template: string;
   cellComputedCss: string;
+  customColumnPosition: number | '' | undefined;
   enabled: boolean;
   brandNew?: boolean;
 }
@@ -220,6 +221,7 @@ function ComputedColumnEditor({
   const showDescription = !isEditorOpen && validState;
   const showError = !isEditorOpen && !validState;
   const isFormulaValid = computedColumn.formula !== '';
+  const isCustomColumnPositionValid = (computedColumn.customColumnPosition === undefined || computedColumn.customColumnPosition === '' || computedColumn.customColumnPosition >= 0);
 
   if (computedColumn.brandNew) {
     computedColumn.brandNew = undefined;
@@ -239,9 +241,9 @@ function ComputedColumnEditor({
   );
 
   useEffect(() => {
-    setValidity(isFormulaValid);
-    setValidState(isFormulaValid);
-  }, [isFormulaValid, setValidity, setValidState]);
+    setValidity(isFormulaValid, isCustomColumnPositionValid);
+    setValidState(isFormulaValid && isCustomColumnPositionValid);
+  }, [isFormulaValid, isCustomColumnPositionValid, setValidity, setValidState]);
 
   return (
     <>
@@ -442,6 +444,26 @@ function ComputedColumnEditor({
                 placeholder="value < 0 ? &quot;background-color: red&quot; : &quot;&quot;"
                 paramName="cellComputedCss"
                 value={computedColumn.cellComputedCss}
+                setValue={setValue}
+              />
+
+              <NumberInputOption
+                label={
+                  <>
+                    <FormattedMessage
+                      id="visTypeEnhancedTable.params.computedColumns.customColumnPosition"
+                      defaultMessage="Custom column position"
+                    />{' '}
+                    <EuiIconTip
+                      content="You can change here the computed column target position to a previous position. For example, '0' will move this column at first position. Despite 'target' column position, formula can reference any previous column to the 'declared' column position, including classic and computed columns."
+                      position="right"
+                    />
+                  </>
+                }
+                isInvalid={!isCustomColumnPositionValid}
+                min={0}
+                paramName="customColumnPosition"
+                value={computedColumn.customColumnPosition}
                 setValue={setValue}
               />
 
