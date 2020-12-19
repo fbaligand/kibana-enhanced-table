@@ -177,6 +177,15 @@
                 </label>
                 <input type="text" ng-model="computedColumn.cellComputedCss" class="form-control" placeholder="value &lt; 0 ? &quot;background-color: red&quot; : &quot;&quot;" />
               </div>
+              <div class="form-group">
+                <label>Custom column position&nbsp;
+                  <icon-tip
+                    content="'You can change here the computed column target position to a previous position. For example, &quot;0&quot; will move this column at first position. Despite &quot;target&quot; column position, formula can reference any previous column to the &quot;declared&quot; column position, including classic and computed columns.'"
+                    position="'right'"
+                  ></icon-tip>
+                </label>
+                <input type="number" ng-model="computedColumn.customColumnPosition" class="form-control" />
+              </div>
           </div>
       </div>
     </div>
