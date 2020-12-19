@@ -62,6 +62,7 @@ uiModules.get('kibana/enhanced-table')
             applyTemplate: false,
             applyTemplateOnTotal: true,
             template: '{{value}}',
+            customColumnPosition: '',
             enabled: true
           });
         };
