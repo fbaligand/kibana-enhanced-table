@@ -42,6 +42,7 @@ export async function enhancedTableRequestHandler ({
   const searchSourceBody = searchSource.getFields();
   let hitsSize = (visParams.hitsSize !== undefined ? Math.min(visParams.hitsSize, MAX_HITS_SIZE) : 0);
   searchSourceBody.size = hitsSize;
+  searchSourceBody.searchAfter = undefined;
 
   // specific request params for "field columns"
   if (visParams.fieldColumns !== undefined) {
@@ -107,17 +108,14 @@ export async function enhancedTableRequestHandler ({
   };
   const response = await handleCourierRequest(request);
 
-  // enrich elasticsearch response and return it
-  response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
-  response.aggs = aggs;
-
   // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
     response.fieldColumns = visParams.fieldColumns;
     response.hits = _.get(searchSource, 'finalResponse.hits.hits', []);
 
     // continue requests until expected hits size is reached
-    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE && response.totalHits > MAX_HITS_SIZE) {
+    const totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
+    if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE && totalHits > MAX_HITS_SIZE) {
       let remainingSize = visParams.hitsSize;
       do {
         remainingSize -= hitsSize;

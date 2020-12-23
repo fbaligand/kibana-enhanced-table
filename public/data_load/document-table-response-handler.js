@@ -78,7 +78,7 @@ function createRow(hit, response, table) {
 function createTable(response) {
   const table = { columns: [], rows: [] };
 
-  const aggConfigs = response.aggs;
+  const aggConfigs = response.columns[0].aggConfig.aggConfigs;
   aggConfigs.aggs = [];
 
   response.fieldColumns.forEach( (fieldColumn, index) => {
@@ -97,5 +97,5 @@ function createTable(response) {
 }
 
 export function documentTableResponseHandler(response) {
-  return { tables: [ createTable(response) ], totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
+  return { tables: [ createTable(response) ] };
 }
