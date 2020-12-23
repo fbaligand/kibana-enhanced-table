@@ -12,7 +12,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Support for numeric columns (ex: `col0 + col1` or `col[0] + col[1]`)
   - Support for string columns, including HTML (ex: `col0 > 0 ? 'OK' : 'KO'`)
   - Support for date columns
-  - Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
+  - Ability to reference total hits count matched by Elasticsearch query (ex: `col0 / total * 100` or `col0 / totalHits * 100`)
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
   - Ability to reference a column total (ex: `col['Sales by month'] / total['Sales by month']`)
   - Ability to define/reference arrays, do variable assignment and define custom functions in expressions
@@ -99,7 +99,9 @@ This is the common documentation for all computed settings:
 - Computed Column Formula
 - Rows Computed Filter
 
-Available features are:
+
+### Available features
+
 - Support for [expr-eval](https://github.com/silentmatt/expr-eval#expression-syntax) expressions
 - Support for features brought by expr-eval 2.0:
   - Ability to reference arrays. Especially useful to reference a 'Top Hits' metric column: `col1[0]`
@@ -107,17 +109,57 @@ Available features are:
   - Variable assignment: `x = 4`
   - Custom function definitions: `myfunction(x, y) = x * y`
   - Evaluate multiple expressions by separating them with `;`
-- Ability to reference total hits count returned by ES query (ex: `col0 / total * 100`)
-- Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
-- Column reference validation (by number or label), with error notification
 - Formula validation, with error notification
-- Support for pre-defined functions provided by [expr-eval](https://github.com/silentmatt/expr-eval#pre-defined-functions)
+
+
+### Available variables
+
+- `col0, col1, ..., colN`: value of a previous column, referenced by its index (0-based index)
+- `col['COLUMN_LABEL']`: value of a previous column, referenced by its label
+- `total0, total1, ..., totalN`: total of a previous column, referenced by its index (0-based index)
+- `total['COLUMN_LABEL']`: total of a previous column, referenced by its label
+- `total`, `totalHits`: total hits count matched by Elasticsearch query (given search bar & filter bar)
+- `value`: value of current computed column (only available in "Cell computed CSS" feature)
+- `timeRange`: informations about current time range, selected in Kibana time picker
+  - `duration`: object containing time range duration, in different units
+    - `years`: years count in time range (rounded up to the nearest whole number)
+    - `months`: months count in time range (rounded up to the nearest whole number)
+    - `weeks`: weeks count in time range (rounded up to the nearest whole number)
+    - `days`: days count in time range (rounded up to the nearest whole number)
+    - `hours`: hours count in time range (rounded up to the nearest whole number)
+    - `minutes`: minutes count in time range (rounded up to the nearest whole number)
+    - `seconds`: seconds count in time range (rounded up to the nearest whole number)
+    - `milliseconds`: milliseconds count in time range
+  - `from` / `to`: object containing all informations on `from` and `to` dates of current time range
+    - `fullYear`: result of [Date.getFullYear()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getFullYear)
+    - `month`: result of [Date.getMonth()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMonth)
+    - `date`: result of [Date.getDate()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDate)
+    - `day`: result of [Date.getDay()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay)
+    - `hours`: result of [Date.getHours()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getHours)
+    - `minutes`: result of [Date.getMinutes()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMinutes)
+    - `seconds`: result of [Date.getSeconds()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getSeconds)
+    - `milliseconds`: result of [Date.getMilliseconds()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMilliseconds)
+    - `time`: result of [Date.getTime()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)
+    - `timezoneOffset`: result of [Date.getTimezoneOffset()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+    - `dateString`: result of [Date.toDateString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toDateString)
+    - `isoString`: result of [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+    - `localeDateString`: result of [Date.toLocaleDateString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString)
+    - `localeString`: result of [Date.toLocaleString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString)
+    - `localeTimeString`: result of [Date.toLocaleTimeString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleTimeString)
+    - `string`: result of [Date.toString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString)
+    - `timeString`: result of [Date.toTimeString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toTimeString)
+    - `utcString`: result of [Date.toUTCString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString)
+
+
+### Available functions
+
+- All pre-defined functions provided by [expr-eval](https://github.com/silentmatt/expr-eval#pre-defined-functions)
 - Additional custom functions listed in table below (ex: `col['Expiration Date'] > now() ? 'OK' : 'KO'`)
 
 Function     | Description
 :----------- | :----------
 col(colRef, defaultValue)  | Returns column value referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
-countSplitCols  | Returns the count of all split columns (only if 'Split cols' bucket is used).
+countSplitCols()  | Returns the count of all split columns (only if 'Split cols' bucket is used).
 [encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component.
 [indexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf)  | Returns the index within the calling String or Array object of the first occurrence of the specified value, starting the search at fromIndex. Returns -1 if the value is not found.
 [isArray(value)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray)  | Determines whether the passed value is an Array.
@@ -129,9 +171,10 @@ countSplitCols  | Returns the count of all split columns (only if 'Split cols' b
 [search(str, regexp)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search)   | Executes a search for a match between a regular expression on 'str' String. Returns the index of the first match or -1 if not found.
 [sort(array\[, compareFunction\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)   | Sorts the elements of an array in place and returns the sorted array. A compare function can be provided to customize the sort order. Example for an array of numbers: `comparator(a, b) = a - b; sort(col0, comparator)`
 [substring(str, indexStart\[, indexEnd\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring)   | Returns the part of the string between the start and end indexes, or to the end of the string (if no index end is provided).
-sumSplitCols   | Returns the sum of all split column values (only if 'Split cols' bucket is used).
+sumSplitCols()   | Returns the sum of all split column values (only if 'Split cols' bucket is used).
 [toLowerCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase)   | Returns the calling string value converted to lowercase.
 [toUpperCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toUpperCase)   | Returns the calling string value converted to uppercase.
+total(colRef, defaultValue)  | Returns column total referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
 [trim(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim)   | Removes whitespace from both ends of a string.
 [uniq(array)](https://lodash.com/docs/3.10.1#uniq)   | Removes duplicates from provided array so that array contains only unique values.
 
