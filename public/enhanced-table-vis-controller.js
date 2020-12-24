@@ -46,7 +46,7 @@ function EnhancedTableVisController ($scope, config) {
   const createTemplateContext = function (table, column, row, totalHits, timeRange) {
 
     // inject column value references
-    const templateContext = { total: totalHits, timeRange: timeRange };
+    const templateContext = { totalHits, timeRange };
     _.forEach(column.template.paramsCols, function (templateParamCol) {
       templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
     });
@@ -152,6 +152,12 @@ function EnhancedTableVisController ($scope, config) {
     realFormula = realFormula.replace(/(col)\s*\(/g, '$1(row, ');
     realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
 
+    // add 'table' param for functions that require whole table
+    realFormula = realFormula.replace(/(total)\s*\(/g, '$1(table, ');
+
+    // replace 'total' variable by 'totalHits'
+    realFormula = realFormula.replace(/([^\w]|^)total([^\(\w]|$)/g, '$1totalHits$2');
+
     // check 'sumSplitCols/countSplitCols' functions condition
     if ((realFormula.indexOf('sumSplitCols') !== -1 || realFormula.indexOf('countSplitCols') !== -1) && splitColIndex === -1) {
       throw new EnhancedTableError(`sumSplitCols() and countSplitCols() functions must be used with a "Split cols" bucket, in ${formulaType}: ${inputFormula}`);
@@ -242,6 +248,28 @@ function EnhancedTableVisController ($scope, config) {
         return defaultValue;
       }
     };
+    parser.functions.total = function (table, colRef, defaultValue) {
+      try {
+        let colIndex = colRef;
+        if (typeof colRef === 'string') {
+          colIndex = findColIndexByTitle(columns, colRef, inputFormula, formulaType, splitColIndex);
+        }
+        if (colIndex < currentCol) {
+          colIndex = getRealColIndex(colIndex, splitColIndex);
+          if (columns[colIndex].total === undefined) {
+            columns[colIndex].total = computeColumnTotal(colIndex, totalFunc, table);
+          }
+          const colTotal = columns[colIndex].total;
+          return colTotal !== undefined ? colTotal : defaultValue;
+        }
+        else {
+          return defaultValue;
+        }
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
     parser.functions.sumSplitCols = function (row) {
       let splitCol = splitColIndex;
       let sum = 0;
@@ -282,7 +310,7 @@ function EnhancedTableVisController ($scope, config) {
 
   const computeFormulaValue = function (formula, table, row, totalHits, timeRange, cellValue) {
     try {
-      const formulaParams = { total: totalHits, row: row, timeRange: timeRange, value: cellValue };
+      const formulaParams = { totalHits: totalHits, table: table, row: row, timeRange: timeRange, value: cellValue };
 
       // inject column value references
       _.forEach(formula.paramsCols, function (formulaParamCol) {
@@ -337,6 +365,9 @@ function EnhancedTableVisController ($scope, config) {
 
     // convert total['colTitle'] syntax to total0 syntax
     realTemplate = realTemplate.replace(/total\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
+    // replace 'total' variable by 'totalHits'
+    realTemplate = realTemplate.replace(/\{\{\s*total\s*\}\}/g, '{{totalHits}}');
 
     // set the right total index, depending splitColIndex
     const totalRefRegex = /total(\d+)\s*\}\}/g;
