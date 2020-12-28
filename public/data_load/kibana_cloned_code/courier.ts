@@ -1,4 +1,4 @@
-import { get, has } from 'lodash';
+import { has } from 'lodash';
 import { i18n } from '@kbn/i18n';
 import { AggConfigs } from 'ui/agg_types/agg_configs';
 
@@ -10,9 +10,8 @@ import {
   esFilters,
   getTime,
   FilterManager
-} from '../../../../src/plugins/data/public';
+} from '../../../../../src/plugins/data/public';
 import { 
-  SearchSource,
   ISearchSource,
   getRequestInspectorStats,
   getResponseInspectorStats
@@ -20,12 +19,11 @@ import {
 // @ts-ignore
 
 import { buildTabularInspectorData } from 'ui/inspector/build_tabular_inspector_data';
-import { calculateObjectHash } from '../../../../src/legacy/core_plugins/visualizations/public';
+import { calculateObjectHash } from '../../../../../src/legacy/core_plugins/visualizations/public';
 // @ts-ignore
 import { tabifyAggResponse } from 'ui/agg_response/tabify/tabify';
 import { PersistedState } from 'ui/persisted_state';
 import { Adapters } from 'plugins/inspector/public';
-import { start as data } from 'data/legacy';
 
 export interface RequestHandlerParams {
   searchSource: ISearchSource;

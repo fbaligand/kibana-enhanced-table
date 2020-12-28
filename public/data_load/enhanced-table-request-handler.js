@@ -18,7 +18,7 @@
  */
 
 import _ from 'lodash';
-import { handleCourierRequest } from './courier';
+import { handleCourierRequest } from './kibana_cloned_code/courier';
 import { SearchSource } from 'ui/courier';
 import { RequestAdapter, DataAdapter } from 'ui/inspector/adapters';
 import { getQueryService } from '../../../../src/plugins/data/public/services';
