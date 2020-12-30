@@ -1,3 +1,5 @@
+import { AnyARecord } from "dns";
+
 interface TimeRangeInput {
   from: string;
   to: string;
@@ -93,9 +95,12 @@ function parseDathMathExpression(dateMathExpression: string, roundUp: boolean, n
   return date;
 }
 
-function parseDate(date: string, roundUp: boolean, nowReference: number, dayOfWeekNumber: number): Date {
-  if (date.indexOf('now') === 0) {
+function parseDate(date: string | any, roundUp: boolean, nowReference: number, dayOfWeekNumber: number): Date {
+  if (typeof date === 'string' && date.indexOf('now') === 0) {
     return parseDathMathExpression(date.substring(3), roundUp, nowReference, dayOfWeekNumber);
+  }
+  else if (date.toDate !== undefined) {
+    return date.toDate();
   }
   else {
     return new Date(date);
