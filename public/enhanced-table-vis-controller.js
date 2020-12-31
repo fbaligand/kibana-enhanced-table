@@ -491,7 +491,7 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
 
   const createComputedCell = function (column, row, totalHits, table) {
     const value = computeFormulaValue(column.formula, row, totalHits, table);
-    const parent = row.length > 0 && row[row.length-1];
+    const parent = null;
     const newCell = new AggConfigResult(column.aggConfig, parent, value, value);
     newCell.column = column;
     if (column.aggConfig.isFilterable()) {
@@ -522,6 +522,9 @@ module.controller('EnhancedTableVisController', function ($scope, $element, Priv
       _.forEach(table.rows, function (row) {
         const newCell = createComputedCell(newColumn, row, totalHits, table);
         if (customColumnPosition || customColumnPosition === 0) {
+          if (newCell.rawData) {
+            newCell.rawData.column = customColumnPosition;
+          }
           row.splice(customColumnPosition, 0, newCell);
         }
         else {
