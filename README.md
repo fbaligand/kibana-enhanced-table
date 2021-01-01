@@ -15,6 +15,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to reference total hits count matched by Elasticsearch query (ex: `col0 / total * 100` or `col0 / totalHits * 100`)
   - Ability to reference a column by its label (ex: `col['Sum of duration'] / col['Count']`)
   - Ability to reference a column total (ex: `col['Sales by month'] / total['Sales by month']`)
+  - Ability to reference Kibana time range (ex: `timeRange.duration.months`)
   - Ability to define/reference arrays, do variable assignment and define custom functions in expressions
   - Ability to compute column total using formula
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
@@ -24,18 +25,19 @@ This project is a Kibana plugin that provides two visualizations:
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
   - Template can reference another column by its label (ex: `<span style="color: {{col['color']}}">{{value}}</span>`)
   - Template can encode a value to render it as a URL parameter (ex: `<a href="my-dashboard?param={{{encodeURIComponent value}}}">{{value}}</a>`)
-  - Support for cell computed CSS based on a computed formula (ex: `value < 0 ? "background-color: red" : ""`)
+  - Support for cell computed CSS based on a computed formula (ex: `value < 0 ? 'background-color: red' : ''`)
     - More documentation [here](#computed-settings-documentation)
   - Support for computed column filtering (Filter for/out value) if formula simply references a column value (ex: `col0`)
+  - Ability to custom column position (to render computed column in a previous position in the table)
 - Filter table rows based on a computed formula (ex: `col0 > 0`)
   - More documentation [here](#computed-settings-documentation)
-- Set dynamically row CSS based on a computed formula (ex: `col0 < 0 ? "background-color: red" : ""`)
+- Set dynamically row CSS based on a computed formula (ex: `col0 < 0 ? 'background-color: red' : ''`)
   - More documentation [here](#computed-settings-documentation)
 - Hide some table columns (ex: `0,1,Col2 Label` hides columns 0, 1 and the column labeled 'Col2 Label')
   - Note that the column label must be written as is (including whitespaces), with no surrounding quotes.
   - Column labels containing commas are not supported since the comma is used to separate the columns
   - It is recommended to use column labels to hide columns rather than their indices. Using the 'Split cols' feature, in fact, indices might depend on the global timerange that has been set. 
-- Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain "cat")  
+- Add a filter bar (ex: when user enters `cat` filter, it will display only rows that contain 'cat')  
   - Works also with numeric and date columns
   - Ability to enable case sensitive filter
   - Ability to make filter bar hideable
@@ -45,11 +47,16 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to define filter bar width
 - Support for a new bucket type : 'Split Cols'. It lets to create a pivot table
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
-- Hide export links (when checked, it will hide "Raw" and "Formatted" export links)
+- Hide CSV export links (when checked, it will hide 'Raw' and 'Formatted' export links)
+- Change CSV export encoding (ex: `iso-8859-1`)
+- Full CSV export: in Document Table vis, ability to download full data in Elasticsearch, not only displayed data in the table (Kibana 7.7+)
+- Add total row to CSV export
 - Add a total label on total row first column (ex: `Total:`)
-- Ability to display striped rows
-- Ability to add a row number column
-- Kibana supported versions : all versions from 5.5 to 7.9
+- Display striped rows
+- Add a row number column
+- Ability to add the visualization to a Canvas workpad (Kibana 7.9+)
+- Ability to use dashboard drilldowns (Kibana 7.9+)
+- Kibana supported versions : all versions from 5.5 to 7.10
 
 ## Demo
 
@@ -62,7 +69,7 @@ This project is a Kibana plugin that provides two visualizations:
 
 Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
-- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases "Go to releases!") and choose the right one for your Kibana
+- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your Kibana
 - launch a shell terminal and go to $KIBANA_HOME folder
 - use Kibana CLI to install :
   - directly from Internet URL :
