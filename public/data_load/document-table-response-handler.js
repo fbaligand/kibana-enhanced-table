@@ -53,9 +53,14 @@ const createCell = function (hit, column, parent) {
   if (value === null || column.aggConfig.getField().type !== 'string') {
     if ((column.aggConfig.getField().readFromDocValues || column.aggConfig.getField().scripted) && hit.fields !== undefined) {
       value = get(hit.fields, column.aggConfig.fieldName(), null);
-      if (value !== null && value.length === 1) {
-        value = value[0];
-      }
+      if (value !== null) {
+        if (column.aggConfig.getField().type === 'date') {
+          value = value.slice(0, value.length / 2);
+        }
+        if (value.length === 1) {
+          value = value[0];
+        }
+      } 
     }
     else if (column.aggConfig.fieldName().startsWith('_')) {
       value = get(hit, column.aggConfig.fieldName(), null);
