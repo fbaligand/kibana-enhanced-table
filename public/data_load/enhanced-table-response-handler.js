@@ -53,14 +53,9 @@ function splitTable(columns, rows, $parent) {
     return [{
       $parent,
       columns: columns.map(column => ({ title: column.name, ...column })),
-      rows: rows.map((row, rowIndex) => {
+      rows: rows.map((row) => {
         const newRow = columns.map(column => {
           const aggConfigResult = new AggConfigResult(column.aggConfig, $parent, row[column.id], row[column.id]);
-          aggConfigResult.rawData = {
-            table: { columns, rows },
-            column: columns.findIndex(c => c.id === column.id),
-            row: rowIndex,
-          };
           return aggConfigResult;
         });
         columns.forEach(column => newRow[column.id] = row[column.id]);
