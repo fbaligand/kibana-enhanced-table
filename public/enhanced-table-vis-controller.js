@@ -495,7 +495,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const newCell = new AggConfigResult(column.aggConfig, parent, value, value);
     newCell.column = column;
     if (column.aggConfig.isFilterable()) {
-      newCell.rawData = { table, row, column: row.length };
+      newCell.rawData = column.rawData;
     }
     if (column.template !== undefined) {
       newCell.templateContext = createTemplateContext(table, column, row, totalHits, timeRange);
@@ -511,20 +511,22 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         return;
       }
 
-      // add new computed column and its cells
+      // add new computed column
       newColumn = _.clone(newColumn);
+      newColumn.rawData = { table: { columns: [ newColumn] }, row: -1, column: 0 };
+
+      // process special "custom column position" case
       if (customColumnPosition || customColumnPosition === 0) {
         table.columns.splice(customColumnPosition, 0, newColumn);
       }
       else {
         table.columns.push(newColumn);
       }
+
+      // add computed cells
       _.forEach(table.rows, function (row) {
         const newCell = createComputedCell(table, newColumn, row, totalHits, timeRange);
         if (customColumnPosition || customColumnPosition === 0) {
-          if (newCell.rawData) {
-            newCell.rawData.column = customColumnPosition;
-          }
           row.splice(customColumnPosition, 0, newCell);
         }
         else {

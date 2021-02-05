@@ -40,6 +40,7 @@ function createColumn(fieldColumn, index, aggConfigs) {
     name: columnTitle,
     title: columnTitle
   };
+  newColumn.rawData = { table: { columns: [ newColumn ] }, row: -1, column: 0 };
 
   if (newColumn.aggConfig.schema === undefined) {
     newColumn.aggConfig.schema = { group: 'buckets', name: 'none' };
@@ -48,7 +49,7 @@ function createColumn(fieldColumn, index, aggConfigs) {
   return newColumn;
 }
 
-const createCell = function (hit, table, column, row) {
+const createCell = function (hit, column) {
   let value = get(hit._source, column.aggConfig.fieldName(), null);
   if (value === null || column.aggConfig.getField().type !== 'string') {
     if ((column.aggConfig.getField().readFromDocValues || column.aggConfig.getField().scripted) && hit.fields !== undefined) {
@@ -67,14 +68,14 @@ const createCell = function (hit, table, column, row) {
     }
   }
   const newCell = new AggConfigResult(column.aggConfig, null, value, value);
-  newCell.rawData = { table, row, column: row.length };
+  newCell.rawData = column.rawData;
   return newCell;
 };
 
-function createRow(hit, response, table) {
+function createRow(hit, table) {
   const newRow = [];
   table.columns.forEach( (column, i) => {
-    newRow[i] = createCell(hit, table, column, newRow);
+    newRow[i] = createCell(hit, column);
     newRow[column.id] = newRow[i].value;
   });
   return newRow;
@@ -94,7 +95,7 @@ function createTable(response) {
   });
 
   response.hits.forEach( hit => {
-    const newRow = createRow(hit, response, table);
+    const newRow = createRow(hit, table);
     table.rows.push(newRow);
   });
 
