@@ -805,6 +805,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         fieldFormatter: fieldFormat,
         dataAlignmentClass: 'text-left'
       };
+      if (newColumn.aggConfig.schema === undefined) {
+        newColumn.aggConfig.schema = { group: 'metrics' };
+      }
       table.columns.unshift(newColumn);
       let i = 1;
       // add row number cells in first position
