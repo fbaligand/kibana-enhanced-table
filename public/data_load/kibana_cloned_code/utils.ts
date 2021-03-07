@@ -5,10 +5,17 @@ import { IFieldFormat } from '../../../../../src/plugins/data/common';
  * Component: serializeAggConfig
  */
 export function serializeAggConfig(aggConfig) {
+  const sourceParams = {
+    indexPatternId: aggConfig.getIndexPattern().id,
+    ...aggConfig.serialize()
+  }
+
   return {
     type: aggConfig.type.name,
-    indexPatternId: aggConfig.getIndexPattern().id,
-    aggConfigParams: aggConfig.serialize().params,
+    indexPatternId: sourceParams.indexPatternId,
+    aggConfigParams: sourceParams.params,
+    source: 'esaggs',
+    sourceParams
   };
 };
 
