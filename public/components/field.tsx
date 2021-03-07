@@ -95,7 +95,6 @@ function FieldParamEditor({
       label={customLabel || label}
       isInvalid={!isValid}
       fullWidth={true}
-      compressed
     >
       <EuiComboBox
         compressed
