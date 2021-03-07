@@ -1,5 +1,34 @@
-// all basic  CSS is inherited from core 'Data Table'
+.kbnTableCellFilter__hover {
+  position: relative;
+
+  /**
+   * 1. Center vertically regardless of row height.
+   */
+  .kbnTableCellFilter {
+    position: absolute;
+    white-space: nowrap;
+    right: 0;
+    top: 50%; /* 1 */
+    transform: translateY(-50%); /* 1 */
+    display: none;
+  }
+
+  &:hover {
+    .kbnTableCellFilter {
+      display: inline;
+    }
+
+    .kbnTableCellFilter__hover-show {
+      visibility: visible;
+    }
+  }
+}
+
+.kbnTableCellFilter__hover-show {
+// so that the cell doesn't change size on hover
+visibility: hidden;
+} 
 
 .kbnAggTable__paginated tr:hover td.cell-custom-background-hover, .kbnAggTable__paginated td.cell-custom-background-hover .kbnTableCellFilter {
-    opacity: .8;
+  opacity: .8;
 }
