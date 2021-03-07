@@ -33,7 +33,7 @@ export function KbnEnhancedRows($compile) {
 
         function createFilterableCell(aggConfigResult) {
           const $template = $(tableCellFilterHtml);
-          $template.addClass('kbnEnhancedTableCellFilter__hover');
+          $template.addClass('kbnTableCellFilter__hover');
 
           const scope = $scope.$new();
 
