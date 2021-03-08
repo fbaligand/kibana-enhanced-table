@@ -156,7 +156,7 @@ function EnhancedTableVisController ($scope, config) {
     realFormula = realFormula.replace(/(total)\s*\(/g, '$1(table, ');
 
     // replace 'total' variable by 'totalHits'
-    realFormula = realFormula.replace(/([^\w]|^)total([^\(\w]|$)/g, '$1totalHits$2');
+    realFormula = realFormula.replace(/([^\w]|^)total([^(\w]|$)/g, '$1totalHits$2');
 
     // check 'sumSplitCols/countSplitCols' functions condition
     if ((realFormula.indexOf('sumSplitCols') !== -1 || realFormula.indexOf('countSplitCols') !== -1) && splitColIndex === -1) {

@@ -105,7 +105,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
         let remainingSize = self.csv.totalHits - $scope.table.rows.length;
         let searchAfter = self.csv.lastSortValue;
         do {
-          let hitsSize = Math.min(remainingSize, self.csv.maxHitsSize);
+          const hitsSize = Math.min(remainingSize, self.csv.maxHitsSize);
           request.searchSource.setField('size', hitsSize);
           request.searchSource.setField('search_after', searchAfter);
           const response = await handleCourierRequest(request);
@@ -161,7 +161,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
           }));
         }
 
-        let csvContent = csvRows.map(function (row) {
+        const csvContent = csvRows.map(function (row) {
           return row.join(self.csv.separator) + '\r\n';
         }).join('');
 
@@ -205,7 +205,16 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
             }
 
             if (col.total !== undefined) {
-              const formatter = col.totalFormatter ? col.totalFormatter('text') : ($scope.totalFunc !== 'count' ? fieldFormatter(agg, 'text') : numberFormatter);
+              let formatter;
+              if (col.totalFormatter) {
+                formatter = col.totalFormatter('text');
+              }
+              else if ($scope.totalFunc !== 'count') {
+                formatter = fieldFormatter(agg, 'text');
+              }
+              else {
+                formatter = numberFormatter;
+              }
               formattedColumn.total = formatter(col.total);
             }
 

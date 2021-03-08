@@ -7,8 +7,9 @@ parserOptions:
   sourceType: module
 rules:
   "prettier/prettier": off
+  "template-curly-spacing" : 0
   indent:
-    - error
+    - off
     - 2
   linebreak-style:
     - error
