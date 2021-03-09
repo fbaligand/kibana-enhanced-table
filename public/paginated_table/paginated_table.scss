@@ -1,5 +1,9 @@
 // all basic  CSS is inherited from core 'Data Table'
 
-.kbnAggTable__paginated tr:hover td.cell-custom-background-hover, .kbnAggTable__paginated td.cell-custom-background-hover .kbnTableCellFilter {
+.kbnAggTable__paginated tr:hover td.cell-custom-background-hover, .kbnAggTable__paginated td.cell-custom-background-hover .kbnTableCellFilter .kbnTableCellDownload {
     opacity: .8;
+}
+
+.kbnTableCellDownload {
+  align-content: center;
 }

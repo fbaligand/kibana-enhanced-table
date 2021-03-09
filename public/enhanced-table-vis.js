@@ -114,6 +114,15 @@ export const enhancedTableVisTypeDefinition = {
         aggFilter: ['!filter'],
         max: 1,
         editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
+      },
+      {
+        group: AggGroupNames.Buckets,
+        name: 'dataFetch',
+        title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.datastoreFetchTitle', {
+          defaultMessage: 'Datastore fetch'
+        }),
+        aggFilter: ['!filter'],
+        max: 1
       }
     ])
   },

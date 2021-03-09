@@ -73,6 +73,15 @@ function EnhancedTableVisController ($scope, Private, config) {
     }
   };
 
+  const findDatastoreFetchIndex = function (tableGroups) {
+    if (tableGroups !== null) {
+      return _.findIndex(tableGroups.tables[0].columns, col => col.aggConfig.schema === 'dataFetch');
+    }
+    else {
+      return -1;
+    }
+  };
+
   const getRealColIndex = function (colIndex, splitColIndex) {
     if (splitColIndex !== -1 && colIndex >= splitColIndex && $scope.vis.params.computedColsPerSplitCol) {
       return colIndex + 1;
@@ -313,7 +322,6 @@ function EnhancedTableVisController ($scope, Private, config) {
   const computeFormulaValue = function (formula, table, row, totalHits, timeRange, cellValue) {
     try {
       const formulaParams = { totalHits: totalHits, table: table, row: row, timeRange: timeRange, value: cellValue };
-
       // inject column value references
       _.forEach(formula.paramsCols, function (formulaParamCol) {
         formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
@@ -838,6 +846,18 @@ function EnhancedTableVisController ($scope, Private, config) {
     }
   };
 
+  const addDownloadColumn = function (tableGroups, aggs, params, dataFetchColIndex) {
+    _.forEach(tableGroups.tables, function (table) {
+      _.forEach(table.rows, function (row) {
+        console.log(row[dataFetchColIndex].value);
+      });
+    });
+  }
+
+  const showDownloadData = function (tableGroups, aggs, params, dataFetchColIndex) {
+    addDownloadColumn(tableGroups, aggs, params, dataFetchColIndex);
+  }
+
   const hasRows = function(table) {
     if (table.tables) {
       return table.tables.some(hasRows);
@@ -975,6 +995,7 @@ function EnhancedTableVisController ($scope, Private, config) {
         const params = $scope.visParams;
         const aggs = $scope.esResponse.aggs;
         const timeRange = computeTimeRange(aggs.timeRange, getConfig('dateFormat:dow'));
+        const dataFetchColIndex = findDatastoreFetchIndex(tableGroups);
 
         // validate that 'Split cols' is the last bucket
         const firstTable = findFirstDataTable(tableGroups);
@@ -984,6 +1005,10 @@ function EnhancedTableVisController ($scope, Private, config) {
           if (splitColIndex !== lastBucketIndex) {
             throw new EnhancedTableError('"Split cols" bucket must be the last one');
           }
+        }
+
+        if(dataFetchColIndex !== -1) {
+          showDownloadData(tableGroups, aggs, params, dataFetchColIndex);
         }
 
         // no data to display

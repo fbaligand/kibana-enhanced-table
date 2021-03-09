@@ -21,6 +21,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import AggConfigResult from '../data_load/agg_config_result';
 import tableCellFilterHtml from './table_cell_filter.html';
+import tableCellDataFetchHtml from './table_cell_download.html';
 
 export function KbnEnhancedRows($compile) {
   return {
@@ -50,6 +51,31 @@ export function KbnEnhancedRows($compile) {
               value: aggConfigResult.value
             }], negate });
           };
+          console.log(aggConfigResult.value);
+
+          return $compile($template)(scope);
+        }
+
+        function createDataFetchCell(aggConfigResult) {
+          const $template = $(tableCellDataFetchHtml);
+          $template.addClass('kbnEnhancedTableCellFilter__hover');
+
+          const scope = $scope.$new();
+
+          scope.onDownloadClick = (event, negate) => {
+            // Don't add filter if a link was clicked.
+            if ($(event.target).is('a')) {
+              return;
+            }
+
+            $scope.filter({ data: [{
+                table: $scope.table,
+                row: $scope.rows.findIndex(r => r === row),
+                column: iColumn,
+                value: aggConfigResult.value
+              }], negate });
+          };
+          console.log(aggConfigResult.value);
 
           return $compile($template)(scope);
         }
@@ -59,12 +85,16 @@ export function KbnEnhancedRows($compile) {
 
         if (contents instanceof AggConfigResult) {
           const field = contents.aggConfig.getField();
+          const isCellDownloadAble = contents.aggConfig.schema === "dataFetch";
           const isCellContentFilterable =
             contents.aggConfig.isFilterable()
             && (!field || field.filterable);
 
-          if (isCellContentFilterable) {
+          if (isCellContentFilterable && !isCellDownloadAble) {
             $cell = createFilterableCell(contents);
+            $cellContent = $cell.find('[data-cell-content]');
+          } else if (isCellDownloadAble) {
+            $cell = createDataFetchCell(contents);
             $cellContent = $cell.find('[data-cell-content]');
           } else {
             $cell = $cellContent = createCell();
