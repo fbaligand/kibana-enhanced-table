@@ -22,6 +22,7 @@ import { existsSync } from 'fs';
 import { Legacy } from 'kibana';
 
 import { LegacyPluginApi, LegacyPluginInitializer } from '../../src/legacy/types';
+import documentFetch from './server/routes/document_fetch';
 
 const enhancedTablePluginInitializer: LegacyPluginInitializer = ({ Plugin }: LegacyPluginApi) =>
   new Plugin({
@@ -33,7 +34,45 @@ const enhancedTablePluginInitializer: LegacyPluginInitializer = ({ Plugin }: Leg
       hacks: [resolve(__dirname, 'public/legacy')],
       injectDefaultVars: server => ({}),
     },
-    init: (server: Legacy.Server) => ({}),
+    init: (server: Legacy.Server) => {
+      const xpackMainPlugin = server.plugins.xpack_main;
+      if (xpackMainPlugin) {
+        const featureId = 'kibana-enhanced-table';
+
+        xpackMainPlugin.registerFeature({
+          id: featureId,
+          name: i18n.translate('enhancesTablePlugin.featureRegistry.featureName', {
+            defaultMessage: 'enhanced-table-plugin',
+          }),
+          navLinkId: featureId,
+          icon: 'questionInCircle',
+          app: [featureId, 'kibana'],
+          catalogue: ['discover'],
+          privileges: {
+            all: {
+              app: [featureId, 'kibana'],
+              catalogue: ['discover'],
+              savedObject: {
+                all: ['search', 'query'],
+                read: ['index-pattern'],
+              },
+              ui: ['show'],
+            },
+            read: {
+              app: [featureId, 'kibana'],
+              catalogue: ['discover'],
+              savedObject: {
+                all: [],
+                read: ['index-pattern', 'search', 'query'],
+              },
+              ui: ['show'],
+            },
+          },
+        });
+      }
+      documentFetch(server);
+
+    },
     config(Joi: any) {
       return Joi.object({
         enabled: Joi.boolean().default(true),

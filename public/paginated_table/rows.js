@@ -56,6 +56,17 @@ export function KbnEnhancedRows($compile) {
           return $compile($template)(scope);
         }
 
+        function getDocument(documentId) {
+          // const { httpClient, startDate, endDate, resultsSize, selectedIndex } = this.props;
+          const url = '../api/kibana-enhanced-table/datafetch/' + documentId;
+          fetch(url)
+            .then(res => {
+              const reader = res.body.getReader();
+              console.log(reader);
+            })
+            .catch(error => {console.log(error)});
+        };
+
         function createDataFetchCell(aggConfigResult) {
           const $template = $(tableCellDataFetchHtml);
           $template.addClass('kbnEnhancedTableCellFilter__hover');
@@ -67,15 +78,10 @@ export function KbnEnhancedRows($compile) {
             if ($(event.target).is('a')) {
               return;
             }
+            console.log("Download init: "+aggConfigResult.value);
+            getDocument(aggConfigResult.value);
 
-            $scope.filter({ data: [{
-                table: $scope.table,
-                row: $scope.rows.findIndex(r => r === row),
-                column: iColumn,
-                value: aggConfigResult.value
-              }], negate });
           };
-          console.log(aggConfigResult.value);
 
           return $compile($template)(scope);
         }
