@@ -20,6 +20,7 @@
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import { Legacy } from 'kibana';
+import { i18n } from '@kbn/i18n';
 
 import { LegacyPluginApi, LegacyPluginInitializer } from '../../src/legacy/types';
 import documentFetch from './server/routes/document_fetch';

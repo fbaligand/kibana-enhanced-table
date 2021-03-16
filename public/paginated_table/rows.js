@@ -22,6 +22,9 @@ import _ from 'lodash';
 import AggConfigResult from '../data_load/agg_config_result';
 import tableCellFilterHtml from './table_cell_filter.html';
 import tableCellDataFetchHtml from './table_cell_download.html';
+import Overlay from './overlay';
+
+const overlay = new Overlay();
 
 export function KbnEnhancedRows($compile) {
   return {
@@ -51,20 +54,41 @@ export function KbnEnhancedRows($compile) {
               value: aggConfigResult.value
             }], negate });
           };
-          console.log(aggConfigResult.value);
 
           return $compile($template)(scope);
         }
 
         function getDocument(documentId) {
-          // const { httpClient, startDate, endDate, resultsSize, selectedIndex } = this.props;
-          const url = '../api/kibana-enhanced-table/datafetch/' + documentId;
-          fetch(url)
-            .then(res => {
-              const reader = res.body.getReader();
-              console.log(reader);
+          overlay.dispayDocOverlay();
+          const fetchDocBaseUrl = '../api/kibana-enhanced-table/datafetch/' + documentId
+
+          fetch(fetchDocBaseUrl+"/find")
+            .then(resp => resp.json())
+            .then(file => {
+              if (file._id === undefined || file._id === null) {
+                const noFileP = $('<p id="'+overlay.noFilePId+'">No file found</p>>');
+                noFileP.css(overlay.noFilePIdCss);
+                noFileP.appendTo('#'+overlay.docOverlayId);
+              } else {
+                if (file.contentType === "image/png" || file.contentType === "image/jpeg") {
+                  const fetchImageUrl = fetchDocBaseUrl+'/stream?contentType='+file.contentType;
+                  const img = $('<img id="'+overlay.overlayImageId+'">');
+                  img.css(overlay.overlayImageCss);
+                  img.attr('src', fetchImageUrl);
+                  img.click(e => e.stopPropagation());
+                  img.appendTo('#'+overlay.docOverlayId);
+                } else {
+                  const fetchBtn = $('<button id="'+overlay.overlayButtonId+'">Download document</button>');
+                  fetchBtn.css(overlay.overlayButtonCss);
+                  fetchBtn.click(e => e.stopPropagation());
+                  fetchBtn.click(() => {
+                    overlay.downloadDocument(fetchDocBaseUrl, file.filename, file.contentType);
+                  });
+                  fetchBtn.appendTo('#'+overlay.docOverlayId);
+                }
+              }
             })
-            .catch(error => {console.log(error)});
+            .catch(err => { console.log(err) })
         };
 
         function createDataFetchCell(aggConfigResult) {
@@ -74,13 +98,11 @@ export function KbnEnhancedRows($compile) {
           const scope = $scope.$new();
 
           scope.onDownloadClick = (event, negate) => {
-            // Don't add filter if a link was clicked.
+            // Don't add doc download if a link was clicked.
             if ($(event.target).is('a')) {
               return;
             }
-            console.log("Download init: "+aggConfigResult.value);
             getDocument(aggConfigResult.value);
-
           };
 
           return $compile($template)(scope);
@@ -100,6 +122,9 @@ export function KbnEnhancedRows($compile) {
             $cell = createFilterableCell(contents);
             $cellContent = $cell.find('[data-cell-content]');
           } else if (isCellDownloadAble) {
+            if ($('#'+overlay.docOverlayId).length < 1) {
+              overlay.createDocOverlay();
+            }
             $cell = createDataFetchCell(contents);
             $cellContent = $cell.find('[data-cell-content]');
           } else {
