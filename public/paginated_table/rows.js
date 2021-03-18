@@ -70,8 +70,8 @@ export function KbnEnhancedRows($compile) {
                 noFileP.css(overlay.noFilePIdCss);
                 noFileP.appendTo('#'+overlay.docOverlayId);
               } else {
-                if (file.contentType === "image/png" || file.contentType === "image/jpeg") {
-                  const fetchImageUrl = fetchDocBaseUrl+'/stream?contentType='+file.contentType;
+                if (file.metadata.contentType === "image/png" || file.metadata.contentType === "image/jpeg") {
+                  const fetchImageUrl = fetchDocBaseUrl+'/stream?contentType='+file.metadata.contentType;
                   const img = $('<img id="'+overlay.overlayImageId+'">');
                   img.css(overlay.overlayImageCss);
                   img.attr('src', fetchImageUrl);
@@ -82,7 +82,7 @@ export function KbnEnhancedRows($compile) {
                   fetchBtn.css(overlay.overlayButtonCss);
                   fetchBtn.click(e => e.stopPropagation());
                   fetchBtn.click(() => {
-                    overlay.downloadDocument(fetchDocBaseUrl, file.filename, file.contentType);
+                    overlay.downloadDocument(fetchDocBaseUrl, file.filename, file.metadata.contentType);
                   });
                   fetchBtn.appendTo('#'+overlay.docOverlayId);
                 }

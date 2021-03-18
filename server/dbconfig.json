@@ -4,10 +4,15 @@
       "port": 27017,
       "type": "mongodb",
       "dbName": "mongouploads",
-      "auth": {
-        "name": "Matus",
-        "password": "strongPassword"
-      },
-      "collection": "uploads"
+      "collection": "uploads",
+      "mongoOptions": {
+        "useNewUrlParser": true,
+        "useUnifiedTopology": true,
+        "db": { "authSource": "mongouploads" },
+        "auth": {
+          "user": "Matus",
+          "password": "strongPassword"
+        }
+      }
     }
 }

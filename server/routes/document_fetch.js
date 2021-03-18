@@ -2,25 +2,14 @@ const mongodb = require('mongodb');
 const ObjectId = require('mongodb').ObjectID;
 const dbconf = require('../dbconfig.json').db;
 
-const user = dbconf.auth.name;
-const password = dbconf.auth.password;
 const mongoURI = dbconf.type+"://"+dbconf.host+":"+dbconf.port;
+const mongoOptions = dbconf.mongoOptions
 const dbName = dbconf.dbName;
 const collectionName = dbconf.collection;
 const collectionNameFiles = dbconf.collection+'.files';
 let bucket;
 let db;
 let collection;
-
-const mongoOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  db: { authSource: dbName },
-  auth: {
-    user: user,
-    password: password
-  }
-}
 
 const streamReadable = stream => {
   stream.pause();
