@@ -66,25 +66,12 @@ export function KbnEnhancedRows($compile) {
             .then(resp => resp.json())
             .then(file => {
               if (file._id === undefined || file._id === null) {
-                const noFileP = $('<p id="'+overlay.noFilePId+'">No file found</p>>');
-                noFileP.css(overlay.noFilePIdCss);
-                noFileP.appendTo('#'+overlay.docOverlayId);
+                overlay.handleNoFile();
               } else {
                 if (file.metadata.contentType === "image/png" || file.metadata.contentType === "image/jpeg") {
-                  const fetchImageUrl = fetchDocBaseUrl+'/stream?contentType='+file.metadata.contentType;
-                  const img = $('<img id="'+overlay.overlayImageId+'">');
-                  img.css(overlay.overlayImageCss);
-                  img.attr('src', fetchImageUrl);
-                  img.click(e => e.stopPropagation());
-                  img.appendTo('#'+overlay.docOverlayId);
+                  overlay.createImage(fetchDocBaseUrl, file);
                 } else {
-                  const fetchBtn = $('<button id="'+overlay.overlayButtonId+'">Download document</button>');
-                  fetchBtn.css(overlay.overlayButtonCss);
-                  fetchBtn.click(e => e.stopPropagation());
-                  fetchBtn.click(() => {
-                    overlay.downloadDocument(fetchDocBaseUrl, file.filename, file.metadata.contentType);
-                  });
-                  fetchBtn.appendTo('#'+overlay.docOverlayId);
+                  overlay.createFetchBtn(fetchDocBaseUrl, file);
                 }
               }
             })
