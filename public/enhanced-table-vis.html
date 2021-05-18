@@ -1,11 +1,11 @@
 <div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis" ng-class="{'theme-dark': isDarkTheme}">
 
   <div ng-show="visState.params.showFilterBar && hasSomeData" class="filterBar">
-    <div ng-hide="showFilterInput()" align="right">
+    <div ng-hide="showFilterInput()" class="filterTextContainer">
       <a ng-click="enableFilterInput()" class="filterText" i18n-id="visTypeTable.vis.filterLink" i18n-default-message="Filter"></a>
     </div>
 
-    <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{visState.params.filterBarWidth}}">
+    <div class="kuiLocalSearch" ng-show="showFilterInput()" ng-style="{ width: visState.params.filterBarWidth }">
       <div class="kuiLocalSearchAssistedInput">
         <input type="text" ng-model="vis.filterInput" ng-keyup="(visState.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="{{ ::'visTypeTable.vis.filterPlaceholder' | i18n: {defaultMessage: 'Filter...'} }}" class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="{{ ::'visTypeTable.vis.filterAriaLabel' | i18n: {defaultMessage: 'Filter input'} }}">
       </div>
