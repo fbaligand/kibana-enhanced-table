@@ -24,8 +24,8 @@ import { FormattedMessage } from '@kbn/i18n/react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiIconTip, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
 import { IAggConfigs } from '../../../../src/plugins/data/public';
-import { VisOptionsProps } from '../../../../src/plugins/vis_default_editor/public';
-import { NumberInputOption, SelectOption } from '../../../../src/plugins/charts/public';
+import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
+import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 import { totalAggregations, AggTypes } from './utils';
@@ -104,9 +104,14 @@ function onDragEnd(source, destination, computedColumns, setComputedColumns) {
 }
 
 function hasSplitColsBucket(aggs: IAggConfigs) {
-  return some(aggs.aggs, function(agg) {
-    return agg.schema === 'splitcols' && agg.enabled;
-  });
+  if (aggs === undefined || aggs === null){
+    return false
+  }
+  else{
+    return some(aggs.aggs, function(agg) {
+      return agg.schema === 'splitcols' && agg.enabled;
+    });
+  }  
 };
 
 function EnhancedTableOptions({
@@ -114,7 +119,7 @@ function EnhancedTableOptions({
   stateParams,
   setValidity,
   setValue,
-}: VisOptionsProps<EnhancedTableVisParams>) {
+}: VisEditorOptionsProps<EnhancedTableVisParams>) {
 
   const isPerPageValid = stateParams.perPage === '' || stateParams.perPage > 0;
   const computedColumnsError = undefined;

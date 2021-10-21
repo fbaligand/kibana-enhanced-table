@@ -11,6 +11,7 @@
     "kibanaUtils",
     "kibanaReact",
     "share",
-    "charts"
+    "charts",
+    "visDefaultEditor"
   ]
 }

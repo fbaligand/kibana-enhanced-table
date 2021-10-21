@@ -19,7 +19,6 @@
 
 import { i18n } from '@kbn/i18n';
 import { AggGroupNames } from '../../../src/plugins/data/public';
-import { Schemas } from '../../../src/plugins/vis_default_editor/public';
 
 import tableVisTemplate from './enhanced-table-vis.html';
 import { getEnhancedTableVisualizationController } from './vis_controller';
@@ -75,7 +74,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
     },
     editorConfig: {
       optionsTemplate: EnhancedTableOptions,
-      schemas: new Schemas([
+      schemas: [
         {
           group: AggGroupNames.Metrics,
           name: 'metric',
@@ -119,7 +118,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
           max: 1,
           editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
         }
-      ])
+      ]
     },
     requestHandler: enhancedTableRequestHandler,
     responseHandler: enhancedTableResponseHandler,
