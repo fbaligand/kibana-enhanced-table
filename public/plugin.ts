@@ -24,12 +24,16 @@ import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { setFormatService, setKibanaLegacy, setNotifications, setQueryService, setSearchService } from './services';
-import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
+import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public'; 
+import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
+import { createEnhancedTableVisLegacyFn } from './components/enhanced_table_vis_options';
+import { getEnhancedTableVisLegacyRenderer } from './enh_table_vis_legacy_renderer';
 
 
 /** @internal */
 export interface TablePluginSetupDependencies {
   visualizations: VisualizationsSetup;
+  expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
 }
 
 /** @internal */
@@ -49,8 +53,10 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
 
   public async setup(
     core: CoreSetup,
-    { visualizations }: TablePluginSetupDependencies
+    { visualizations, expressions }: TablePluginSetupDependencies
   ) {
+    expressions.registerFunction(createEnhancedTableVisLegacyFn);
+    expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core, this.initializerContext));
     visualizations.createBaseVisualization(
       enhancedTableVisTypeDefinition(core, this.initializerContext)
     );

@@ -26,6 +26,7 @@ import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
+import { toExpressionAst } from './to_ast';
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
@@ -41,6 +42,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visualization: getEnhancedTableVisualizationController(core, context),
+    toExpressionAst: toExpressionAst,
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
     },
