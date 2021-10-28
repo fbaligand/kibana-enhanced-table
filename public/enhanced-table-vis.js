@@ -32,6 +32,7 @@ import { toExpressionAst } from './to_ast';
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
 export function enhancedTableVisTypeDefinition (core, context) {
   return {
+    requiresSearch: true,
     type: 'table',
     name: 'enhanced-table',
     title: i18n.translate('visTypeEnhancedTable.visTitle', {
