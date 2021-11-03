@@ -17,7 +17,7 @@ export const getEnhancedTableVisLegacyRenderer: (
   core: CoreSetup<TablePluginStartDependencies>,
   context: PluginInitializerContext
 ) => ExpressionRenderDefinition<EnhancedTableVisRenderValue> = (core, context) => ({
-  name: 'table_vis',
+  name: 'enhanced-table',
   reuseDomNode: true,
   render: async (domNode, config, handlers) => {
     let registeredController = tableVisRegistry.get(domNode);
