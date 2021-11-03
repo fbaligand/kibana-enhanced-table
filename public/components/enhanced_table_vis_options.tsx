@@ -26,7 +26,7 @@ import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, E
 import { IAggConfigs } from '../../../../src/plugins/data/public';
 import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
 import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
-import { ExpressionFunctionDefinition, Datatable, Render } from '../../../../src/plugins/expressions/public';
+import { Datatable, ExpressionFunctionDefinition, Render } from '../../../../src/plugins/expressions/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 import { totalAggregations, AggTypes } from './utils';
@@ -44,7 +44,7 @@ export type EnhancedTableExpressionFunctionDefinition = ExpressionFunctionDefini
   'enhanced-table',
   Input,
   Arguments,
-  Render<EnhancedTableVisRenderValue>
+  Promise<Render<EnhancedTableVisRenderValue>>
 >;
 
 export interface EnhancedTableVisRenderValue {
@@ -68,10 +68,12 @@ export const createEnhancedTableVisLegacyFn = (): EnhancedTableExpressionFunctio
       default: '"{}"',
       help: '',
     },
+
   },
-  fn(input, args) {
+  async fn(input, args, context) {
     const visConfig = args.visConfig && JSON.parse(args.visConfig);
-    const convertedData = enhancedTableResponseHandler(input, visConfig.dimensions);
+
+    const convertedData = await enhancedTableResponseHandler(input, visConfig.dimensions);
 
     return {
       type: 'render',
