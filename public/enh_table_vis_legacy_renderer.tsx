@@ -8,8 +8,9 @@
 
 import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 import { ExpressionRenderDefinition } from '../../../src/plugins/expressions';
+import { EnhancedTableVisRenderValue } from './enh_table_fn';
 import { TablePluginStartDependencies } from './plugin';
-import { EnhancedTableVisRenderValue } from './components/enhanced_table_vis_options';
+
 
 const tableVisRegistry = new Map<HTMLElement, any>();
 
@@ -26,7 +27,7 @@ export const getEnhancedTableVisLegacyRenderer: (
       const { getEnhancedTableVisualizationController } = await import('./vis_controller');
 
       const Controller = getEnhancedTableVisualizationController(core, context);
-      registeredController = new Controller(domNode);
+      registeredController = new Controller(domNode, handlers, config.visConfig);
       tableVisRegistry.set(domNode, registeredController);
 
       handlers.onDestroy(() => {

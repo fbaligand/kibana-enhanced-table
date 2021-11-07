@@ -24,7 +24,7 @@ interface Arguments {
   aggConfigs?: string;
 }
 
-export interface VisResponseValue {
+export interface EnhancedTableVisRenderValue {
     visType: string;
     visData: object;
     visConfig: object;
@@ -35,7 +35,7 @@ export type EnhancedTableExpressionFunctionDefinition = ExpressionFunctionDefini
   'enhanced-table',
   any,
   Arguments,
-  Promise<Render<VisResponseValue>>
+  Promise<Render<EnhancedTableVisRenderValue>>
 >;
 
 export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFunctionDefinition => ({

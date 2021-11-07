@@ -16,14 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
+import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
+import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getKibanaLegacy } from './services';
+import { getKibanaLegacy, getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
+import { BaseVisType } from '../../../src/plugins/visualizations/public/vis_types';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
@@ -35,14 +36,18 @@ export function getEnhancedTableVisualizationController(
     private tableVisModule: IModule | undefined;
     private injector: auto.IInjectorService | undefined;
     el: JQuery<Element>;
-    vis: ExprVis;
     $rootScope: IRootScopeService | null = null;
     $scope: (IScope & { [key: string]: any }) | undefined;
     $compile: ICompileService | undefined;
+    params: object;
+    handlers: any;
+    vis: BaseVisType;
 
-    constructor(domeElement: Element, vis: ExprVis) {
+    constructor(domeElement: Element, handlers, visConfig: object) {
       this.el = $(domeElement);
-      this.vis = vis;
+      this.handlers = handlers;
+      this.params = visConfig;
+      this.vis = getVisualization().get('enhanced-table')
     }
 
     getInjector() {
@@ -101,9 +106,9 @@ export function getEnhancedTableVisualizationController(
 
         if (!this.$scope && this.$compile) {
           this.$scope = this.$rootScope.$new();
-          this.$scope.uiState = this.vis.getUiState();
+          this.$scope.uiState = this.handlers.uiState;
           updateScope();
-          this.el.find('div').append(this.$compile(this.vis.type!.visConfig.template)(this.$scope));
+          this.el.find('div').append(this.$compile(this.vis.visConfig.template)(this.$scope));
           this.$scope.$apply();
         } else {
           updateScope();
