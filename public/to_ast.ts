@@ -6,13 +6,10 @@
  * Side Public License, v 1.
  */
 
-import {
-  EsaggsExpressionFunctionDefinition,
-  IndexPatternLoadExpressionFunctionDefinition,
-} from '../../../src/plugins/data/public';
 import { buildExpression, buildExpressionFunction } from '../../../src/plugins/expressions/public';
 import { getVisSchemas, VisToExpressionAst } from '../../../src/plugins/visualizations/public';
-import { EnhancedTableVisParams, EnhancedTableExpressionFunctionDefinition } from './components/enhanced_table_vis_options';
+import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
+import { EnhancedTableExpressionFunctionDefinition } from './enh_table_fn';
 import { EnhancedTableVisConfig } from './types';
 
 const buildTableVisConfig = (
@@ -41,16 +38,6 @@ const buildTableVisConfig = (
 };
 
 export const toExpressionAst: VisToExpressionAst<EnhancedTableVisParams> = (vis, params) => {
-  const esaggs = buildExpressionFunction<EsaggsExpressionFunctionDefinition>('esaggs', {
-    index: buildExpression([
-      buildExpressionFunction<IndexPatternLoadExpressionFunctionDefinition>('indexPatternLoad', {
-        id: vis.data.indexPattern!.id!,
-      }),
-    ]),
-    metricsAtAllLevels: vis.isHierarchical(),
-    partialRows: vis.params.showPartialRows,
-    aggs: vis.data.aggs!.aggs.map((agg) => buildExpression(agg.toExpressionAst())),
-  });
 
   const schemas = getVisSchemas(vis, params);
 
@@ -62,9 +49,15 @@ export const toExpressionAst: VisToExpressionAst<EnhancedTableVisParams> = (vis,
 
   const table = buildExpressionFunction<EnhancedTableExpressionFunctionDefinition>('enhanced-table', {
     visConfig: JSON.stringify(visConfig),
+    schemas: JSON.stringify(schemas),
+    index: vis.data.indexPattern!.id!,
+    uiState: JSON.stringify(vis.uiState),
+    aggConfigs: JSON.stringify(vis.data.aggs!.aggs),
+    partialRows: vis.params.showPartialRows,
+    metricsAtAllLevels: vis.isHierarchical()
   });
 
-  const ast = buildExpression([esaggs, table]);
+  const ast = buildExpression([table]);
 
   return ast.toAst();
 };

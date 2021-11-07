@@ -17,17 +17,17 @@
  * under the License.
  */
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
+import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService, setKibanaLegacy, setNotifications, setQueryService, setSearchService } from './services';
+import { setFilterManager, setFormatService, setIndexPatterns, setKibanaLegacy, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
 import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public'; 
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
-import { createEnhancedTableVisLegacyFn } from './components/enhanced_table_vis_options';
 import { getEnhancedTableVisLegacyRenderer } from './enh_table_vis_legacy_renderer';
+import { enhancedTableExpressionFunction } from './enh_table_fn';
 
 
 /** @internal */
@@ -40,6 +40,7 @@ export interface TablePluginSetupDependencies {
 export interface TablePluginStartDependencies {
   data: DataPublicPluginStart;
   kibanaLegacy: KibanaLegacyStart;
+  visualizations: VisualizationsStart;
 }
 
 /** @internal */
@@ -55,7 +56,7 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
     core: CoreSetup,
     { visualizations, expressions }: TablePluginSetupDependencies
   ) {
-    expressions.registerFunction(createEnhancedTableVisLegacyFn);
+    expressions.registerFunction(enhancedTableExpressionFunction);
     expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core, this.initializerContext));
     visualizations.createBaseVisualization(
       enhancedTableVisTypeDefinition(core, this.initializerContext)
@@ -66,11 +67,14 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
       );
   }
 
-  public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {
-    setFormatService(data.fieldFormats);
-    setKibanaLegacy(kibanaLegacy);
+  public start(core: CoreStart, deps: TablePluginStartDependencies) {
+    setFormatService(deps.data.fieldFormats);
+    setKibanaLegacy(deps.kibanaLegacy);
     setNotifications(core.notifications);
-    setQueryService(data.query);
-    setSearchService(data.search);
+    setQueryService(deps.data.query);
+    setSearchService(deps.data.search);
+    setIndexPatterns(deps.data.indexPatterns);
+    setFilterManager(deps.data.query.filterManager);
+    setVisualization(deps.visualizations)
   }
 }

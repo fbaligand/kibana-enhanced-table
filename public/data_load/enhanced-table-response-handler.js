@@ -111,6 +111,7 @@ export async function enhancedTableResponseHandler(response, dimensions) {
   return { tables: splitTable(enhancedColumns, response.rows, null), totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
 }
 
+// This shouldn't be necessary, find a way to put this inside the requestHandler
 async function enrichColumnsWithAggconfig(columns){
   const promises = columns.map(async (column) => {
       column.meta.index = column.meta.sourceParams.indexPatternId

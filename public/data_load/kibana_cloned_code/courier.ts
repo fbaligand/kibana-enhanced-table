@@ -193,14 +193,15 @@ export const handleCourierRequest = async ({
     );
   }
 
-  inspectorAdapters.data.setTabularLoader(
+  // DataAdapter is not present in Kibana 7.12. Is this necessary?
+/*   inspectorAdapters.data.setTabularLoader(
     () =>
       buildTabularInspectorData((searchSource as any).tabifiedResponse, {
         queryFilter: filterManager,
         deserializeFieldFormat: getFieldFormats().deserialize,
       }),
     { returnsFormattedValues: true }
-  );
+  ); */
 
   return (searchSource as any).tabifiedResponse;
 };

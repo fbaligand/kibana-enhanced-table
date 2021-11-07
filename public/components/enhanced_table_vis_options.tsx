@@ -26,66 +26,11 @@ import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, E
 import { IAggConfigs } from '../../../../src/plugins/data/public';
 import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
 import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
-import { Datatable, ExpressionFunctionDefinition, Render } from '../../../../src/plugins/expressions/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 import { totalAggregations, AggTypes } from './utils';
 import { ComputedColumn, ComputedColumnEditor } from './computed_column';
-import { EnhancedTableVisConfig, EnhancedTableVisData } from '../types';
-import { enhancedTableResponseHandler } from '../data_load/enhanced-table-response-handler';
 
-export type Input = Datatable;
-
-interface Arguments {
-  visConfig: string | null;
-}
-
-export type EnhancedTableExpressionFunctionDefinition = ExpressionFunctionDefinition<
-  'enhanced-table',
-  Input,
-  Arguments,
-  Promise<Render<EnhancedTableVisRenderValue>>
->;
-
-export interface EnhancedTableVisRenderValue {
-  visData: EnhancedTableVisData;
-  visType: typeof VIS_TYPE_ENH_TABLE;
-  visConfig: EnhancedTableVisConfig;
-}
-
-export const VIS_TYPE_ENH_TABLE = 'enhanced-table';
-
-export const createEnhancedTableVisLegacyFn = (): EnhancedTableExpressionFunctionDefinition => ({
-  name: 'enhanced-table',
-  type: 'render',
-  inputTypes: ['datatable'],
-  help: i18n.translate('visTypeTable.function.help', {
-    defaultMessage: 'EnhancedTable',
-  }),
-  args: {
-    visConfig: {
-      types: ['string'],
-      default: '"{}"',
-      help: '',
-    },
-
-  },
-  async fn(input, args, context) {
-    const visConfig = args.visConfig && JSON.parse(args.visConfig);
-
-    const convertedData = await enhancedTableResponseHandler(input, visConfig.dimensions);
-
-    return {
-      type: 'render',
-      as: 'enhanced-table',
-      value: {
-        visData: convertedData,
-        visType: VIS_TYPE_ENH_TABLE,
-        visConfig,
-      },
-    };
-  },
-});
 
 export interface EnhancedTableVisParams {
   type: 'table';

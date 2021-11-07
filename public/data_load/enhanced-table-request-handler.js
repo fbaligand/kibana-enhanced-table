@@ -18,10 +18,8 @@
  */
 
 import _ from 'lodash';
-import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
 import { getSearchService, getQueryService } from '../services';
 import { handleCourierRequest } from './kibana_cloned_code/courier';
-import { serializeAggConfig } from './kibana_cloned_code/utils';
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -32,10 +30,11 @@ export async function enhancedTableRequestHandler ({
   filters,
   inspectorAdapters,
   forceFetch,
-  aggs
+  aggs,
+  queryFilter
 }) {
 
-  const { filterManager } = getQueryService();
+  const filterManager = queryFilter
   const MAX_HITS_SIZE = 10000;
 
   // create search source with query parameters
@@ -85,8 +84,10 @@ export async function enhancedTableRequestHandler ({
     });
   }
 
-  inspectorAdapters.requests = new RequestAdapter();
-  inspectorAdapters.data = new DataAdapter();
+  //inspectorAdapters.requests is already initialized
+  //inspectorAdapters.requests = new RequestAdapter();
+  // DataAdapter is not present in Kibana 7.12. Is this necessary?
+  //inspectorAdapters.data = new DataAdapter();
 
   // execute elasticsearch query
   const request = {
@@ -113,9 +114,10 @@ export async function enhancedTableRequestHandler ({
   // enrich response: total & aggs
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
   response.aggs = aggs;
-  response.columns.forEach(column => {
+  // Columns already have meta in Kibana 7.12
+/*   response.columns.forEach(column => {
     column.meta = serializeAggConfig(column.aggConfig);
-  });
+  }); */
 
   // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
