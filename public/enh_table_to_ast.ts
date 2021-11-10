@@ -11,6 +11,7 @@ import { getVisSchemas, VisToExpressionAst } from '../../../src/plugins/visualiz
 import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
 import { EnhancedTableExpressionFunctionDefinition } from './enh_table_fn';
 import { EnhancedTableVisConfig } from './types';
+import { ENH_TABLE_VIS_NAME } from './types'
 
 const buildTableVisConfig = (
   schemas: ReturnType<typeof getVisSchemas>,
@@ -47,7 +48,7 @@ export const toExpressionAst: VisToExpressionAst<EnhancedTableVisParams> = (vis,
     title: vis.title,
   };
 
-  const table = buildExpressionFunction<EnhancedTableExpressionFunctionDefinition>('enhanced-table', {
+  const table = buildExpressionFunction<EnhancedTableExpressionFunctionDefinition>(ENH_TABLE_VIS_NAME, {
     visConfig: JSON.stringify(visConfig),
     schemas: JSON.stringify(schemas),
     index: vis.data.indexPattern!.id!,

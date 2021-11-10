@@ -18,7 +18,7 @@
  */
 
 import _ from 'lodash';
-import { getSearchService, getQueryService } from '../services';
+import { getSearchService } from '../services';
 import { handleCourierRequest } from './kibana_cloned_code/courier';
 
 export async function enhancedTableRequestHandler ({
@@ -119,6 +119,9 @@ export async function enhancedTableRequestHandler ({
     column.meta = serializeAggConfig(column.aggConfig);
   }); */
 
+  //Add aggConfig to each column
+  response.columns = await enrichColumnsWithAggconfig(response.columns)
+
   // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
     response.fieldColumns = visParams.fieldColumns;
@@ -149,4 +152,17 @@ export async function enhancedTableRequestHandler ({
 
   // return elasticsearch response
   return response;
+}
+
+// Adds aggConfig to each column using the search service
+async function enrichColumnsWithAggconfig(columns){
+  const promises = columns.map(async (column) => {
+      column.meta.index = column.meta.sourceParams.indexPatternId
+      const indexPattern = await getSearchService().aggs.datatableUtilities.getIndexPattern(column)
+      return {
+          ...column,
+          aggConfig: getSearchService().aggs.createAggConfigs(indexPattern,[column.meta.sourceParams]).aggs[0]
+      }
+  });
+  return await Promise.all(promises);
 }

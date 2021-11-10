@@ -13,6 +13,7 @@ import { ExpressionFunctionDefinition, Render } from '../../../src/plugins/expre
 import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from './services';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
+import { ENH_TABLE_VIS_NAME } from './types'
 
 interface Arguments {
   index?: string | null;
@@ -32,14 +33,14 @@ export interface EnhancedTableVisRenderValue {
   }
 
 export type EnhancedTableExpressionFunctionDefinition = ExpressionFunctionDefinition<
-  'enhanced-table',
+  typeof ENH_TABLE_VIS_NAME,
   any,
   Arguments,
   Promise<Render<EnhancedTableVisRenderValue>>
 >;
 
 export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFunctionDefinition => ({
-  name: 'enhanced-table',
+  name: ENH_TABLE_VIS_NAME,
   type: 'render',
   help: i18n.translate('visualizations.functions.visualization.help', {
     defaultMessage: 'A simple visualization',
@@ -96,7 +97,7 @@ export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFuncti
     const aggs = indexPattern
       ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState)
       : undefined;
-    const visType = getVisualization().get('enhanced-table')
+    const visType = getVisualization().get(ENH_TABLE_VIS_NAME)
 
     input = await enhancedTableRequestHandler({
         partialRows: args.partialRows,
@@ -136,7 +137,7 @@ export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFuncti
 
     return {
       type: 'render',
-      as: 'enhanced-table',
+      as: ENH_TABLE_VIS_NAME,
       value: {
         visData: input,
         visType: visType.name,

@@ -25,6 +25,7 @@ import { getAngularModule } from './get_inner_angular';
 import { getKibanaLegacy, getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 import { BaseVisType } from '../../../src/plugins/visualizations/public/vis_types';
+import { ENH_TABLE_VIS_NAME } from './types';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
@@ -43,11 +44,11 @@ export function getEnhancedTableVisualizationController(
     handlers: any;
     vis: BaseVisType;
 
-    constructor(domeElement: Element, handlers, visConfig: object) {
+    constructor(domeElement: Element, handlers, visConfig: object, visName: string) {
       this.el = $(domeElement);
       this.handlers = handlers;
       this.params = visConfig;
-      this.vis = getVisualization().get('enhanced-table')
+      this.vis = getVisualization().get(visName)
     }
 
     getInjector() {

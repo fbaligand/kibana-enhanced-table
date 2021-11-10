@@ -106,20 +106,7 @@ function splitTable(columns, rows, $parent) {
 export async function enhancedTableResponseHandler(response, dimensions) {
   console.log(dimensions);
 
-  const enhancedColumns = await enrichColumnsWithAggconfig(response.columns)
-
-  return { tables: splitTable(enhancedColumns, response.rows, null), totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
+  return { tables: splitTable(response.columns, response.rows, null), totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
 }
 
-// This shouldn't be necessary, find a way to put this inside the requestHandler
-async function enrichColumnsWithAggconfig(columns){
-  const promises = columns.map(async (column) => {
-      column.meta.index = column.meta.sourceParams.indexPatternId
-      const indexPattern = await getSearchService().aggs.datatableUtilities.getIndexPattern(column)
-      return {
-          ...column,
-          aggConfig: getSearchService().aggs.createAggConfigs(indexPattern,[column.meta.sourceParams]).aggs[0]
-      }
-  });
-  return await Promise.all(promises);
-}
+

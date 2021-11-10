@@ -11,6 +11,9 @@ import { DatatableColumn, DatatableRow } from '../../../src/plugins/expressions'
 import { SchemaConfig } from '../../../src/plugins/visualizations/public';
 import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
 
+export const ENH_TABLE_VIS_NAME = 'enhanced-table';
+export const DOC_TABLE_VIS_NAME = 'document_table';
+
 export interface Dimensions {
   buckets: SchemaConfig[];
   metrics: SchemaConfig[];

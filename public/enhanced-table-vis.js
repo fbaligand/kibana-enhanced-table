@@ -26,7 +26,9 @@ import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
-import { toExpressionAst } from './to_ast';
+import { toExpressionAst } from './enh_table_to_ast';
+
+import { ENH_TABLE_VIS_NAME } from './types'
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
@@ -34,7 +36,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
   return {
     requiresSearch: true,
     type: 'table',
-    name: 'enhanced-table',
+    name: ENH_TABLE_VIS_NAME,
     title: i18n.translate('visTypeEnhancedTable.visTitle', {
       defaultMessage: 'Enhanced Table'
     }),
