@@ -26,8 +26,13 @@ import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { setFilterManager, setFormatService, setIndexPatterns, setKibanaLegacy, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
 import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public'; 
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
+
 import { getEnhancedTableVisLegacyRenderer } from './enh_table_vis_legacy_renderer';
 import { enhancedTableExpressionFunction } from './enh_table_fn';
+import { documentTableExpressionFunction } from './doc_table_fn';
+import { getDocumentTableVisLegacyRenderer } from './doc_table_vis_legacy_renderer';
+
+
 
 
 /** @internal */
@@ -62,6 +67,8 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
       enhancedTableVisTypeDefinition(core, this.initializerContext)
     );
 
+    expressions.registerFunction(documentTableExpressionFunction);
+    expressions.registerRenderer(getDocumentTableVisLegacyRenderer(core, this.initializerContext));
     visualizations.createBaseVisualization(
       documentTableVisTypeDefinition(core, this.initializerContext)
       );

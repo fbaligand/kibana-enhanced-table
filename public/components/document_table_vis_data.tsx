@@ -26,9 +26,9 @@ import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/pu
 import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
 import { FieldColumnEditor } from './field_column';
 import { FieldParamEditor } from './field';
+import { EnhancedTableVisParams } from './enhanced_table_vis_options';
 
-
-interface DocumentTableVisDataParams {
+export interface DocumentTableVisDataParams extends EnhancedTableVisParams {
   type: 'table';
 
   fieldColumns?: any[];
