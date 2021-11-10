@@ -28,7 +28,7 @@ export const getEnhancedTableVisLegacyRenderer: (
       const { getEnhancedTableVisualizationController } = await import('./vis_controller');
 
       const Controller = getEnhancedTableVisualizationController(core, context);
-      registeredController = new Controller(domNode, handlers, config.visConfig, ENH_TABLE_VIS_NAME);
+      registeredController = new Controller(domNode, handlers, config.visConfig, config.visType);
       tableVisRegistry.set(domNode, registeredController);
 
       handlers.onDestroy(() => {
