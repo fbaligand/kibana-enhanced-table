@@ -72,7 +72,7 @@ function EnhancedTableVisController ($scope, config) {
   };
 
   const getRealColIndex = function (colIndex, splitColIndex) {
-    if (splitColIndex !== -1 && colIndex >= splitColIndex && $scope.vis.params.computedColsPerSplitCol) {
+    if (splitColIndex !== -1 && colIndex >= splitColIndex && $scope.visState.params.computedColsPerSplitCol) {
       return colIndex + 1;
     }
     else {
@@ -81,7 +81,7 @@ function EnhancedTableVisController ($scope, config) {
   };
 
   const getOriginalColIndex = function (colIndex, splitColIndex) {
-    if (splitColIndex !== -1 && colIndex > splitColIndex && $scope.vis.params.computedColsPerSplitCol) {
+    if (splitColIndex !== -1 && colIndex > splitColIndex && $scope.visState.params.computedColsPerSplitCol) {
       return colIndex - 1;
     }
     else {
@@ -788,7 +788,7 @@ function EnhancedTableVisController ($scope, config) {
   };
 
   const notifyError = function(errorMessage) {
-    const title = $scope.vis.type.title + ' Error';
+    const title = $scope.vis.title + ' Error';
     getNotifications().toasts.addDanger({title, text: errorMessage});
   };
 
