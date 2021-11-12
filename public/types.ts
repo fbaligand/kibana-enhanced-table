@@ -8,19 +8,13 @@
 
 import { IFieldFormat } from '../../../src/plugins/data/public';
 import { DatatableColumn, DatatableRow } from '../../../src/plugins/expressions';
-import { SchemaConfig } from '../../../src/plugins/visualizations/public';
 import { DocumentTableVisDataParams } from './components/document_table_vis_data';
 import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
 
-export const ENH_TABLE_VIS_NAME = 'enhanced-table';
-export const DOC_TABLE_VIS_NAME = 'document_table';
+export const ENH_TABLE_VIS_NAME:VisName = 'enhanced-table';
+export const DOC_TABLE_VIS_NAME:VisName = 'document_table';
 
-export interface Dimensions {
-  buckets: SchemaConfig[];
-  metrics: SchemaConfig[];
-  splitColumn?: SchemaConfig[];
-  splitRow?: SchemaConfig[];
-}
+export type VisName = string;
 
 export interface ColumnWidthData {
   colIndex: number;
@@ -44,7 +38,6 @@ export interface EnhancedTableVisUseUiStateProps {
 
 export interface EnhancedTableVisConfig extends EnhancedTableVisParams {
   title: string;
-  dimensions: Dimensions;
 }
 
 export interface DocumentTableVisConfig extends DocumentTableVisDataParams {

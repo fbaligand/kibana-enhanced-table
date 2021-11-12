@@ -161,7 +161,7 @@ async function enrichColumnsWithAggconfig(columns){
       const indexPattern = await getSearchService().aggs.datatableUtilities.getIndexPattern(column);
       return {
           ...column,
-          aggConfig: getSearchService().aggs.createAggConfigs(indexPattern,[column.meta.sourceParams]).aggs[0];
+          aggConfig: getSearchService().aggs.createAggConfigs(indexPattern,[column.meta.sourceParams]).aggs[0],
       }
   });
   return await Promise.all(promises);

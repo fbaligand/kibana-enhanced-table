@@ -72,7 +72,7 @@ function EnhancedTableVisController ($scope, config) {
   };
 
   const getRealColIndex = function (colIndex, splitColIndex) {
-    if (splitColIndex !== -1 && colIndex >= splitColIndex && $scope.visState.params.computedColsPerSplitCol) {
+    if (splitColIndex !== -1 && colIndex >= splitColIndex && $scope.visParams.computedColsPerSplitCol) {
       return colIndex + 1;
     }
     else {
@@ -81,7 +81,7 @@ function EnhancedTableVisController ($scope, config) {
   };
 
   const getOriginalColIndex = function (colIndex, splitColIndex) {
-    if (splitColIndex !== -1 && colIndex > splitColIndex && $scope.visState.params.computedColsPerSplitCol) {
+    if (splitColIndex !== -1 && colIndex > splitColIndex && $scope.visParams.computedColsPerSplitCol) {
       return colIndex - 1;
     }
     else {

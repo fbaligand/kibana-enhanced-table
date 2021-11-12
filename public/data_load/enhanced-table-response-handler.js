@@ -19,11 +19,7 @@
 
 import { get, findLastIndex } from 'lodash';
 import AggConfigResult from './agg_config_result';
-import { AggConfig, AggConfigs } from '../../../../src/plugins/data/common';
 import { fieldFormatter } from '../field_formatter';
-import { Dimensions } from '../types';
-import { getSearchService, getQueryService } from '../services';
-
 
 
 /**
@@ -103,9 +99,7 @@ function splitTable(columns, rows, $parent) {
   });
 }
 
-export async function enhancedTableResponseHandler(response, dimensions) {
-  console.log(dimensions);
-
+export async function enhancedTableResponseHandler(response) {
   return { tables: splitTable(response.columns, response.rows, null), totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
 }
 

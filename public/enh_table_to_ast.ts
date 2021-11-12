@@ -9,34 +9,9 @@
 import { buildExpression, buildExpressionFunction } from '../../../src/plugins/expressions/public';
 import { getVisSchemas, VisToExpressionAst } from '../../../src/plugins/visualizations/public';
 import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
-import { EnhancedTableExpressionFunctionDefinition } from './enh_table_fn';
+import { CommonExpressionFunctionDefinition } from './visualization_fn';
 import { EnhancedTableVisConfig } from './types';
 import { ENH_TABLE_VIS_NAME } from './types'
-
-const buildTableVisConfig = (
-  schemas: ReturnType<typeof getVisSchemas>,
-  visParams: EnhancedTableVisParams
-) => {
-  const metrics = schemas.metric;
-  const buckets = schemas.bucket || [];
-  const visConfig = {
-    dimensions: {
-      metrics,
-      buckets,
-      splitRow: schemas.split_row,
-      splitColumn: schemas.split_column,
-    },
-  };
-
-  if (visParams.showPartialRows && !visParams.showMetricsAtAllLevels) {
-    // Handle case where user wants to see partial rows but not metrics at all levels.
-    // This requires calculating how many metrics will come back in the tabified response,
-    // and removing all metrics from the dimensions except the last set.
-    const metricsPerBucket = metrics.length / buckets.length;
-    visConfig.dimensions.metrics.splice(0, metricsPerBucket * buckets.length - metricsPerBucket);
-  }
-  return visConfig;
-};
 
 export const toExpressionAst: VisToExpressionAst<EnhancedTableVisParams> = (vis, params) => {
 
@@ -44,11 +19,10 @@ export const toExpressionAst: VisToExpressionAst<EnhancedTableVisParams> = (vis,
 
   const visConfig: EnhancedTableVisConfig = {
     ...vis.params,
-    ...buildTableVisConfig(schemas, vis.params),
     title: vis.title,
   };
 
-  const table = buildExpressionFunction<EnhancedTableExpressionFunctionDefinition>(ENH_TABLE_VIS_NAME, {
+  const table = buildExpressionFunction<CommonExpressionFunctionDefinition>(ENH_TABLE_VIS_NAME, {
     visConfig: JSON.stringify(visConfig),
     schemas: JSON.stringify(schemas),
     index: vis.data.indexPattern!.id!,

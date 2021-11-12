@@ -13,7 +13,11 @@ import { ExpressionFunctionDefinition, Render } from '../../../src/plugins/expre
 import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from './services';
 import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
-import { ENH_TABLE_VIS_NAME } from './types'
+import { documentTableResponseHandler } from './data_load/document-table-response-handler';
+
+import { DOC_TABLE_VIS_NAME } from './types';
+import { ENH_TABLE_VIS_NAME }  from './types';
+import { VisName } from './types';
 
 interface Arguments {
   index?: string | null;
@@ -25,22 +29,32 @@ interface Arguments {
   aggConfigs?: string;
 }
 
-export interface EnhancedTableVisRenderValue {
+export interface VisRenderValue {
     visType: string;
     visData: object;
     visConfig: object;
     params?: object;
   }
 
-export type EnhancedTableExpressionFunctionDefinition = ExpressionFunctionDefinition<
-  typeof ENH_TABLE_VIS_NAME,
+export type CommonExpressionFunctionDefinition = ExpressionFunctionDefinition<
+  VisName,
   any,
   Arguments,
-  Promise<Render<EnhancedTableVisRenderValue>>
+  Promise<Render<VisRenderValue>>
 >;
 
-export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFunctionDefinition => ({
-  name: ENH_TABLE_VIS_NAME,
+type ResponseHandler = (any) => any;
+
+export const documentTableExpressionFunction = (): CommonExpressionFunctionDefinition => ({
+    ...expressionFunction(DOC_TABLE_VIS_NAME,documentTableResponseHandler),
+});
+
+export const enhancedTableExpressionFunction = (): CommonExpressionFunctionDefinition => ({
+    ...expressionFunction(ENH_TABLE_VIS_NAME,enhancedTableResponseHandler),
+});
+
+const expressionFunction = (visName: VisName, responseHandler: ResponseHandler): CommonExpressionFunctionDefinition => ({
+  name: visName,
   type: 'render',
   help: i18n.translate('visualizations.functions.visualization.help', {
     defaultMessage: 'A simple visualization',
@@ -97,7 +111,7 @@ export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFuncti
     const aggs = indexPattern
       ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState)
       : undefined;
-    const visType = getVisualization().get(ENH_TABLE_VIS_NAME)
+    const visType = getVisualization().get(visName)
 
     input = await enhancedTableRequestHandler({
         partialRows: args.partialRows,
@@ -132,12 +146,12 @@ export const enhancedTableExpressionFunction = (): EnhancedTableExpressionFuncti
         });
     }
 
-    input = await enhancedTableResponseHandler(input, visConfigParams.dimensions);
+    input = await responseHandler(input);
     
 
     return {
       type: 'render',
-      as: ENH_TABLE_VIS_NAME,
+      as: visName,
       value: {
         visData: input,
         visType: visType.name,
