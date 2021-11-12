@@ -158,7 +158,7 @@ export async function enhancedTableRequestHandler ({
 async function enrichColumnsWithAggconfig(columns){
   const promises = columns.map(async (column) => {
       column.meta.index = column.meta.sourceParams.indexPatternId;
-      const indexPattern = await getSearchService().aggs.datatableUtilities.getIndexPattern(column)
+      const indexPattern = await getSearchService().aggs.datatableUtilities.getIndexPattern(column);
       return {
           ...column,
           aggConfig: getSearchService().aggs.createAggConfigs(indexPattern,[column.meta.sourceParams]).aggs[0]
