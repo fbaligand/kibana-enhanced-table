@@ -26,7 +26,8 @@ import { documentTableResponseHandler } from './data_load/document-table-respons
 import { DocumentTableData } from './components/document_table_vis_data';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
-import { toExpressionAst } from './doc_table_to_ast'
+import { documentTableToExpressionAst } from './to_ast';
+import { DOC_TABLE_VIS_NAME } from './types';
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
@@ -34,7 +35,7 @@ export function documentTableVisTypeDefinition (core, context) {
   return {
     requiresSearch: true,
     type: 'table',
-    name: 'document_table',
+    name: DOC_TABLE_VIS_NAME,
     title: i18n.translate('visTypeDocumentTable.visTitle', {
       defaultMessage: 'Document Table'
     }),
@@ -43,7 +44,7 @@ export function documentTableVisTypeDefinition (core, context) {
       defaultMessage: 'Same functionality than Data Table, but for single documents (not aggregations) and with enhanced features like computed columns, filter bar and pivot table.'
     }),
     visualization: getEnhancedTableVisualizationController(core, context),
-    toExpressionAst: toExpressionAst,
+    toExpressionAst: documentTableToExpressionAst,
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
     },

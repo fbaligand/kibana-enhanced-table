@@ -29,7 +29,7 @@ interface Arguments {
   aggConfigs?: string;
 }
 
-export interface VisRenderValue {
+export interface CommonVisRenderValue {
     visType: string;
     visData: object;
     visConfig: object;
@@ -40,7 +40,7 @@ export type CommonExpressionFunctionDefinition = ExpressionFunctionDefinition<
   VisName,
   any,
   Arguments,
-  Promise<Render<VisRenderValue>>
+  Promise<Render<CommonVisRenderValue>>
 >;
 
 type ResponseHandler = (any) => any;
