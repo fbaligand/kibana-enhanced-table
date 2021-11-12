@@ -34,7 +34,7 @@ export async function enhancedTableRequestHandler ({
   queryFilter
 }) {
 
-  const filterManager = queryFilter
+  const filterManager = queryFilter;
   const MAX_HITS_SIZE = 10000;
 
   // create search source with query parameters
