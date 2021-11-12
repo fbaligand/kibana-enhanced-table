@@ -120,7 +120,12 @@ export async function enhancedTableRequestHandler ({
   }); */
 
   //Add aggConfig to each column
-  response.columns = await enrichColumnsWithAggconfig(response.columns);
+  response.columns = response.columns.map( ( column ) => {
+    return {
+      ...column,
+      aggConfig: aggs.byId(column.meta.sourceParams.id),
+    }
+  })
 
   // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
@@ -152,17 +157,4 @@ export async function enhancedTableRequestHandler ({
 
   // return elasticsearch response
   return response;
-}
-
-// Adds aggConfig to each column using the search service
-async function enrichColumnsWithAggconfig(columns){
-  const promises = columns.map(async (column) => {
-      column.meta.index = column.meta.sourceParams.indexPatternId;
-      const indexPattern = await getSearchService().aggs.datatableUtilities.getIndexPattern(column);
-      return {
-          ...column,
-          aggConfig: getSearchService().aggs.createAggConfigs(indexPattern,[column.meta.sourceParams]).aggs[0],
-      }
-  });
-  return await Promise.all(promises);
 }
