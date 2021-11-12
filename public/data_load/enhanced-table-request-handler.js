@@ -120,7 +120,7 @@ export async function enhancedTableRequestHandler ({
   }); */
 
   //Add aggConfig to each column
-  response.columns = await enrichColumnsWithAggconfig(response.columns)
+  response.columns = await enrichColumnsWithAggconfig(response.columns);
 
   // enrich response: hits
   if (visParams.fieldColumns !== undefined) {
