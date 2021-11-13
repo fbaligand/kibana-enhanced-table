@@ -99,7 +99,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
       help: 'Aggregation configurations',
     },
   },
-  async fn(input, args, { inspectorAdapters }) {
+  async fn(input, args, { inspectorAdapters, getSearchSessionId }) {
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
     const schemas = args.schemas ? JSON.parse(args.schemas) : {};
     const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
@@ -125,7 +125,8 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
         inspectorAdapters,
         queryFilter: getFilterManager(),
         aggs,
-        forceFetch: true
+        forceFetch: true,
+        searchSessionId: getSearchSessionId(),
     });
 
 
@@ -148,7 +149,9 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
 
     input = await responseHandler(input);
     
-
+    if (inspectorAdapters?.tables) {
+      inspectorAdapters.tables.logDatatable('default', input.tables[0]);
+    }
     return {
       type: 'render',
       as: visName,

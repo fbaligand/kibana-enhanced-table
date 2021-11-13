@@ -31,7 +31,8 @@ export async function enhancedTableRequestHandler ({
   inspectorAdapters,
   forceFetch,
   aggs,
-  queryFilter
+  queryFilter,
+  searchSessionId
 }) {
 
   const filterManager = queryFilter;
@@ -91,17 +92,18 @@ export async function enhancedTableRequestHandler ({
 
   // execute elasticsearch query
   const request = {
-    searchSource,
-    aggs,
+    searchSource: searchSource,
+    aggs: aggs,
     indexPattern: aggs.indexPattern,
-    timeRange,
-    query,
-    filters,
-    forceFetch,
-    metricsAtAllLevels,
-    partialRows,
-    inspectorAdapters,
-    filterManager
+    timeRange: timeRange,
+    query: query,
+    filters: filters,
+    forceFetch: forceFetch,
+    metricsAtAllLevels: metricsAtAllLevels,
+    partialRows: partialRows,
+    inspectorAdapters: inspectorAdapters,
+    filterManager: filterManager,
+    searchSessionId: searchSessionId
   };
   const response = await handleCourierRequest(request);
 

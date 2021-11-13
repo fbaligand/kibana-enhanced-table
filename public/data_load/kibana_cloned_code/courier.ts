@@ -3,17 +3,20 @@ import { i18n } from '@kbn/i18n';
 
 import { calculateObjectHash } from '../../../../../src/plugins/kibana_utils/public';
 import { PersistedState } from '../../../../../src/plugins/visualizations/public';
-import { Adapters } from '../../../../../src/plugins/inspector/public';
+import { Adapters } from '../../../../../src/plugins/inspector/common';
 
-import { IAggConfigs } from '../../../../../src/plugins/data/public/search/aggs';
-import { ISearchSource } from '../../../../../src/plugins/data/public/search/search_source';
+import { IAggConfigs } from '../../../../../src/plugins/data/common/search/aggs';
+import { ISearchSource } from '../../../../../src/plugins/data/common/search/search_source';
 import {
   calculateBounds,
   Filter,
+  getRequestInspectorStats,
+  getResponseInspectorStats,
   getTime,
   IIndexPattern,
   isRangeFilter,
   Query,
+  tabifyAggResponse,
   TimeRange,
 } from '../../../../../src/plugins/data/common';
 import { FilterManager } from '../../../../../src/plugins/data/public/query';
@@ -39,6 +42,7 @@ interface RequestHandlerParams {
   uiState?: PersistedState;
   partialRows?: boolean;
   inspectorAdapters: Adapters;
+  searchSessionId?: string;
   metricsAtAllLevels?: boolean;
   visParams?: any;
   abortSignal?: AbortSignal;
@@ -56,6 +60,7 @@ export const handleCourierRequest = async ({
   partialRows,
   metricsAtAllLevels,
   inspectorAdapters,
+  searchSessionId,
   filterManager,
   abortSignal,
 }: RequestHandlerParams) => {
@@ -116,9 +121,10 @@ export const handleCourierRequest = async ({
   // since the last request
   const shouldQuery = forceFetch || (searchSource as any).lastQuery !== queryHash;
 
+  let request;
   if (shouldQuery) {
     inspectorAdapters.requests.reset();
-    const request = inspectorAdapters.requests.start(
+    request = inspectorAdapters.requests.start(
       i18n.translate('data.functions.esaggs.inspector.dataRequest.title', {
         defaultMessage: 'Data',
       }),
@@ -127,48 +133,53 @@ export const handleCourierRequest = async ({
           defaultMessage:
             'This request queries Elasticsearch to fetch the data for the visualization.',
         }),
+        searchSessionId
       }
     );
-    request.stats(search.getRequestInspectorStats(requestSearchSource));
+    request.stats(getRequestInspectorStats(requestSearchSource));
 
     try {
-      const response = await requestSearchSource.fetch({ abortSignal });
+      const response = await requestSearchSource.fetch({ 
+        abortSignal,
+        sessionId: searchSessionId 
+      });
 
       (searchSource as any).lastQuery = queryHash;
 
-      request.stats(search.getResponseInspectorStats(searchSource, response)).ok({ json: response });
+      request.stats(getResponseInspectorStats(response, searchSource)).ok({ json: response });
 
       (searchSource as any).rawResponse = response;
     } catch (e) {
       // Log any error during request to the inspector
-      request.error({ json: e });
+      if (request) {
+        request.error({ json: e });
+      }
       throw e;
     } finally {
       // Add the request body no matter if things went fine or not
-      requestSearchSource.getSearchRequestBody().then((req: unknown) => {
-        request.json(req);
-      });
+      request.json(await requestSearchSource.getSearchRequestBody());
     }
   }
 
   // Note that rawResponse is not deeply cloned here, so downstream applications using courier
   // must take care not to mutate it, or it could have unintended side effects, e.g. displaying
   // response data incorrectly in the inspector.
-  let resp = (searchSource as any).rawResponse;
+  let response = (searchSource as any).rawResponse;
   for (const agg of aggs.aggs) {
-    if (hasIn(agg, 'type.postFlightRequest')) {
-      resp = await agg.type.postFlightRequest(
-        resp,
+    if (agg.enabled && typeof agg.type.postFlightRequest === 'function') {
+      response = await agg.type.postFlightRequest(
+        response,
         aggs,
         agg,
         requestSearchSource,
         inspectorAdapters.requests,
-        abortSignal
+        abortSignal,
+        searchSessionId
       );
     }
   }
 
-  (searchSource as any).finalResponse = resp;
+  (searchSource as any).finalResponse = response;
 
   const parsedTimeRange = timeRange ? calculateBounds(timeRange) : null;
   const tabifyParams = {
@@ -186,8 +197,7 @@ export const handleCourierRequest = async ({
 
   if (shouldCalculateNewTabify) {
     (searchSource as any).lastTabifyHash = tabifyCacheHash;
-    (searchSource as any).tabifiedResponse = search.tabifyAggResponse(
-      aggs,
+    (searchSource as any).tabifiedResponse = tabifyAggResponse(aggs,
       (searchSource as any).finalResponse,
       tabifyParams
     );
