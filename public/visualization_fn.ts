@@ -145,18 +145,21 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
             }
             });
         });
+
+        // This only works if "inputs.columns" exist, so it makes
+        // sense to have it here
+        if (inspectorAdapters?.tables) {
+          inspectorAdapters.tables.logDatatable('default', input);
+        }
     }
 
-    input = await responseHandler(input);
+    const response = await responseHandler(input);
     
-    if (inspectorAdapters?.tables) {
-      inspectorAdapters.tables.logDatatable('default', input.tables[0]);
-    }
     return {
       type: 'render',
       as: visName,
       value: {
-        visData: input,
+        visData: response,
         visType: visType.name,
         visConfig: visConfigParams,
       },
