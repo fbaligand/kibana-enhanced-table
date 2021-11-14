@@ -24,8 +24,10 @@ import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
 import { getKibanaLegacy, getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
+// @ts-ignore
+import enhancedTableVisTemplate from './enhanced-table-vis.html'
 import { BaseVisType } from '../../../src/plugins/visualizations/public/vis_types';
-import { ENH_TABLE_VIS_NAME } from './types';
+import { IInterpreterRenderHandlers } from '../../../src/plugins/expressions';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
@@ -44,17 +46,15 @@ export function getEnhancedTableVisualizationController(
     handlers: any;
     vis: BaseVisType;
 
-    constructor(domeElement: Element, handlers, visConfig: object, visName: string) {
+    constructor(domeElement: Element, visName: string) {
       this.el = $(domeElement);
-      this.handlers = handlers;
-      this.params = visConfig;
       this.vis = getVisualization().get(visName)
     }
 
     getInjector() {
       if (!this.injector) {
         const mountpoint = document.createElement('div');
-        mountpoint.setAttribute('style', 'height: 100%; width: 100%;');
+        mountpoint.className = "visualization";
         this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
         this.el.append(mountpoint);
       }
@@ -67,11 +67,15 @@ export function getEnhancedTableVisualizationController(
         const [coreStart] = await core.getStartServices();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
         initTableVisLegacyModule(this.tableVisModule);
+        getKibanaLegacy().loadFontAwesome();
       }
     }
 
-    async render(esResponse: object, visParams: VisParams) {
-      getKibanaLegacy().loadFontAwesome();
+    async render(
+      esResponse: object,
+      visParams: VisParams,
+      handlers: IInterpreterRenderHandlers
+      ): Promise<void> {
       await this.initLocalAngular();
 
       return new Promise(async (resolve, reject) => {
@@ -107,9 +111,10 @@ export function getEnhancedTableVisualizationController(
 
         if (!this.$scope && this.$compile) {
           this.$scope = this.$rootScope.$new();
-          this.$scope.uiState = this.handlers.uiState;
+          this.$scope.uiState = handlers.uiState;
+          this.$scope.filter = handlers.event;
           updateScope();
-          this.el.find('div').append(this.$compile(this.vis.visConfig.template)(this.$scope));
+          this.el.find('div').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
           this.$scope.$apply();
         } else {
           updateScope();
