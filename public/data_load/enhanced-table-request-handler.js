@@ -85,11 +85,6 @@ export async function enhancedTableRequestHandler ({
     });
   }
 
-  //inspectorAdapters.requests is already initialized
-  //inspectorAdapters.requests = new RequestAdapter();
-  // DataAdapter is not present in Kibana 7.12. Is this necessary?
-  //inspectorAdapters.data = new DataAdapter();
-
   // execute elasticsearch query
   const request = {
     searchSource: searchSource,
@@ -116,18 +111,11 @@ export async function enhancedTableRequestHandler ({
   // enrich response: total & aggs
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
   response.aggs = aggs;
-  // Columns already have meta in Kibana 7.12
-/*   response.columns.forEach(column => {
-    column.meta = serializeAggConfig(column.aggConfig);
-  }); */
 
-  //Add aggConfig to each column
-  response.columns = response.columns.map( ( column ) => {
-    return {
-      ...column,
-      aggConfig: aggs.byId(column.meta.sourceParams.id),
-    }
-  })
+  // enrich columns: aggConfig
+  response.columns.forEach( column => {
+    column.aggConfig = aggs.byId(column.meta.sourceParams.id);
+  });
 
   // enrich response: hits
   if (visParams.fieldColumns !== undefined) {

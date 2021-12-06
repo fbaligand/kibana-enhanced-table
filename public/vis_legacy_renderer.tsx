@@ -8,7 +8,7 @@
 
 import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 import { ExpressionRenderDefinition } from '../../../src/plugins/expressions';
-import { CommonVisRenderValue } from './visualization_fn';
+import { CommonVisRenderValue } from './data_load/visualization_fn';
 import { TablePluginStartDependencies } from './plugin';
 import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from './types';
 

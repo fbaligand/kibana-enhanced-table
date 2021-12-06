@@ -9,7 +9,7 @@
 import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '../../../src/plugins/expressions/public';
 import { getVisSchemas, VisToExpressionAst } from '../../../src/plugins/visualizations/public';
 import { DocumentTableVisDataParams  } from './components/document_table_vis_data';
-import { CommonExpressionFunctionDefinition } from './visualization_fn';
+import { CommonExpressionFunctionDefinition } from './data_load/visualization_fn';
 import { DocumentTableVisConfig, EnhancedTableVisConfig, ENH_TABLE_VIS_NAME, VisName } from './types';
 import { DOC_TABLE_VIS_NAME } from './types'
 import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';

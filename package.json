@@ -12,7 +12,7 @@
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
     "start": "cd ../.. && node scripts/kibana --dev --oss",
-    "start-full": "cd ../.. && node scripts/kibana --dev",
+    "start-xpack": "cd ../.. && node scripts/kibana --dev",
     "test:server": "node ../../scripts/plugin_helpers.js test:server",
     "test:browser": "node ../../scripts/plugin_helpers.js test:browser",
     "build": "node ../../scripts/plugin_helpers.js build",

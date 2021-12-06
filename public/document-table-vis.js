@@ -43,7 +43,6 @@ export function documentTableVisTypeDefinition (core, context) {
     description: i18n.translate('visTypeDocumentTable.visDescription', {
       defaultMessage: 'Same functionality than Data Table, but for single documents (not aggregations) and with enhanced features like computed columns, filter bar and pivot table.'
     }),
-    visualization: getEnhancedTableVisualizationController(core, context),
     toExpressionAst: documentTableToExpressionAst,
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
@@ -110,8 +109,6 @@ export function documentTableVisTypeDefinition (core, context) {
         }
       ]
     },
-    requestHandler: enhancedTableRequestHandler,
-    responseHandler: documentTableResponseHandler,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     }

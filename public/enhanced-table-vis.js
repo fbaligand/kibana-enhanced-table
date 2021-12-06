@@ -44,7 +44,6 @@ export function enhancedTableVisTypeDefinition (core, context) {
     description: i18n.translate('visTypeEnhancedTable.visDescription', {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
-    visualization: getEnhancedTableVisualizationController(core, context),
     toExpressionAst: enhancedTableToExpressionAst,
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
@@ -125,8 +124,6 @@ export function enhancedTableVisTypeDefinition (core, context) {
         }
       ]
     },
-    requestHandler: enhancedTableRequestHandler,
-    responseHandler: enhancedTableResponseHandler,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     }

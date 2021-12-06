@@ -121,10 +121,9 @@ export const handleCourierRequest = async ({
   // since the last request
   const shouldQuery = forceFetch || (searchSource as any).lastQuery !== queryHash;
 
-  let request;
   if (shouldQuery) {
     inspectorAdapters.requests.reset();
-    request = inspectorAdapters.requests.start(
+    const request = inspectorAdapters.requests.start(
       i18n.translate('data.functions.esaggs.inspector.dataRequest.title', {
         defaultMessage: 'Data',
       }),
@@ -202,16 +201,6 @@ export const handleCourierRequest = async ({
       tabifyParams
     );
   }
-
-  // DataAdapter is not present in Kibana 7.12. Is this necessary?
-/*   inspectorAdapters.data.setTabularLoader(
-    () =>
-      buildTabularInspectorData((searchSource as any).tabifiedResponse, {
-        queryFilter: filterManager,
-        deserializeFieldFormat: getFieldFormats().deserialize,
-      }),
-    { returnsFormattedValues: true }
-  ); */
 
   return (searchSource as any).tabifiedResponse;
 };

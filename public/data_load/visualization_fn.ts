@@ -8,16 +8,13 @@
 
 import { get } from 'lodash';
 import { i18n } from '@kbn/i18n';
-import { PersistedState } from '../../../src/plugins/visualizations/public';
-import { ExpressionFunctionDefinition, Render } from '../../../src/plugins/expressions/public';
-import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from './services';
-import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
-import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
-import { documentTableResponseHandler } from './data_load/document-table-response-handler';
-
-import { DOC_TABLE_VIS_NAME } from './types';
-import { ENH_TABLE_VIS_NAME }  from './types';
-import { VisName } from './types';
+import { PersistedState } from '../../../../src/plugins/visualizations/public';
+import { ExpressionFunctionDefinition, Render } from '../../../../src/plugins/expressions/public';
+import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from '../services';
+import { enhancedTableRequestHandler } from './enhanced-table-request-handler';
+import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
+import { documentTableResponseHandler } from './document-table-response-handler';
+import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from '../types';
 
 interface Arguments {
   index?: string | null;

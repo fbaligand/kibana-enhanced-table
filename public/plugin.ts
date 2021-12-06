@@ -28,7 +28,7 @@ import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
 
 import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } from './vis_legacy_renderer';
-import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './visualization_fn';
+import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
 
 
 
