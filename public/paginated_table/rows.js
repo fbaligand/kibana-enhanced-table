@@ -43,12 +43,20 @@ export function KbnEnhancedRows($compile) {
               return;
             }
 
-            $scope.filter({ data: [{
-              table: $scope.table,
-              row: $scope.rows.findIndex(r => r === row),
-              column: iColumn,
-              value: aggConfigResult.value
-            }], negate });
+            $scope.filter({
+              name: 'filterBucket',
+              data: {
+                data: [
+                  {
+                    table: $scope.table,
+                    row: $scope.rows.findIndex((r) => r === row),
+                    column: iColumn,
+                    value: aggConfigResult.value,
+                  },
+                ],
+                negate,
+              },
+            });
           };
 
           return $compile($template)(scope);

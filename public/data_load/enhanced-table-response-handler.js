@@ -21,6 +21,7 @@ import { get, findLastIndex } from 'lodash';
 import AggConfigResult from './agg_config_result';
 import { fieldFormatter } from '../field_formatter';
 
+
 /**
  * Takes an array of tabified rows and splits them by column value:
  *
@@ -47,7 +48,7 @@ function splitRowsOnColumn(rows, columnId) {
 }
 
 function splitTable(columns, rows, $parent) {
-  const splitColumn = columns.find(column => get(column, 'aggConfig.schema') === 'split');
+  const splitColumn = columns.find(column => get(column, 'meta.sourceParams.schema') === 'split');
 
   if (!splitColumn) {
     return [{
@@ -98,6 +99,8 @@ function splitTable(columns, rows, $parent) {
   });
 }
 
-export function enhancedTableResponseHandler(response) {
+export async function enhancedTableResponseHandler(response) {
   return { tables: splitTable(response.columns, response.rows, null), totalHits: response.totalHits, aggs: response.aggs, newResponse: true };
 }
+
+

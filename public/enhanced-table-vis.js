@@ -19,7 +19,6 @@
 
 import { i18n } from '@kbn/i18n';
 import { AggGroupNames } from '../../../src/plugins/data/public';
-import { Schemas } from '../../../src/plugins/vis_default_editor/public';
 
 import tableVisTemplate from './enhanced-table-vis.html';
 import { getEnhancedTableVisualizationController } from './vis_controller';
@@ -28,12 +27,16 @@ import { enhancedTableResponseHandler } from './data_load/enhanced-table-respons
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
 
+import { ENH_TABLE_VIS_NAME } from './types'
+import { enhancedTableToExpressionAst } from './to_ast';
+
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
 export function enhancedTableVisTypeDefinition (core, context) {
   return {
+    requiresSearch: true,
     type: 'table',
-    name: 'enhanced-table',
+    name: ENH_TABLE_VIS_NAME,
     title: i18n.translate('visTypeEnhancedTable.visTitle', {
       defaultMessage: 'Enhanced Table'
     }),
@@ -41,7 +44,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
     description: i18n.translate('visTypeEnhancedTable.visDescription', {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
-    visualization: getEnhancedTableVisualizationController(core, context),
+    toExpressionAst: enhancedTableToExpressionAst,
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
     },
@@ -75,7 +78,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
     },
     editorConfig: {
       optionsTemplate: EnhancedTableOptions,
-      schemas: new Schemas([
+      schemas: [
         {
           group: AggGroupNames.Metrics,
           name: 'metric',
@@ -119,10 +122,8 @@ export function enhancedTableVisTypeDefinition (core, context) {
           max: 1,
           editor: '<div class="hintbox"><i class="fa fa-danger text-info"></i> This bucket must be the last one</div>'
         }
-      ])
+      ]
     },
-    requestHandler: enhancedTableRequestHandler,
-    responseHandler: enhancedTableResponseHandler,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     }

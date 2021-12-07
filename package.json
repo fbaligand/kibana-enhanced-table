@@ -12,10 +12,12 @@
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
     "start": "cd ../.. && node scripts/kibana --dev --oss",
-    "test:server": "../../node_modules/.bin/plugin-helpers test:server",
-    "test:browser": "../../node_modules/.bin/plugin-helpers test:browser",
-    "build": "../../node_modules/.bin/plugin-helpers build",
-    "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --scan-dir . --filter enhancedTable"
+    "start-xpack": "cd ../.. && node scripts/kibana --dev",
+    "test:server": "node ../../scripts/plugin_helpers.js test:server",
+    "test:browser": "node ../../scripts/plugin_helpers.js test:browser",
+    "build": "node ../../scripts/plugin_helpers.js build",
+    "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --scan-dir . --filter enhancedTable",
+    "debug": "node --nolazy --inspect ../../scripts/kibana --dev"
   },
   "dependencies": {
     "expr-eval": "2.0.2"

@@ -22,13 +22,13 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n/react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
-import { VisOptionsProps } from '../../../../src/plugins/vis_default_editor/public';
-import { NumberInputOption, SelectOption } from '../../../../src/plugins/charts/public';
+import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
+import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
 import { FieldColumnEditor } from './field_column';
 import { FieldParamEditor } from './field';
+import { EnhancedTableVisParams } from './enhanced_table_vis_options';
 
-
-interface DocumentTableVisDataParams {
+export interface DocumentTableVisDataParams extends EnhancedTableVisParams {
   type: 'table';
 
   fieldColumns?: any[];
@@ -83,7 +83,7 @@ function DocumentTableData({
   stateParams,
   setValidity,
   setValue,
-}: VisOptionsProps<DocumentTableVisDataParams>) {
+}: VisEditorOptionsProps<DocumentTableVisDataParams>) {
 
   const isHitsSizeValid = stateParams.hitsSize > 0;
   const fieldColumnsError = undefined;

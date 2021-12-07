@@ -17,25 +17,33 @@
  * under the License.
  */
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
+import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService, setKibanaLegacy, setNotifications, setQueryService, setSearchService } from './services';
-import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
+import { setFilterManager, setFormatService, setIndexPatterns, setKibanaLegacy, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
+import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public'; 
+import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
+
+import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } from './vis_legacy_renderer';
+import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
+
+
 
 
 /** @internal */
 export interface TablePluginSetupDependencies {
   visualizations: VisualizationsSetup;
+  expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
 }
 
 /** @internal */
 export interface TablePluginStartDependencies {
   data: DataPublicPluginStart;
   kibanaLegacy: KibanaLegacyStart;
+  visualizations: VisualizationsStart;
 }
 
 /** @internal */
@@ -49,22 +57,29 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
 
   public async setup(
     core: CoreSetup,
-    { visualizations }: TablePluginSetupDependencies
+    { visualizations, expressions }: TablePluginSetupDependencies
   ) {
+    expressions.registerFunction(enhancedTableExpressionFunction);
+    expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core, this.initializerContext));
     visualizations.createBaseVisualization(
       enhancedTableVisTypeDefinition(core, this.initializerContext)
     );
 
+    expressions.registerFunction(documentTableExpressionFunction);
+    expressions.registerRenderer(getDocumentTableVisLegacyRenderer(core, this.initializerContext));
     visualizations.createBaseVisualization(
       documentTableVisTypeDefinition(core, this.initializerContext)
       );
   }
 
-  public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {
-    setFormatService(data.fieldFormats);
-    setKibanaLegacy(kibanaLegacy);
+  public start(core: CoreStart, deps: TablePluginStartDependencies) {
+    setFormatService(deps.data.fieldFormats);
+    setKibanaLegacy(deps.kibanaLegacy);
     setNotifications(core.notifications);
-    setQueryService(data.query);
-    setSearchService(data.search);
+    setQueryService(deps.data.query);
+    setSearchService(deps.data.search);
+    setIndexPatterns(deps.data.indexPatterns);
+    setFilterManager(deps.data.query.filterManager);
+    setVisualization(deps.visualizations)
   }
 }

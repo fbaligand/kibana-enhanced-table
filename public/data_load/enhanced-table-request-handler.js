@@ -18,10 +18,8 @@
  */
 
 import _ from 'lodash';
-import { RequestAdapter, DataAdapter } from '../../../../src/plugins/inspector/public';
-import { getSearchService, getQueryService } from '../services';
+import { getSearchService } from '../services';
 import { handleCourierRequest } from './kibana_cloned_code/courier';
-import { serializeAggConfig } from './kibana_cloned_code/utils';
 
 export async function enhancedTableRequestHandler ({
   partialRows,
@@ -32,10 +30,12 @@ export async function enhancedTableRequestHandler ({
   filters,
   inspectorAdapters,
   forceFetch,
-  aggs
+  aggs,
+  queryFilter,
+  searchSessionId
 }) {
 
-  const { filterManager } = getQueryService();
+  const filterManager = queryFilter;
   const MAX_HITS_SIZE = 10000;
 
   // create search source with query parameters
@@ -85,22 +85,20 @@ export async function enhancedTableRequestHandler ({
     });
   }
 
-  inspectorAdapters.requests = new RequestAdapter();
-  inspectorAdapters.data = new DataAdapter();
-
   // execute elasticsearch query
   const request = {
-    searchSource,
-    aggs,
+    searchSource: searchSource,
+    aggs: aggs,
     indexPattern: aggs.indexPattern,
-    timeRange,
-    query,
-    filters,
-    forceFetch,
-    metricsAtAllLevels,
-    partialRows,
-    inspectorAdapters,
-    filterManager
+    timeRange: timeRange,
+    query: query,
+    filters: filters,
+    forceFetch: forceFetch,
+    metricsAtAllLevels: metricsAtAllLevels,
+    partialRows: partialRows,
+    inspectorAdapters: inspectorAdapters,
+    filterManager: filterManager,
+    searchSessionId: searchSessionId
   };
   const response = await handleCourierRequest(request);
 
@@ -113,8 +111,10 @@ export async function enhancedTableRequestHandler ({
   // enrich response: total & aggs
   response.totalHits = _.get(searchSource, 'finalResponse.hits.total', -1);
   response.aggs = aggs;
-  response.columns.forEach(column => {
-    column.meta = serializeAggConfig(column.aggConfig);
+
+  // enrich columns: aggConfig
+  response.columns.forEach( column => {
+    column.aggConfig = aggs.byId(column.meta.sourceParams.id);
   });
 
   // enrich response: hits

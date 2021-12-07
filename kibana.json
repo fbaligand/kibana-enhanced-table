@@ -5,12 +5,14 @@
   "ui": true,
   "requiredPlugins": [
     "visualizations",
+    "expressions",
     "data",
     "inspector",
     "kibanaLegacy",
     "kibanaUtils",
     "kibanaReact",
     "share",
-    "charts"
+    "charts",
+    "visDefaultEditor"
   ]
 }

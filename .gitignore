@@ -7,3 +7,4 @@ package-lock.json
 yarn.lock
 .project
 *.zip
+.vscode
