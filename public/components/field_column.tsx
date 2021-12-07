@@ -1,8 +1,8 @@
 import { clone } from 'lodash';
 import React, { useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
-import { IndexPatternField } from '../../../../src/plugins/data/public';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
+import { IndexPatternField } from '../../../../src/plugins/data/public';
 
 import { TextInputOption } from './text_input';
 import { FieldParamEditor } from './field';

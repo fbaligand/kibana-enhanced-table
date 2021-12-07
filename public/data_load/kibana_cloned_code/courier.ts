@@ -1,4 +1,3 @@
-import { hasIn } from 'lodash';
 import { i18n } from '@kbn/i18n';
 
 import { calculateObjectHash } from '../../../../../src/plugins/kibana_utils/public';
@@ -19,11 +18,6 @@ import {
   tabifyAggResponse,
   TimeRange,
 } from '../../../../../src/plugins/data/common';
-import { FilterManager } from '../../../../../src/plugins/data/public/query';
-import { buildTabularInspectorData } from './build_tabular_inspector_data';
-import { search } from '../../../../../src/plugins/data/public';
-
-import { getFormatService as getFieldFormats } from '../../services';
 
 /**
  * Clone of: ../../../../../src/plugins/data/public/search/expressions/esaggs.ts
@@ -38,7 +32,6 @@ interface RequestHandlerParams {
   query?: Query;
   filters?: Filter[];
   forceFetch: boolean;
-  filterManager: FilterManager;
   uiState?: PersistedState;
   partialRows?: boolean;
   inspectorAdapters: Adapters;
@@ -61,7 +54,6 @@ export const handleCourierRequest = async ({
   metricsAtAllLevels,
   inspectorAdapters,
   searchSessionId,
-  filterManager,
   abortSignal,
 }: RequestHandlerParams) => {
   // Create a new search source that inherits the original search source
@@ -138,9 +130,9 @@ export const handleCourierRequest = async ({
     request.stats(getRequestInspectorStats(requestSearchSource));
 
     try {
-      const response = await requestSearchSource.fetch({ 
+      const response = await requestSearchSource.fetch({
         abortSignal,
-        sessionId: searchSessionId 
+        sessionId: searchSessionId
       });
 
       (searchSource as any).lastQuery = queryHash;

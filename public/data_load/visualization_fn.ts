@@ -1,6 +1,5 @@
 import { get } from 'lodash';
 import { i18n } from '@kbn/i18n';
-import { PersistedState } from '../../../../src/plugins/visualizations/public';
 import { ExpressionFunctionDefinition, Render } from '../../../../src/plugins/expressions/public';
 import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from '../services';
 import { enhancedTableRequestHandler } from './enhanced-table-request-handler';
@@ -52,7 +51,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
     // TODO: Below `help` keys should be internationalized once this function
     // TODO: is moved to visualizations plugin.
     index: {
-      //types: ['string', 'null'],
+      // types: ['string', 'null'],
       types: ['string'],
       default: '',
       help: 'Index',
@@ -93,24 +92,19 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
     const schemas = args.schemas ? JSON.parse(args.schemas) : {};
     const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
 
-    const uiStateParams = args.uiState ? JSON.parse(args.uiState) : {};
-    const uiState = new PersistedState(uiStateParams);
-
     const aggConfigsState = args.aggConfigs ? JSON.parse(args.aggConfigs) : [];
     const aggs = indexPattern
       ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState)
       : undefined;
-    const visType = getVisualization().get(visName)
+    const visType = getVisualization().get(visName);
 
     input = await enhancedTableRequestHandler({
         partialRows: args.partialRows,
         metricsAtAllLevels: args.metricsAtAllLevels,
-        //index: indexPattern,
         visParams: visConfigParams,
         timeRange: get(input, 'timeRange', null),
         query: get(input, 'query', null),
         filters: get(input, 'filters', null),
-        //uiState,
         inspectorAdapters,
         queryFilter: getFilterManager(),
         aggs,
@@ -143,7 +137,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
     }
 
     const response = await responseHandler(input);
-    
+
     return {
       type: 'render',
       as: visName,

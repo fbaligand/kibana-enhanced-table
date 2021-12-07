@@ -1,13 +1,13 @@
-import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
+import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
 import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
 import { getKibanaLegacy, getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 // @ts-ignore
-import enhancedTableVisTemplate from './enhanced-table-vis.html'
+import enhancedTableVisTemplate from './enhanced-table-vis.html';
 import { BaseVisType } from '../../../src/plugins/visualizations/public/vis_types';
 import { IInterpreterRenderHandlers } from '../../../src/plugins/expressions';
 
@@ -30,13 +30,13 @@ export function getEnhancedTableVisualizationController(
 
     constructor(domeElement: Element, visName: string) {
       this.el = $(domeElement);
-      this.vis = getVisualization().get(visName)
+      this.vis = getVisualization().get(visName);
     }
 
     getInjector() {
       if (!this.injector) {
         const mountpoint = document.createElement('div');
-        mountpoint.className = "visualization";
+        mountpoint.className = 'visualization';
         this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
         this.el.append(mountpoint);
       }
@@ -60,7 +60,7 @@ export function getEnhancedTableVisualizationController(
       ): Promise<void> {
       await this.initLocalAngular();
 
-      return new Promise(async (resolve, reject) => {
+      return new Promise((resolve, reject) => {
         if (!this.$rootScope) {
           const $injector = this.getInjector();
           this.$rootScope = $injector.get('$rootScope');

@@ -22,7 +22,7 @@ export interface FieldParamEditorProps {
 function createIndexedFields(indexPatternFields: IndexPatternField[]): ComboBoxGroupedOptions<IndexPatternField> {
   const indexedFields = [];
   indexPatternFields.forEach(field => {
-    let indexedField = indexedFields.find(indexedField => indexedField.label === field.type);
+    let indexedField = indexedFields.find(f => f.label === field.type);
     if (!indexedField) {
       indexedField = { label: field.type, options: [] };
       indexedFields.push(indexedField);

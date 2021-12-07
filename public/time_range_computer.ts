@@ -47,11 +47,11 @@ function parseDathMathExpression(dateMathExpression: string, roundUp: boolean, n
   const date: Date = new Date(nowReference);
 
   // update date with +/- intervals
-  const matches = dateMathExpression.match(/([\+\-][0-9]+[yMwdHhms])/g);
+  const matches = dateMathExpression.match(/([+-][0-9]+[yMwdHhms])/g);
   if (matches) {
     matches.forEach(match => {
-      const multiplier = parseInt(match.substring(0, 1) + '1');
-      const incrementCount = parseInt(match.substring(1, match.length - 1)) * multiplier;
+      const multiplier = parseInt(match.substring(0, 1) + '1', 10);
+      const incrementCount = parseInt(match.substring(1, match.length - 1), 10) * multiplier;
       const unit = match.substring(match.length - 1);
       incrementDateUnit(date, incrementCount, unit);
     });
@@ -189,6 +189,6 @@ export function computeTimeRange(timeRange?: TimeRangeInput, dayOfWeek?: string)
     duration: computeDuration(from, to),
     from: computeDateStructure(from),
     to: computeDateStructure(to)
-  }
+  };
 
 }

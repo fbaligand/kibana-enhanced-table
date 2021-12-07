@@ -11,14 +11,14 @@ export const getEnhancedTableVisLegacyRenderer: (
   context: PluginInitializerContext
 ) => ExpressionRenderDefinition<CommonVisRenderValue> = (core, context) => ({
   ...getCommonVisLegacyRenderer(core,context,ENH_TABLE_VIS_NAME)
-})
+});
 
 export const getDocumentTableVisLegacyRenderer: (
   core: CoreSetup<TablePluginStartDependencies>,
   context: PluginInitializerContext
 ) => ExpressionRenderDefinition<CommonVisRenderValue> = (core, context) => ({
   ...getCommonVisLegacyRenderer(core,context,DOC_TABLE_VIS_NAME)
-})
+});
 
 const getCommonVisLegacyRenderer: (
   core: CoreSetup<TablePluginStartDependencies>,

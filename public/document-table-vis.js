@@ -1,9 +1,6 @@
 import { i18n } from '@kbn/i18n';
 
 import tableVisTemplate from './enhanced-table-vis.html';
-import { getEnhancedTableVisualizationController } from './vis_controller';
-import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
-import { documentTableResponseHandler } from './data_load/document-table-response-handler';
 import { DocumentTableData } from './components/document_table_vis_data';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
@@ -12,6 +9,7 @@ import { DOC_TABLE_VIS_NAME } from './types';
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
+// eslint-disable-next-line no-unused-vars
 export function documentTableVisTypeDefinition (core, context) {
   return {
     requiresSearch: true,
