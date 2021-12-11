@@ -8,7 +8,7 @@ export function serializeAggConfig(aggConfig) {
   const sourceParams = {
     indexPatternId: aggConfig.getIndexPattern().id,
     ...aggConfig.serialize()
-  }
+  };
 
   return {
     type: aggConfig.type.name,
@@ -17,7 +17,7 @@ export function serializeAggConfig(aggConfig) {
     source: 'esaggs',
     sourceParams
   };
-};
+}
 
 /**
  * Clone of: '../../../../../src/plugins/data/common/field_formats/utils.ts'

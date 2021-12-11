@@ -1,29 +1,15 @@
-/*
- * Licensed to Elasticsearch B.V. under one or more contributor
- * license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright
- * ownership. Elasticsearch B.V. licenses this file to you under
- * the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
+import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
+import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getKibanaLegacy } from './services';
+import { getKibanaLegacy, getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
+// @ts-ignore
+import enhancedTableVisTemplate from './enhanced-table-vis.html';
+import { BaseVisType } from '../../../src/plugins/visualizations/public/vis_types';
+import { IInterpreterRenderHandlers } from '../../../src/plugins/expressions';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
@@ -35,20 +21,22 @@ export function getEnhancedTableVisualizationController(
     private tableVisModule: IModule | undefined;
     private injector: auto.IInjectorService | undefined;
     el: JQuery<Element>;
-    vis: ExprVis;
     $rootScope: IRootScopeService | null = null;
     $scope: (IScope & { [key: string]: any }) | undefined;
     $compile: ICompileService | undefined;
+    params: object;
+    handlers: any;
+    vis: BaseVisType;
 
-    constructor(domeElement: Element, vis: ExprVis) {
+    constructor(domeElement: Element, visName: string) {
       this.el = $(domeElement);
-      this.vis = vis;
+      this.vis = getVisualization().get(visName);
     }
 
     getInjector() {
       if (!this.injector) {
         const mountpoint = document.createElement('div');
-        mountpoint.setAttribute('style', 'height: 100%; width: 100%;');
+        mountpoint.className = 'visualization';
         this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
         this.el.append(mountpoint);
       }
@@ -61,14 +49,18 @@ export function getEnhancedTableVisualizationController(
         const [coreStart] = await core.getStartServices();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
         initTableVisLegacyModule(this.tableVisModule);
+        getKibanaLegacy().loadFontAwesome();
       }
     }
 
-    async render(esResponse: object, visParams: VisParams) {
-      getKibanaLegacy().loadFontAwesome();
+    async render(
+      esResponse: object,
+      visParams: VisParams,
+      handlers: IInterpreterRenderHandlers
+      ): Promise<void> {
       await this.initLocalAngular();
 
-      return new Promise(async (resolve, reject) => {
+      return new Promise((resolve, reject) => {
         if (!this.$rootScope) {
           const $injector = this.getInjector();
           this.$rootScope = $injector.get('$rootScope');
@@ -101,9 +93,10 @@ export function getEnhancedTableVisualizationController(
 
         if (!this.$scope && this.$compile) {
           this.$scope = this.$rootScope.$new();
-          this.$scope.uiState = this.vis.getUiState();
+          this.$scope.uiState = handlers.uiState;
+          this.$scope.filter = handlers.event;
           updateScope();
-          this.el.find('div').append(this.$compile(this.vis.type!.visConfig.template)(this.$scope));
+          this.el.find('div').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
           this.$scope.$apply();
         } else {
           updateScope();

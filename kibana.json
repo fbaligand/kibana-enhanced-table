@@ -5,6 +5,7 @@
   "ui": true,
   "requiredPlugins": [
     "visualizations",
+    "expressions",
     "data",
     "inspector",
     "kibanaLegacy",

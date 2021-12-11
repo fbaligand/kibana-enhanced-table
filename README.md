@@ -56,7 +56,7 @@ This project is a Kibana plugin that provides two visualizations:
 - Add a row number column
 - Ability to add the visualization to a Canvas workpad (Kibana 7.9+)
 - Ability to use dashboard drilldowns (Kibana 7.9+)
-- Kibana supported versions : all versions from 5.5 to 7.11
+- Kibana supported versions : all versions from 5.5 to 7.12
 
 ## Demo
 
@@ -83,15 +83,22 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 - Open Kibana URL in your browser (by default: [http://localhost:5601](http://localhost:5601))
 - Go to "Visualize" app
 - Click on "Create visualization" button
-- Choose "Enhanced Table"
-- Select your index-pattern, and then your buckets & metrics
-- Go to "Options" tab, and enjoy the enhanced features: computed columns, hidden columns, filter bar, and so on...
+- If you use Kibana 7.11 or superior, click on "Aggregation based"
+- If you want a table based on aggregated data:
+  - Choose "Enhanced Table"
+  - Select your index-pattern, and then your buckets & metrics
+  - Go to "Options" tab, and enjoy the enhanced features: computed columns, hidden columns, filter bar, and so on...
+- If you want a table based on single documents:
+  - Choose "Document Table"
+  - Select your index-pattern
+  - Then in 'Data' tab, define columns to display and indicate "Hits size"
+  - Go to "Options" tab, and enjoy the enhanced features: computed columns, hidden columns, filter bar, and so on...
 
 ### Troubleshooting
 
 If you don't see 'Enhanced Table' (when you go to "Create visualization" screen) or if you see any error, try these actions:
 - in your browser, force Kibana page reload: Shift+F5 or Ctrl+F5
-- if it still doesn't work, empty your browser cache, and then, reload Kibana page
+- if it still doesn't work, empty your browser cache (using Ctrl+Shift+Del), and then, reload Kibana page
 - if it still doesn't work:
   - stop Kibana
   - delete `$KIBANA_HOME/optimize` folder
