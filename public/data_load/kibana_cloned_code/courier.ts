@@ -23,7 +23,6 @@ interface RequestHandlerParams {
   filters?: Filter[];
   indexPattern?: IndexPattern;
   inspectorAdapters: Adapters;
-  metricsAtAllLevels?: boolean;
   partialRows?: boolean;
   query?: Query;
   searchSessionId?: string;
@@ -72,9 +71,7 @@ export const handleCourierRequest = async ({
     },
   });
 
-  requestSearchSource.setField('aggs', function () {
-    return aggs.toDsl();
-  });
+  requestSearchSource.setField('aggs', aggs);
 
   requestSearchSource.onRequestStart((paramSearchSource, options) => {
     return aggs.onSearchRequestStart(paramSearchSource, options);
@@ -127,6 +124,9 @@ export const handleCourierRequest = async ({
       ? { from: parsedTimeRange.min, to: parsedTimeRange.max, timeFields: allTimeFields }
       : undefined,
   };
+
+  //Need this so the enhancedTableRequestHandler can recover the hits for the document table
+  (searchSource as any).finalResponse = response;
 
   const tabifiedResponse = tabifyAggResponse(aggs, response, tabifyParams);
 
