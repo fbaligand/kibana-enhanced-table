@@ -61,6 +61,7 @@ export function getEnhancedTableVisualizationController(
       await this.initLocalAngular();
 
       return new Promise((resolve, reject) => {
+        try {
         if (!this.$rootScope) {
           const $injector = this.getInjector();
           this.$rootScope = $injector.get('$rootScope');
@@ -100,6 +101,9 @@ export function getEnhancedTableVisualizationController(
           this.$scope.$apply();
         } else {
           updateScope();
+        }
+      } catch (error) {
+        reject(error);
         }
       });
     }
