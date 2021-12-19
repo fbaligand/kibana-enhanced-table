@@ -12,8 +12,8 @@
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
     "start": "cd ../.. && node scripts/kibana --dev --oss",
-    "test:server": "../../node_modules/.bin/plugin-helpers test:server",
-    "test:browser": "../../node_modules/.bin/plugin-helpers test:browser",
+    "start-xpack": "cd ../.. && node scripts/kibana --dev",
+    "debug": "node --nolazy --inspect ../../scripts/kibana --dev",
     "build": "../../node_modules/.bin/plugin-helpers build",
     "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --scan-dir . --filter enhancedTable"
   },
