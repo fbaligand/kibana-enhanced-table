@@ -103,7 +103,7 @@ export function getEnhancedTableVisualizationController(
             updateScope();
           }
         } catch (error) {
-            reject(error);
+          reject(error);
         }
       });
     }
