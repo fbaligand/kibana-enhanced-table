@@ -8,15 +8,12 @@ import 'angular-recursion';
 import { i18nDirective, i18nFilter, I18nProvider } from '@kbn/i18n/angular';
 import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
 import {
-  initAngularBootstrap,
   PaginateDirectiveProvider,
   PaginateControlsDirectiveProvider,
   PrivateProvider,
   watchMultiDecorator,
   KbnAccessibleClickProvider,
 } from '../../../src/plugins/kibana_legacy/public';
-
-initAngularBootstrap();
 
 const thirdPartyAngularDependencies = ['ngSanitize', 'ui.bootstrap', 'RecursionHelper'];
 
