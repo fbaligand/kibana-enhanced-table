@@ -172,8 +172,11 @@ function DocumentTableData({
         />
 
         <FieldParamEditor
-          indexPatternFields = {getSortableFields(aggs)}
-          showValidation = { true }
+          customLabel={i18n.translate('visTypeDocumentTable.params.sortField', {
+            defaultMessage: 'Sort Field'
+          })}
+          indexPatternFields={getSortableFields(aggs)}
+          showValidation={true}
           value={stateParams.sortField}
           setValue={ value => setValue('sortField', value)}
         />
