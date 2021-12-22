@@ -1012,7 +1012,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         }
 
         // no data to display
-        if (totalHits === 0 || firstTable === null) {
+        if (firstTable === null || firstTable.rows.length === 0) {
           $scope.hasSomeRows = false;
           $scope.hasSomeData = false;
           $scope.renderComplete();
