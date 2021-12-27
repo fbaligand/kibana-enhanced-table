@@ -36,11 +36,11 @@ function parseDathMathExpression(dateMathExpression, roundUp, nowReference, dayO
   const date = new Date(nowReference);
 
   // update date with +/- intervals
-  const matches = dateMathExpression.match(/([\+\-][0-9]+[yMwdHhms])/g);
+  const matches = dateMathExpression.match(/([+-/][0-9]*[yMwdHhms])/g);
   if (matches) {
     matches.forEach(match => {
-      const multiplier = parseInt(match.substring(0, 1) + '1');
-      const incrementCount = parseInt(match.substring(1, match.length - 1)) * multiplier;
+      const multiplier = parseInt(match.substring(0, 1) + '1', 10);
+      const incrementCount = parseInt(match.substring(1, match.length - 1), 10) * multiplier;
       const unit = match.substring(match.length - 1);
       incrementDateUnit(date, incrementCount, unit);
     });
@@ -83,11 +83,13 @@ function parseDathMathExpression(dateMathExpression, roundUp, nowReference, dayO
 }
 
 function parseDate(date, roundUp, nowReference, dayOfWeekNumber) {
-  if (typeof date === 'string' && date.indexOf('now') === 0) {
+  if (typeof date === 'string' && date.startsWith('now')) {
     return parseDathMathExpression(date.substring(3), roundUp, nowReference, dayOfWeekNumber);
   }
-  else if (date.toDate !== undefined) {
-    return date.toDate();
+  else if (date.indexOf('||') !== -1) {
+    const doublePipeIndex = date.indexOf('||');
+    const dateReference = new Date(date.substring(0, doublePipeIndex));
+    return parseDathMathExpression(date.substring(doublePipeIndex + 2), roundUp, dateReference.getTime(), dayOfWeekNumber);
   }
   else {
     return new Date(date);
@@ -181,6 +183,6 @@ export function computeTimeRange(timeRange, dayOfWeek) {
     duration: computeDuration(from, to),
     from: computeDateStructure(from),
     to: computeDateStructure(to)
-  }
+  };
 
 }
