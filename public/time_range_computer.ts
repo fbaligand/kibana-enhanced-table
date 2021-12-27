@@ -94,8 +94,13 @@ function parseDathMathExpression(dateMathExpression: string, roundUp: boolean, n
 }
 
 function parseDate(date: string, roundUp: boolean, nowReference: number, dayOfWeekNumber: number): Date {
-  if (date.indexOf('now') === 0) {
+  if (date.startsWith('now')) {
     return parseDathMathExpression(date.substring(3), roundUp, nowReference, dayOfWeekNumber);
+  }
+  else if (date.indexOf('||') !== -1) {
+    const doublePipeIndex: number = date.indexOf('||');
+    const dateReference: Date = new Date(date.substring(0, doublePipeIndex));
+    return parseDathMathExpression(date.substring(doublePipeIndex + 2), roundUp, dateReference.getTime(), dayOfWeekNumber);
   }
   else {
     return new Date(date);
