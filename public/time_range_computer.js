@@ -174,15 +174,21 @@ export function computeTimeRange(timeRange, dayOfWeek) {
     return undefined;
   }
 
-  const nowReference = Date.now();
-  const dayOfWeekNumber = getDayOfWeekNumber(dayOfWeek);
-  const from = parseDate(timeRange.from, false, nowReference, dayOfWeekNumber);
-  const to = parseDate(timeRange.to, true, nowReference, dayOfWeekNumber);
+  try {
+    const nowReference = Date.now();
+    const dayOfWeekNumber = getDayOfWeekNumber(dayOfWeek);
+    const from = parseDate(timeRange.from, false, nowReference, dayOfWeekNumber);
+    const to = parseDate(timeRange.to, true, nowReference, dayOfWeekNumber);
 
-  return {
-    duration: computeDuration(from, to),
-    from: computeDateStructure(from),
-    to: computeDateStructure(to)
-  };
+    return {
+      duration: computeDuration(from, to),
+      from: computeDateStructure(from),
+      to: computeDateStructure(to)
+    };
+  }
+  catch (e) {
+    console.error(e);
+    return undefined;
+  }
 
 }
