@@ -3,7 +3,12 @@ function incrementDateUnit(date, incrementCount, unit) {
     date.setFullYear(date.getFullYear() + incrementCount);
   }
   else if (unit === 'M') {
+    const dayBefore = date.getDate();
     date.setMonth(date.getMonth() + incrementCount);
+    const dayAfter = date.getDate();
+    if (dayBefore !== dayAfter) {
+      date.setDate(0);
+    }
   }
   else if (unit === 'w') {
     date.setDate(date.getDate() + incrementCount * 7);
@@ -22,60 +27,61 @@ function incrementDateUnit(date, incrementCount, unit) {
   }
 }
 
-function parseDathMathExpression(dateMathExpression, roundUp, nowReference, dayOfWeekNumber) {
-
-  // extract rounding part
-  const roundingIndex = dateMathExpression.indexOf('/');
-  let roundUnit;
-  if (roundingIndex !== -1) {
-    roundUnit = dateMathExpression.substring(roundingIndex + 1);
-    dateMathExpression = dateMathExpression.substring(0, roundingIndex);
+function roundDate(roundUnit, roundUp, date, dayOfWeekNumber) {
+  if (roundUp) {
+    incrementDateUnit(date, 1, roundUnit);
   }
+  if (roundUnit.match(/[y]/)) {
+    date.setMonth(0);
+  }
+  if (roundUnit.match(/[yM]/)) {
+    date.setDate(1);
+  }
+  if (roundUnit.match(/[w]/)) {
+    const dayOfWeekToDay = Math.abs(date.getDay() - dayOfWeekNumber);
+    date.setDate(date.getDate() - dayOfWeekToDay);
+  }
+  if (roundUnit.match(/[yMwd]/)) {
+    date.setHours(0);
+  }
+  if (roundUnit.match(/[yMwdHh]/)) {
+    date.setMinutes(0);
+  }
+  if (roundUnit.match(/[yMwdHhm]/)) {
+    date.setSeconds(0);
+  }
+  if (roundUnit.match(/[yMwdHhms]/)) {
+    date.setMilliseconds(0);
+  }
+}
+
+function parseDathMathExpression(dateMathExpression, roundUp, nowReference, dayOfWeekNumber) {
 
   // initiate result date
   const date = new Date(nowReference);
+  let decrementOneMs = false;
 
-  // update date with +/- intervals
+  // update date with +/- intervals and rounds
   const matches = dateMathExpression.match(/([+-/][0-9]*[yMwdHhms])/g);
   if (matches) {
     matches.forEach(match => {
-      const multiplier = parseInt(match.substring(0, 1) + '1', 10);
-      const incrementCount = parseInt(match.substring(1, match.length - 1), 10) * multiplier;
-      const unit = match.substring(match.length - 1);
-      incrementDateUnit(date, incrementCount, unit);
+      if (match.charAt(0) === '/') {
+        const roundUnit = match.charAt(1);
+        roundDate(roundUnit, roundUp, date, dayOfWeekNumber);
+        decrementOneMs = roundUp;
+      }
+      else {
+        const multiplier = parseInt(match.substring(0, 1) + '1', 10);
+        const incrementCount = (match.length === 2) ? 1 : parseInt(match.substring(1, match.length - 1), 10);
+        const unit = match.substring(match.length - 1);
+        incrementDateUnit(date, incrementCount * multiplier, unit);
+      }
     });
   }
 
-  // round date
-  if (roundUnit) {
-    if (roundUp) {
-      incrementDateUnit(date, 1, roundUnit);
-    }
-    if (roundUnit.match(/[y]/)) {
-      date.setMonth(1);
-    }
-    if (roundUnit.match(/[yM]/)) {
-      date.setDate(1);
-    }
-    if (roundUnit.match(/[w]/)) {
-      const dayOfWeekToDay = Math.abs(date.getDay() - dayOfWeekNumber);
-      date.setDate(date.getDate() - dayOfWeekToDay);
-    }
-    if (roundUnit.match(/[yMwd]/)) {
-      date.setHours(0);
-    }
-    if (roundUnit.match(/[yMwdHh]/)) {
-      date.setMinutes(0);
-    }
-    if (roundUnit.match(/[yMwdHhm]/)) {
-      date.setSeconds(0);
-    }
-    if (roundUnit.match(/[yMwdHhms]/)) {
-      date.setMilliseconds(0);
-    }
-    if (roundUp) {
-      date.setMilliseconds(date.getMilliseconds() - 1);
-    }
+  // decrement 1 ms if round up is requested
+  if (decrementOneMs) {
+    date.setMilliseconds(date.getMilliseconds() - 1);
   }
 
   // return result date
