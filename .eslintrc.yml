@@ -25,7 +25,7 @@ rules:
   no-trailing-spaces:
     - 2
     - skipBlankLines: false
-  no-console: error
+  no-console: ["error", { allow: ["warn", "error"] }]
 overrides:
   - files: ['index.js']
     env:
