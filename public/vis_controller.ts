@@ -50,7 +50,7 @@ export function getEnhancedTableVisualizationController(
       getKibanaLegacy().loadFontAwesome();
       await this.initLocalAngular();
 
-      return new Promise(async (resolve, reject) => {
+      return new Promise((resolve, reject) => {
         if (!this.$rootScope) {
           const $injector = this.getInjector();
           this.$rootScope = $injector.get('$rootScope');

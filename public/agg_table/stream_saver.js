@@ -1,8 +1,10 @@
-function initStreamSaver() {
+ /* eslint-disable no-undef */
+ function initStreamSaver() {
   const global = typeof window === 'object' ? window : this;
 
   let mitmTransporter = null;
   let supportsTransferable = false;
+   // eslint-disable-next-line no-empty
   const test = fn => { try { fn(); } catch (e) {} };
   const isSecureContext = global.isSecureContext;
   // TODO: Must come up with a real detection test (#69)

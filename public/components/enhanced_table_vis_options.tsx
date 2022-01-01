@@ -88,7 +88,7 @@ function hasSplitColsBucket(aggs: IAggConfigs) {
   return some(aggs.aggs, function(agg) {
     return agg.schema === 'splitcols' && agg.enabled;
   });
-};
+}
 
 function EnhancedTableOptions({
   aggs,
