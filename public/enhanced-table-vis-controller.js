@@ -470,8 +470,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // process "computeTotalUsingFormula" option
     if (showTotal && computedColumn.computeTotalUsingFormula) {
-      const totalFormula = computedColumn.formula.replace(/col(\[|\d+)/g, 'total$1')
-        .replace(/col\s*\(\s*(\d+)[^)]*\)/g, 'total$1');
+      const totalFormula = computedColumn.formula.replace(/col(\[|\s*\(|\d+)/g, 'total$1');
       newColumn.totalFormula = createFormula(totalFormula, 'computed total', splitColIndex, columns, totalFunc);
     }
 
