@@ -508,7 +508,7 @@ function EnhancedTableVisController ($scope, config) {
         }
         else {
           row.push(newCell);
-          position = row.length;
+          position = row.length-1;
         }
         newCell = createComputedCell(table, newColumn, row, totalHits, timeRange);
         row[position] = newCell;
