@@ -216,7 +216,7 @@ function EnhancedTableVisController ($scope, config) {
         if (typeof colRef === 'string') {
           colIndex = findColIndexByTitle(columns, colRef, inputFormula, formulaType, splitColIndex);
         }
-        if (colIndex < currentCol) {
+        if (colIndex <= currentCol) {
           colIndex = getRealColIndex(colIndex, splitColIndex);
           const colValue = row[colIndex].value;
           return colValue !== undefined ? colValue : defaultValue;
@@ -235,7 +235,7 @@ function EnhancedTableVisController ($scope, config) {
         if (typeof colRef === 'string') {
           colIndex = findColIndexByTitle(columns, colRef, inputFormula, formulaType, splitColIndex);
         }
-        if (colIndex < currentCol) {
+        if (colIndex <= currentCol) {
           colIndex = getRealColIndex(colIndex, splitColIndex);
           if (columns[colIndex].total === undefined) {
             columns[colIndex].total = computeColumnTotal(colIndex, totalFunc, table);
@@ -501,13 +501,17 @@ function EnhancedTableVisController ($scope, config) {
         table.columns.push(newColumn);
       }
       _.forEach(table.rows, function (row) {
-        const newCell = createComputedCell(table, newColumn, row, totalHits, timeRange);
-        if (customColumnPosition || customColumnPosition === 0) {
-          row.splice(customColumnPosition, 0, newCell);
+        let position = customColumnPosition;
+        let newCell = new AggConfigResult(newColumn.aggConfig);
+        if (position || position === 0) {
+          row.splice(position, 0, newCell);
         }
         else {
           row.push(newCell);
+          position = row.length-1;
         }
+        newCell = createComputedCell(table, newColumn, row, totalHits, timeRange);
+        row[position] = newCell;
         row[newColumn.id] = newCell.value;
       });
 
