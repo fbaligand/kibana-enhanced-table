@@ -47,6 +47,7 @@ export function getEnhancedTableVisualizationController(
     async initLocalAngular() {
       if (!this.tableVisModule) {
         const [coreStart] = await core.getStartServices();
+        await getKibanaLegacy().loadAngularBootstrap();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
         initTableVisLegacyModule(this.tableVisModule);
         getKibanaLegacy().loadFontAwesome();
