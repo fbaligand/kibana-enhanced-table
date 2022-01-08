@@ -12,7 +12,7 @@ function sum(tableRows, columnIndex) {
 /**
  * Compute and return one column total, given its column index and total function
  */
-export function computeColumnTotal(columnIndex, totalFunc, table) {
+export function computeColumnTotal(columnIndex, totalFunc, table, computedColsPerSplitCol, splitColIndex, refRow) {
   let total = undefined;
   let isFieldNumeric = false;
   let isFieldDate = false;
@@ -45,25 +45,33 @@ export function computeColumnTotal(columnIndex, totalFunc, table) {
   }
 
   if (isFieldNumeric || isFieldDate || totalFunc === 'count') {
+
+    // filter rows to compute (if computedColsPerSplitCol)
+    let rowsToCompute = table.rows;
+    if (computedColsPerSplitCol) {
+      const refRowSplitColValue = refRow[splitColIndex].value;
+      rowsToCompute = rowsToCompute.filter(currentRow => currentRow[splitColIndex].value === refRowSplitColValue);
+    }
+
     switch (totalFunc) {
     case 'sum':
       if (!isFieldDate) {
-        total = sum(table.rows, columnIndex);
+        total = sum(rowsToCompute, columnIndex);
       }
       break;
     case 'avg':
       if (!isFieldDate) {
-        total = sum(table.rows, columnIndex) / table.rows.length;
+        total = sum(rowsToCompute, columnIndex) / rowsToCompute.length;
       }
       break;
     case 'min':
-      total = _.chain(table.rows).map(columnIndex).map('value').min().value();
+      total = _.chain(rowsToCompute).map(columnIndex).map('value').min().value();
       break;
     case 'max':
-      total = _.chain(table.rows).map(columnIndex).map('value').max().value();
+      total = _.chain(rowsToCompute).map(columnIndex).map('value').max().value();
       break;
     case 'count':
-      total = table.rows.length;
+      total = rowsToCompute.length;
       break;
     default:
       break;
