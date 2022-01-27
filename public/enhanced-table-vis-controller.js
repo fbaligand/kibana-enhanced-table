@@ -528,14 +528,6 @@ function EnhancedTableVisController ($scope, config) {
 
     // add new computed column
     newColumn = _.clone(newColumn);
-    if (customColumnPosition || customColumnPosition === 0) {
-      table.columns.splice(customColumnPosition, 0, newColumn);
-    }
-    else {
-      table.columns.push(newColumn);
-    }
-
-    // add "total" formatter function
     if (!computedColsPerSplitCol) {
       newColumn.totalFormatter = createTotalFormatter(table, newColumn, undefined, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
     }
@@ -555,6 +547,14 @@ function EnhancedTableVisController ($scope, config) {
     // compute total if totalFormula is present
     if (newColumn.totalFormula && !computedColsPerSplitCol) {
       newColumn.total = computeFormulaValue(newColumn.totalFormula, table, null, totalHits, timeRange);
+    }
+
+    // insert new column in table
+    if (customColumnPosition || customColumnPosition === 0) {
+      table.columns.splice(customColumnPosition, 0, newColumn);
+    }
+    else {
+      table.columns.push(newColumn);
     }
 
   };
