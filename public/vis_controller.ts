@@ -47,7 +47,8 @@ export function getEnhancedTableVisualizationController(
     async initLocalAngular() {
       if (!this.tableVisModule) {
         const [coreStart] = await core.getStartServices();
-        await getKibanaLegacy().loadAngularBootstrap();
+        const { initAngularBootstrap } = await import('./kibana_legacy/public/angular_bootstrap');
+        initAngularBootstrap();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
         initTableVisLegacyModule(this.tableVisModule);
         getKibanaLegacy().loadFontAwesome();
@@ -98,7 +99,8 @@ export function getEnhancedTableVisualizationController(
             this.$scope.uiState = handlers.uiState;
             this.$scope.filter = handlers.event;
             updateScope();
-            this.el.find('div').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
+            this.el.find('.visualization').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
+            this.el.find('.visChart__spinner').remove();
             this.$scope.$apply();
           } else {
             updateScope();

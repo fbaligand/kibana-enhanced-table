@@ -29,7 +29,7 @@ export interface TablePluginStartDependencies {
 }
 
 /** @internal */
-export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
+export class EnhancedTablePlugin implements Plugin<void, void> {
   initializerContext: PluginInitializerContext;
   createBaseVisualization: any;
 
@@ -37,7 +37,7 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
     this.initializerContext = initializerContext;
   }
 
-  public async setup(
+  public setup(
     core: CoreSetup,
     { visualizations, expressions }: TablePluginSetupDependencies
   ) {
