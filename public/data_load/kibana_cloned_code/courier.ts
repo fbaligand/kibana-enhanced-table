@@ -23,6 +23,7 @@ interface RequestHandlerParams {
   filters?: Filter[];
   indexPattern?: IndexPattern;
   inspectorAdapters: Adapters;
+  metricsAtAllLevels?: boolean;
   partialRows?: boolean;
   query?: Query;
   searchSessionId?: string;
@@ -38,6 +39,7 @@ export const handleCourierRequest = async ({
   filters,
   indexPattern,
   inspectorAdapters,
+  metricsAtAllLevels,
   partialRows,
   query,
   searchSessionId,
@@ -118,7 +120,7 @@ export const handleCourierRequest = async ({
 
   const parsedTimeRange = timeRange ? calculateBounds(timeRange, { forceNow }) : null;
   const tabifyParams = {
-    metricsAtAllLevels: aggs.hierarchical,
+    metricsAtAllLevels,
     partialRows,
     timeRange: parsedTimeRange
       ? { from: parsedTimeRange.min, to: parsedTimeRange.max, timeFields: allTimeFields }
