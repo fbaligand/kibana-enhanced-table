@@ -14,7 +14,7 @@ import { EnhancedPaginatedTable } from './paginated_table/paginated_table';
 /** @internal */
 export const initTableVisLegacyModule = (angularIns: IModule): void => {
   angularIns
-    .controller('EnhancedTableVisController', EnhancedTableVisController)
+    .controller('EnhancedTableVisController',EnhancedTableVisController)
     .directive('kbnEnhancedAggTable', KbnEnhancedAggTable)
     .directive('kbnEnhancedAggTableGroup', KbnEnhancedAggTableGroup)
     .directive('kbnEnhancedRows', KbnEnhancedRows)

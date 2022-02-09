@@ -40,7 +40,7 @@ export function getInnerAngular(name = 'kibana/enhanced_table_vis', core: CoreSt
       'tableVisPrivate',
       'tableVisI18n',
     ])
-    .config(watchMultiDecorator)
+    .config(['$provide',watchMultiDecorator])
     .directive('kbnAccessibleClick', KbnAccessibleClickProvider);
 }
 

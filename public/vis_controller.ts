@@ -37,7 +37,9 @@ export function getEnhancedTableVisualizationController(
       if (!this.injector) {
         const mountpoint = document.createElement('div');
         mountpoint.className = 'visualization';
-        this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
+        this.injector = angular.bootstrap(mountpoint, [innerAngularName], /*{
+          strictDi: true
+        }*/);
         this.el.append(mountpoint);
       }
 
