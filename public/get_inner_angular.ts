@@ -49,7 +49,7 @@ function createLocalPrivateModule() {
 }
 
 function createLocalConfigModule(uiSettings: IUiSettingsClient) {
-  angular.module('tableVisConfig', []).provider('config', function () {
+  angular.module('tableVisConfig', []).provider('tableConfig', function () {
     return {
       $get: () => ({
         get: (value: string) => {
@@ -75,6 +75,6 @@ function createLocalI18nModule() {
 function createLocalPaginateModule() {
   angular
     .module('tableVisPaginate', [])
-    .directive('paginate', PaginateDirectiveProvider)
+    .directive('paginate', ['$parse','$compile',PaginateDirectiveProvider])
     .directive('paginateControls', PaginateControlsDirectiveProvider);
 }
