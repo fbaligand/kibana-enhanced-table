@@ -39,6 +39,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
         totalFunc: 'sum',
         computedColumns: [],
         computedColsPerSplitCol: false,
+        sortSplitCols: false,
         hideExportLinks: false,
         csvExportWithTotal: false,
         stripedRows: false,

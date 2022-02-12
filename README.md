@@ -47,6 +47,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to define filter bar width
 - Support for a new bucket type : 'Split Cols'. It lets to create a pivot table
   - When combined with computed columns, each computed column can be added per split column or after all split columns  
+  - Ability to sort split columns (by split column value)
 - Hide CSV export links (when checked, it will hide 'Raw' and 'Formatted' export links)
 - Change CSV export encoding (ex: `iso-8859-1`)
 - Full CSV export: in Document Table vis, ability to download full data in Elasticsearch, not only displayed data in the table (Kibana 7.7+)
