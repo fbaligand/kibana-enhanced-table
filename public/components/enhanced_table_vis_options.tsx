@@ -25,6 +25,7 @@ export interface EnhancedTableVisParams {
   rowsComputedCss: string;
   hiddenColumns: string;
   computedColsPerSplitCol: boolean;
+  sortSplitCols: boolean;
   hideExportLinks: boolean;
   csvExportWithTotal: boolean;
   csvFullExport: boolean;
@@ -245,6 +246,20 @@ function EnhancedTableOptions({
             })}
             paramName="computedColsPerSplitCol"
             value={stateParams.computedColsPerSplitCol}
+            setValue={setValue}
+          />
+        }
+
+        { hasSplitColsBucket(aggs) &&
+          <SwitchOption
+            label={i18n.translate('visTypeEnhancedTable.params.sortSplitCols', {
+              defaultMessage: 'Sort split cols',
+            })}
+            icontip={i18n.translate('visTypeEnhancedTable.params.sortSplitColsIconTip', {
+              defaultMessage: 'By default, split cols are displayed in the order they come from Elasticsearch response. If this option is checked, the columns are sorted by split col value (ascending order). This is especially useful when "Split Cols" bucket aggregation is "Date Histogram" or "Terms" to have a natural and stable columns order.',
+            })}
+            paramName="sortSplitCols"
+            value={stateParams.sortSplitCols}
             setValue={setValue}
           />
         }
