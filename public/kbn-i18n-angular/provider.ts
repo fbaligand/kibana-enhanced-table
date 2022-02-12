@@ -6,7 +6,7 @@
  * Side Public License, v 1.
  */
 
-import * as i18n from '../core';
+import { i18n } from '@kbn/i18n';
 
 export type I18nServiceType = ReturnType<I18nProvider['$get']>;
 

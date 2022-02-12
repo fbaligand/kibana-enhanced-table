@@ -5,7 +5,7 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-import { i18nDirective, i18nFilter, I18nProvider } from './kbn-i18n/src/angular';
+import { i18nDirective, i18nFilter, I18nProvider } from './kbn-i18n-angular';
 import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
 import {
   PaginateDirectiveProvider,
