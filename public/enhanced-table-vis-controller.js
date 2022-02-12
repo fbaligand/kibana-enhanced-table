@@ -721,14 +721,37 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
   };
 
+  const findNewSplitColIndex = function(newColValue, splitColValues) {
+    if (newColValue === undefined || newColValue === null) {
+      newColValue = undefined;
+    }
+    else if (newColValue.from !== undefined) {
+      newColValue = newColValue.from;
+    }
+    else if (newColValue.gte !== undefined) {
+      newColValue = newColValue.gte;
+    }
+
+    let newColIndex = 0;
+    while (newColIndex < splitColValues.length) {
+      if (splitColValues[newColIndex] >= newColValue) {
+        break;
+      }
+      newColIndex++;
+    }
+
+    splitColValues.splice(newColIndex, 0, newColValue);
+    return newColIndex;
+  };
+
   const DEFAULT_METRIC_VALUE = 0;
 
-  const splitCols = function (table, computedColsPerSplitCol, splitColIndex, totalHits, timeRange) {
+  const splitCols = function (table, computedColsPerSplitCol, splitColIndex, sortSplitCols, totalHits, timeRange) {
 
     // process only real tables (with rows)
     if (table.tables) {
       _.forEach(table.tables, function (table) {
-        splitCols(table, computedColsPerSplitCol, splitColIndex, totalHits, timeRange);
+        splitCols(table, computedColsPerSplitCol, splitColIndex, sortSplitCols, totalHits, timeRange);
       });
       return;
     }
@@ -755,6 +778,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     const newRows = [];
     let newRow = null;
     const newColNamePrefixes = [];
+    const newColValues = [];
     const newColDefaultMetrics = [];
     const metricsCount = table.columns.length - 1 - splitColIndex;
 
@@ -787,9 +811,17 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
       // create new col
       if (newColIndex === -1) {
-        newColNamePrefixes.push(rowSplitColValue);
-        newColIndex = newColNamePrefixes.length - 1;
+        if (sortSplitCols) {
+          newColIndex = findNewSplitColIndex(row[splitColIndex].value, newColValues);
+        }
+        else {
+          newColIndex = newColNamePrefixes.length;
+        }
+        newColNamePrefixes.splice(newColIndex, 0, rowSplitColValue);
         for (let i = splitColIndex+1; i < row.length; i++) {
+          const spliceIndex = (i - 1) + (newColIndex * metricsCount);
+
+          // add new column
           const newCol = _.clone(table.columns[i]);
           newCol.title = metricsCount > 1 ? rowSplitColValue + ' - ' + newCol.title : rowSplitColValue;
           if (computedColsPerSplitCol && newCol.totalFormula !== undefined) {
@@ -798,7 +830,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           if (computedColsPerSplitCol && newCol.template !== undefined) {
             newCol.totalFormatter = createTotalFormatter(_.clone(table), newCol, row, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
           }
-          newCols.push(newCol);
+          newCols.splice(spliceIndex, 0, newCol);
+
+          // add new column default metric
           let newColDefaultMetric;
           if (newCol.formula === undefined) {
             newColDefaultMetric = new AggConfigResult(row[i].aggConfig, null, DEFAULT_METRIC_VALUE, DEFAULT_METRIC_VALUE, row[i].filters);
@@ -806,9 +840,12 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           else {
             newColDefaultMetric = createComputedCell(table, newCol, refRowForComputedColumn, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
           }
-          newColDefaultMetrics.push(newColDefaultMetric);
+          newColDefaultMetrics.splice(spliceIndex - splitColIndex, 0, newColDefaultMetric);
+
+          // add new column to new rows
+          newRow.splice(spliceIndex, 0, newColDefaultMetric);
           for (let j = 0; j < newRows.length - 1; j++) {
-            newRows[j].push(newColDefaultMetric);
+            newRows[j].splice(spliceIndex, 0, newColDefaultMetric);
           }
         }
       }
@@ -1039,7 +1076,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
         // process 'Split Cols' bucket: transform rows to cols
         if (splitColIndex !== -1 && !params.computedColsPerSplitCol) {
-          splitCols(tableGroups, splitColIndex !== -1 && params.computedColsPerSplitCol, splitColIndex, totalHits, timeRange);
+            splitCols(tableGroups, splitColIndex !== -1 && params.computedColsPerSplitCol, splitColIndex, params.sortSplitCols, totalHits, timeRange);
         }
 
         // add computed columns
@@ -1063,7 +1100,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         // process 'Split Cols' bucket: transform rows to cols
         if (splitColIndex !== -1 && params.computedColsPerSplitCol) {
           splitColIndex = findSplitColIndex(firstTable);
-          splitCols(tableGroups, splitColIndex !== -1 && params.computedColsPerSplitCol, splitColIndex, totalHits, timeRange);
+          splitCols(tableGroups, splitColIndex !== -1 && params.computedColsPerSplitCol, splitColIndex, params.sortSplitCols, totalHits, timeRange);
         }
 
         // process rows computed options : lines computed filter and rows computed CSS (split cols)
