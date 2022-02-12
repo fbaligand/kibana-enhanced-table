@@ -246,6 +246,17 @@
       </label>
     </div>
 
+    <div class="checkbox" ng-show="hasSplitColsBucket()">
+      <label>
+        <input type="checkbox" ng-model="editorState.params.sortSplitCols">
+        Sort split cols&nbsp;
+        <icon-tip
+          content="'By default, split cols are displayed in the order they come from Elasticsearch response. If this option is checked, the columns are sorted by split col value (ascending order). This is especially useful when \'Split Cols\' bucket aggregation is \'Date Histogram\' or \'Terms\' to have a natural and stable columns order.'"
+          position="'right'"
+        ></icon-tip>
+      </label>
+    </div>
+
   </div>
 
   <!-- FILTER BAR SECTION -->
