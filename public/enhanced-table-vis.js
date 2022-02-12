@@ -71,6 +71,7 @@ function EnhancedTableVisTypeProvider(Private) {
         totalFunc: 'sum',
         computedColumns: [],
         computedColsPerSplitCol: false,
+        sortSplitCols: false,
         hideExportLinks: false,
         stripedRows: false,
         addRowNumberColumn: false,
