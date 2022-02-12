@@ -54,6 +54,7 @@ export const documentTableVisTypeDefinition = {
       totalFunc: 'sum',
       computedColumns: [],
       computedColsPerSplitCol: false,
+      sortSplitCols: false,
       hideExportLinks: false,
       csvExportWithTotal: false,
       csvFullExport: false,
