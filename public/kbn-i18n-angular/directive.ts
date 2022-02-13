@@ -95,7 +95,7 @@ function setContent(
       }
 
       $element.append(
-        originalValues!.hasOwnProperty(contentOrPlaceholder)
+        Object.prototype.hasOwnProperty.call(originalValues,contentOrPlaceholder)
           ? $sanitize(originalValues![contentOrPlaceholder])
           : document.createTextNode(contentOrPlaceholder)
       );

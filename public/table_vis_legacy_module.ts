@@ -18,5 +18,5 @@ export const initTableVisLegacyModule = (angularIns: IModule): void => {
     .directive('kbnEnhancedAggTable', ['tableConfig','RecursionHelper',KbnEnhancedAggTable])
     .directive('kbnEnhancedAggTableGroup', ['RecursionHelper',KbnEnhancedAggTableGroup])
     .directive('kbnEnhancedRows', ['$compile',KbnEnhancedRows])
-    .directive('enhancedPaginatedTable', ['$filter',EnhancedPaginatedTable]);
+    .directive('enhancedPaginatedTable', [EnhancedPaginatedTable]);
 };

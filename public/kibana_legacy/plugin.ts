@@ -6,7 +6,7 @@
  * Side Public License, v 1.
  */
 
-import { PluginInitializerContext, CoreStart, CoreSetup } from 'kibana/public';
+import { PluginInitializerContext, CoreStart } from 'kibana/public';
 import { ConfigSchema } from '../config';
 import { getDashboardConfig } from './dashboard_config';
 import { injectHeaderStyle } from './utils/inject_header_style';
@@ -14,11 +14,11 @@ import { injectHeaderStyle } from './utils/inject_header_style';
 export class KibanaLegacyPlugin {
   constructor(private readonly initializerContext: PluginInitializerContext<ConfigSchema>) {}
 
-  public setup(core: CoreSetup<{}, KibanaLegacyStart>) {
+  public setup() {
     return {};
   }
 
-  public start({ application, http: { basePath }, uiSettings }: CoreStart) {
+  public start({ application, uiSettings }: CoreStart) {
     injectHeaderStyle(uiSettings);
     return {
       /**

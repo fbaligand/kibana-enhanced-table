@@ -12,7 +12,7 @@ import './_paginate.scss';
 import paginateControlsTemplate from './paginate_controls.html';
 
 export function PaginateDirectiveProvider($parse, $compile) {
-  PaginateDirectiveProviderController.$inject = ['$scope','$document']
+  PaginateDirectiveProviderController.$inject = ['$scope','$document'];
   return {
     restrict: 'E',
     scope: true,
@@ -104,7 +104,7 @@ function PaginateDirectiveProviderController($scope, $document){
 
   self.goToPage = function (number) {
     if (number) {
-      if (number.hasOwnProperty('number')) number = number.number;
+      if (Object.prototype.hasOwnProperty.call(number,'number')) number = number.number;
       $scope.page = $scope.pages[number - 1] || $scope.pages[0];
     }
   };

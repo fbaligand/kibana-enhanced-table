@@ -41,7 +41,7 @@ function FieldParamEditor({
   value,
   setValue,
 }: FieldParamEditorProps) {
-  const indexedFields = React.useMemo(() => createIndexedFields(indexPatternFields), indexPatternFields);
+  const indexedFields = React.useMemo(() => createIndexedFields(indexPatternFields), [indexPatternFields]);
   const [isDirty, setIsDirty] = useState(false);
   const selectedOptions: ComboBoxGroupedOptions<IndexPatternField> = value
     ? [{ label: value.displayName || value.name, target: value }]
@@ -67,7 +67,7 @@ function FieldParamEditor({
     } else if (indexedField.options.length === 1) {
       setValue(indexedField.options[0].target);
     }
-  }, []);
+  }, [indexedFields, setValue]);
 
   const onSearchChange = useCallback(searchValue => setIsDirty(Boolean(searchValue)), []);
 

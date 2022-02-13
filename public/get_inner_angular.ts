@@ -5,8 +5,8 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
+import { CoreStart, IUiSettingsClient } from 'kibana/public';
 import { i18nDirective, i18nFilter, I18nProvider } from './kbn-i18n-angular';
-import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
 import {
   PaginateDirectiveProvider,
   PaginateControlsDirectiveProvider,
@@ -17,7 +17,7 @@ import {
 
 const thirdPartyAngularDependencies = ['ngSanitize', 'ui.bootstrap', 'RecursionHelper'];
 
-export function getAngularModule(name: string, core: CoreStart, context: PluginInitializerContext) {
+export function getAngularModule(name: string, core: CoreStart) {
   const uiModule = getInnerAngular(name, core);
   return uiModule;
 }

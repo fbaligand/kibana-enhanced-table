@@ -11,10 +11,7 @@ import { createTable } from '../data_load/document-table-response-handler';
 import { streamSaver } from './stream_saver';
 
 export function KbnEnhancedAggTable(tableConfig, RecursionHelper) {
-  const fieldFormats = getFormatService();
-  const numberFormatter = fieldFormats.getDefaultInstance('number').getConverterFor('text');
   KbnEnhancedAggTableController.$inject = ['$scope','tableConfig'];
-
   return {
     restrict: 'E',
     template: aggTableTemplate,
@@ -42,6 +39,8 @@ export function KbnEnhancedAggTable(tableConfig, RecursionHelper) {
 }
 
 function KbnEnhancedAggTableController($scope, tableConfig){
+  const fieldFormats = getFormatService();
+  const numberFormatter = fieldFormats.getDefaultInstance('number').getConverterFor('text');
   const self = this;
 
   self._saveAs = require('@elastic/filesaver').saveAs;

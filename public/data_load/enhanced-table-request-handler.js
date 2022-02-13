@@ -95,7 +95,7 @@ export async function enhancedTableRequestHandler ({
 
   // enrich columns: aggConfig
   response.columns.forEach( column => {
-    column.aggConfig = aggs.byId(column.meta.sourceParams.id.split(".")[0]);
+    column.aggConfig = aggs.byId(column.meta.sourceParams.id.split('.')[0]);
   });
 
   // enrich response: hits

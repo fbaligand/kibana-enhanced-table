@@ -19,12 +19,12 @@ export function KbnAccessibleClickProvider() {
       const elementType = element.prop('tagName');
 
       if (elementType === 'BUTTON') {
-        throw new Error(`kbnAccessibleClick doesn't need to be used on a button.`);
+        throw new Error('kbnAccessibleClick does not need to be used on a button.');
       }
 
       if (elementType === 'A' && attrs.href !== undefined) {
         throw new Error(
-          `kbnAccessibleClick doesn't need to be used on a link if it has a href attribute.`
+          'kbnAccessibleClick does not need to be used on a link if it has a href attribute.'
         );
       }
 

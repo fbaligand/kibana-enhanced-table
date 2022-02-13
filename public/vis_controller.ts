@@ -1,7 +1,8 @@
+/* global JQuery */
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
+import { CoreSetup } from '../../../src/core/public';
 import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
 import { getKibanaLegacy, getVisualization } from './services';
@@ -15,7 +16,6 @@ const innerAngularName = 'kibana/enhanced_table_vis';
 
 export function getEnhancedTableVisualizationController(
   core: CoreSetup,
-  context: PluginInitializerContext
 ) {
   return class EnhancedTableVisualizationController {
     private tableVisModule: IModule | undefined;
@@ -51,7 +51,7 @@ export function getEnhancedTableVisualizationController(
         const [coreStart] = await core.getStartServices();
         const { initAngularBootstrap } = await import('./kibana_legacy/angular_bootstrap');
         initAngularBootstrap();
-        this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
+        this.tableVisModule = getAngularModule(innerAngularName, coreStart);
         initTableVisLegacyModule(this.tableVisModule);
         getKibanaLegacy().loadFontAwesome();
       }

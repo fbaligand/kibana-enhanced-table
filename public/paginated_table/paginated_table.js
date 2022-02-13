@@ -3,9 +3,8 @@ import _ from 'lodash';
 import AggConfigResult from '../data_load/agg_config_result';
 import paginatedTableTemplate from './paginated_table.html';
 
-export function EnhancedPaginatedTable($filter) {
-  const orderBy = $filter('orderBy');
-  EnhancedPaginatedTableController.$inject = ['$scope'];
+export function EnhancedPaginatedTable() {
+  EnhancedPaginatedTableController.$inject = ['$scope','$filter'];
   return {
     restrict: 'E',
     template: paginatedTableTemplate,
@@ -29,7 +28,8 @@ export function EnhancedPaginatedTable($filter) {
   };
 }
 
-function EnhancedPaginatedTableController($scope){
+function EnhancedPaginatedTableController($scope,$filter){
+  const orderBy = $filter('orderBy');
   const self = this;
   self.sort = {
     columnIndex: null,

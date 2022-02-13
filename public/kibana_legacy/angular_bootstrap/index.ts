@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import { once } from 'lodash';
 import angular from 'angular';
 

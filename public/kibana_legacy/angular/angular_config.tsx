@@ -259,10 +259,11 @@ const $setupBreadcrumbsAutoClear = (newPlatform: CoreStart, isLocalAngular: bool
     try {
       newPlatform.chrome.setBreadcrumbs($injector.invoke(k7BreadcrumbsProvider));
     } catch (error) {
+      let angularError = error;
       if (isAngularHttpError(error)) {
-        error = formatAngularHttpError(error);
+        angularError = formatAngularHttpError(error);
       }
-      newPlatform.fatalErrors.add(error, 'location');
+      newPlatform.fatalErrors.add(angularError, 'location');
     }
   });
 };
@@ -304,10 +305,11 @@ const $setupBadgeAutoClear = (newPlatform: CoreStart, isLocalAngular: boolean) =
     try {
       newPlatform.chrome.setBadge($injector.invoke(badgeProvider));
     } catch (error) {
+      let angularError = error;
       if (isAngularHttpError(error)) {
-        error = formatAngularHttpError(error);
+        angularError = formatAngularHttpError(error);
       }
-      newPlatform.fatalErrors.add(error, 'location');
+      newPlatform.fatalErrors.add(angularError, 'location');
     }
   });
 };
