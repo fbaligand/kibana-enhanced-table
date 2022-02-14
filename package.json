@@ -22,8 +22,7 @@
     "angular": "^1.8.0",
     "angular-recursion": "^1.0.5",
     "angular-sanitize": "^1.8.2",
-    "expr-eval": "2.0.2",
-    "ngreact": "^0.5.2"
+    "expr-eval": "2.0.2"
   },
   "devDependencies": {
     "dragula": "3.7.2",

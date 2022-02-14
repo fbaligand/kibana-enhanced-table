@@ -7,8 +7,6 @@
  */
 
 // @ts-ignore
-export { watchMultiDecorator } from './watch_multi';
-export * from './angular_config';
+export { KbnAccessibleClickProvider } from './kbn_accessible_click';
 // @ts-ignore
-export { createTopNavDirective, createTopNavHelper, loadKbnTopNavDirectives } from './kbn_top_nav';
-export { subscribeWithScope } from './subscribe_with_scope';
+export { PrivateProvider, IPrivate } from './private';
