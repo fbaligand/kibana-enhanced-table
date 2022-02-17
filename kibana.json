@@ -3,7 +3,7 @@
   "version": "kibana",
   "server": false,
   "owner": {
-    "name": "fgaliband"
+    "name": "fbaligand"
   },
   "ui": true,
   "requiredPlugins": [
