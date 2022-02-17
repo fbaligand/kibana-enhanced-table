@@ -2,6 +2,9 @@
   "id": "enhancedTable",
   "version": "kibana",
   "server": false,
+  "owner": {
+    "name": "fbaligand"
+  },
   "ui": true,
   "requiredPlugins": [
     "visualizations",

@@ -5,19 +5,15 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-import { i18nDirective, i18nFilter, I18nProvider } from '@kbn/i18n/angular';
-import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
-import {
-  PaginateDirectiveProvider,
-  PaginateControlsDirectiveProvider,
-  PrivateProvider,
-  watchMultiDecorator,
-  KbnAccessibleClickProvider,
-} from '../../../src/plugins/kibana_legacy/public';
+import { CoreStart, IUiSettingsClient } from 'kibana/public';
+import { i18nDirective, i18nFilter, I18nProvider } from './angular/i18n';
+import { watchMultiDecorator } from './angular/watch_multi';
+import { PaginateDirectiveProvider, PaginateControlsDirectiveProvider} from './paginate/paginate.js';
+import { KbnAccessibleClickProvider, PrivateProvider } from './angular/utils';
 
 const thirdPartyAngularDependencies = ['ngSanitize', 'ui.bootstrap', 'RecursionHelper'];
 
-export function getAngularModule(name: string, core: CoreStart, context: PluginInitializerContext) {
+export function getAngularModule(name: string, core: CoreStart) {
   const uiModule = getInnerAngular(name, core);
   return uiModule;
 }
@@ -40,7 +36,7 @@ export function getInnerAngular(name = 'kibana/enhanced_table_vis', core: CoreSt
       'tableVisPrivate',
       'tableVisI18n',
     ])
-    .config(watchMultiDecorator)
+    .config(['$provide',watchMultiDecorator])
     .directive('kbnAccessibleClick', KbnAccessibleClickProvider);
 }
 
@@ -49,7 +45,7 @@ function createLocalPrivateModule() {
 }
 
 function createLocalConfigModule(uiSettings: IUiSettingsClient) {
-  angular.module('tableVisConfig', []).provider('config', function () {
+  angular.module('tableVisConfig', []).provider('tableConfig', function () {
     return {
       $get: () => ({
         get: (value: string) => {
@@ -75,6 +71,6 @@ function createLocalI18nModule() {
 function createLocalPaginateModule() {
   angular
     .module('tableVisPaginate', [])
-    .directive('paginate', PaginateDirectiveProvider)
+    .directive('paginate', ['$parse','$compile',PaginateDirectiveProvider])
     .directive('paginateControls', PaginateControlsDirectiveProvider);
 }

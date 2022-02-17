@@ -10,7 +10,7 @@ import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
 // EnhancedTableVis AngularJS controller
-function EnhancedTableVisController ($scope, config) {
+function EnhancedTableVisController ($scope, tableConfig) {
 
   class EnhancedTableError {
     constructor(message) {
@@ -18,7 +18,7 @@ function EnhancedTableVisController ($scope, config) {
     }
   }
 
-  const getConfig = (...args) => config.get(...args);
+  const getConfig = (...args) => tableConfig.get(...args);
 
   handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 

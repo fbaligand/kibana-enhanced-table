@@ -69,7 +69,7 @@ export const handleCourierRequest = async ({
       return searchSource.history;
     },
     set(history) {
-      return (searchSource.history = history);
+      searchSource.history = history;
     },
   });
 
@@ -127,7 +127,7 @@ export const handleCourierRequest = async ({
       : undefined,
   };
 
-  //Need this so the enhancedTableRequestHandler can recover the hits for the document table
+  // Need this so the enhancedTableRequestHandler can recover the hits for the document table
   (searchSource as any).finalResponse = response;
 
   const tabifiedResponse = tabifyAggResponse(aggs, response, tabifyParams);

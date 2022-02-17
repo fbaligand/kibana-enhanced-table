@@ -33,7 +33,7 @@ const getCommonVisLegacyRenderer: (
     if (!registeredController) {
       const { getEnhancedTableVisualizationController } = await import('./vis_controller');
 
-      const Controller = getEnhancedTableVisualizationController(core, context);
+      const Controller = getEnhancedTableVisualizationController(core);
       registeredController = new Controller(domNode, config.visType);
       tableVisRegistry.set(domNode, registeredController);
 

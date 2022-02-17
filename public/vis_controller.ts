@@ -1,7 +1,8 @@
+/* global JQuery */
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
+import { CoreSetup } from '../../../src/core/public';
 import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
 import { getKibanaLegacy, getVisualization } from './services';
@@ -15,7 +16,6 @@ const innerAngularName = 'kibana/enhanced_table_vis';
 
 export function getEnhancedTableVisualizationController(
   core: CoreSetup,
-  context: PluginInitializerContext
 ) {
   return class EnhancedTableVisualizationController {
     private tableVisModule: IModule | undefined;
@@ -37,7 +37,9 @@ export function getEnhancedTableVisualizationController(
       if (!this.injector) {
         const mountpoint = document.createElement('div');
         mountpoint.className = 'visualization';
-        this.injector = angular.bootstrap(mountpoint, [innerAngularName]);
+        this.injector = angular.bootstrap(mountpoint, [innerAngularName], {
+          strictDi: true
+        } );
         this.el.append(mountpoint);
       }
 
@@ -47,8 +49,9 @@ export function getEnhancedTableVisualizationController(
     async initLocalAngular() {
       if (!this.tableVisModule) {
         const [coreStart] = await core.getStartServices();
-        await getKibanaLegacy().loadAngularBootstrap();
-        this.tableVisModule = getAngularModule(innerAngularName, coreStart, context);
+        const { initAngularBootstrap } = await import('./angular/angular_bootstrap');
+        initAngularBootstrap();
+        this.tableVisModule = getAngularModule(innerAngularName, coreStart);
         initTableVisLegacyModule(this.tableVisModule);
         getKibanaLegacy().loadFontAwesome();
       }
@@ -98,7 +101,8 @@ export function getEnhancedTableVisualizationController(
             this.$scope.uiState = handlers.uiState;
             this.$scope.filter = handlers.event;
             updateScope();
-            this.el.find('div').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
+            this.el.find('.visualization').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
+            this.el.find('.visChart__spinner').remove();
             this.$scope.$apply();
           } else {
             updateScope();
