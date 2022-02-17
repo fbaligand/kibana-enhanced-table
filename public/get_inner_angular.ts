@@ -6,10 +6,10 @@ import angular from 'angular';
 import 'angular-sanitize';
 import 'angular-recursion';
 import { CoreStart, IUiSettingsClient } from 'kibana/public';
-import { i18nDirective, i18nFilter, I18nProvider } from './angular_bootstrap/i18n';
-import { watchMultiDecorator } from './angular_bootstrap/watch_multi';
+import { i18nDirective, i18nFilter, I18nProvider } from './angular/i18n';
+import { watchMultiDecorator } from './angular/watch_multi';
 import { PaginateDirectiveProvider, PaginateControlsDirectiveProvider} from './paginate/paginate.js';
-import { KbnAccessibleClickProvider, PrivateProvider } from './angular_bootstrap/utils';
+import { KbnAccessibleClickProvider, PrivateProvider } from './angular/utils';
 
 const thirdPartyAngularDependencies = ['ngSanitize', 'ui.bootstrap', 'RecursionHelper'];
 

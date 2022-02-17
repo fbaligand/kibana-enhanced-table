@@ -49,7 +49,7 @@ export function getEnhancedTableVisualizationController(
     async initLocalAngular() {
       if (!this.tableVisModule) {
         const [coreStart] = await core.getStartServices();
-        const { initAngularBootstrap } = await import('./angular_bootstrap');
+        const { initAngularBootstrap } = await import('./angular/angular_bootstrap');
         initAngularBootstrap();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart);
         initTableVisLegacyModule(this.tableVisModule);
