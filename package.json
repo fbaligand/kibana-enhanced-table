@@ -16,7 +16,7 @@
     "debug": "node --nolazy --inspect ../../scripts/kibana --dev",
     "build": "../../node_modules/.bin/plugin-helpers build",
     "compile-and-build": "node ../../scripts/plugin_helpers.js build",
-    "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --scan-dir . --filter enhancedTable"
+    "compile": "rm -rf ./target && node ../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/enhancedTable/target . && rm -rf build/*"
   },
   "dependencies": {
     "expr-eval": "2.0.2"
