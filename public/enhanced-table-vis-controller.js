@@ -163,7 +163,7 @@ function EnhancedTableVisController ($scope, Private, config) {
     realFormula = realFormula.replace(/(total)\s*\(/g, '$1(table, row, ');
 
     // replace 'total' variable by 'totalHits'
-    realFormula = realFormula.replace(/([^\w]|^)total([^\(\w]|$)/g, '$1totalHits$2');
+    realFormula = realFormula.replace(/([^\w]|^)total([^(\w]|$)/g, '$1totalHits$2');
 
     // check 'sumSplitCols/countSplitCols' functions condition
     if ((realFormula.indexOf('sumSplitCols') !== -1 || realFormula.indexOf('countSplitCols') !== -1) && splitColIndex === -1) {
@@ -419,7 +419,7 @@ function EnhancedTableVisController ($scope, Private, config) {
   };
 
   /** create a new data table column for specified computed column */
-  const createColumn = function (computedColumn, index, splitColIndex, columns, showTotal, totalFunc, aggs, computedColsPerSplitCol) {
+  const createColumn = function (computedColumn, index, splitColIndex, columns, showTotal, totalFunc, totalHits, aggs, computedColsPerSplitCol) {
 
     const fieldFormats = npStart.plugins.data.fieldFormats;
     const FieldFormat = fieldFormats.getType(computedColumn.format);
@@ -1098,7 +1098,7 @@ function EnhancedTableVisController ($scope, Private, config) {
         // add computed columns
         _.forEach(params.computedColumns, function (computedColumn, index) {
           if (computedColumn.enabled) {
-            const newColumn = createColumn(computedColumn, index, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc, vis.aggs, splitColIndex !== -1 && params.computedColsPerSplitCol);
+            const newColumn = createColumn(computedColumn, index, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc, totalHits, vis.aggs, splitColIndex !== -1 && params.computedColsPerSplitCol);
             addComputedColumnToTables(tableGroups, newColumn, computedColumn.customColumnPosition, totalHits, timeRange, splitColIndex !== -1 && params.computedColsPerSplitCol, splitColIndex);
           }
         });
