@@ -396,7 +396,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // add template param totals
     const templateParamsTotals = [];
     while ((regexMatch = totalRefRegex.exec(realTemplate)) !== null) {
-      let colIndex = parseInt(regexMatch[1]);
+      const colIndex = parseInt(regexMatch[1]);
       templateParamsTotals.push(colIndex);
     }
 
@@ -425,7 +425,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
   };
 
   /** create a new data table column for specified computed column */
-  const createColumn = function (computedColumn, index, splitColIndex, columns, showTotal, totalFunc, aggs, computedColsPerSplitCol) {
+  const createColumn = function (computedColumn, index, splitColIndex, columns, showTotal, totalFunc, totalHits, aggs, computedColsPerSplitCol) {
 
     const FieldFormat = fieldFormats.getType(computedColumn.format);
     const fieldFormatParamsByFormat = {
@@ -1082,7 +1082,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         // add computed columns
         _.forEach(params.computedColumns, function (computedColumn, index) {
           if (computedColumn.enabled) {
-            const newColumn = createColumn(computedColumn, index, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc, vis.aggs, splitColIndex !== -1 && params.computedColsPerSplitCol);
+            const newColumn = createColumn(computedColumn, index, splitColIndex, firstTable.columns, params.showTotal, params.totalFunc, totalHits, $scope.vis.aggs, splitColIndex !== -1 && params.computedColsPerSplitCol);
             addComputedColumnToTables(tableGroups, newColumn, computedColumn.customColumnPosition, totalHits, timeRange, splitColIndex !== -1 && params.computedColsPerSplitCol, splitColIndex);
           }
         });
