@@ -1,8 +1,9 @@
 {
   "name": "enhanced-table",
-  "version": "1.12.2",
+  "version": "1.13.0",
   "description": "This visualization plugin is like a Data Table, but with enhanced features like computed columns, filter bar and pivot table",
   "license": "Apache-2.0",
+  "homepage": "https://github.com/fbaligand/kibana-enhanced-table",
   "kibana": {
     "version": "kibana"
   },
