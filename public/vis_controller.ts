@@ -1,13 +1,13 @@
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
+import { CoreSetup, PluginInitializerContext } from 'opensearch-dashboards/public';
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
 import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getKibanaLegacy } from './services';
+import { getOpenSearchDashboardsLegacy } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 
-const innerAngularName = 'kibana/enhanced_table_vis';
+const innerAngularName = 'opensearch-dashboards/enhanced_table_vis';
 
 export function getEnhancedTableVisualizationController(
   core: CoreSetup,
@@ -47,7 +47,7 @@ export function getEnhancedTableVisualizationController(
     }
 
     async render(esResponse: object, visParams: VisParams) {
-      getKibanaLegacy().loadFontAwesome();
+      getOpenSearchDashboardsLegacy().loadFontAwesome();
       await this.initLocalAngular();
 
       return new Promise((resolve, reject) => {

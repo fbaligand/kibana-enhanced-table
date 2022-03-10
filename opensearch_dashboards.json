@@ -1,0 +1,19 @@
+{
+  "id": "enhancedTable",
+  "version": "opensearch-dashboards",
+  "opensearchDashboardsVersion": "1.2.0",
+  "server": false,
+  "ui": true,
+  "requiredPlugins": [
+    "visualizations",
+    "expressions",
+    "data",
+    "inspector",
+    "opensearchDashboardsLegacy",
+    "opensearchDashboardsUtils",
+    "opensearchDashboardsReact",
+    "share",
+    "charts",
+    "visDefaultEditor"
+  ]
+}

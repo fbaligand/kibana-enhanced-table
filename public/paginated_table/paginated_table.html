@@ -11,7 +11,7 @@
             scope="col"
             ng-repeat="col in columns"
             ng-click="enhancedPaginatedTable.sortColumn($index)"
-            kbn-accessible-click
+            osd-accessible-click
             tabindex="0"
             class="{{ col.class }} {{ col.titleAlignmentClass }}">
             <span ng-bind="::col.title"></span>

@@ -1,12 +1,12 @@
 import { hasIn } from 'lodash';
-import { i18n } from '@kbn/i18n';
+import { i18n } from '@osd/i18n';
 
-import { calculateObjectHash } from '../../../../../src/plugins/kibana_utils/public';
+import { calculateObjectHash } from '../../../../../src/plugins/opensearch_dashboards_utils/public';
 import { PersistedState } from '../../../../../src/plugins/visualizations/public';
 import { Adapters } from '../../../../../src/plugins/inspector/public';
 
-import { IAggConfigs } from '../../../../../src/plugins/data/public/search/aggs';
-import { ISearchSource } from '../../../../../src/plugins/data/public/search/search_source';
+import { IAggConfigs } from '../../../../../src/plugins/data/public';
+import { ISearchSource } from '../../../../../src/plugins/data/common';
 import {
   calculateBounds,
   Filter,
@@ -136,7 +136,7 @@ export const handleCourierRequest = async ({
 
       (searchSource as any).lastQuery = queryHash;
 
-      request.stats(search.getResponseInspectorStats(searchSource, response)).ok({ json: response });
+      request.stats(search.getResponseInspectorStats(response, searchSource)).ok({ json: response });
 
       (searchSource as any).rawResponse = response;
     } catch (e) {

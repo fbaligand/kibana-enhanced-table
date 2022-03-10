@@ -4,25 +4,23 @@
   "description": "This visualization plugin is like a Data Table, but with enhanced features like computed columns, filter bar and pivot table",
   "license": "Apache-2.0",
   "homepage": "https://github.com/fbaligand/kibana-enhanced-table",
-  "kibana": {
-    "version": "kibana"
+  "opensearch-dashboards": {
+    "version": "opensearch-dashboards"
   },
   "scripts": {
     "preinstall": "node ../../preinstall_check",
-    "kbn": "node ../../scripts/kbn",
+    "osd": "node ../../scripts/osd",
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
-    "start": "cd ../.. && node scripts/kibana --dev --oss",
-    "start-xpack": "cd ../.. && node scripts/kibana --dev",
-    "debug": "node --nolazy --inspect ../../scripts/kibana --dev",
+    "start": "cd ../.. && node scripts/opensearch_dashboards --dev",
+    "debug": "node --nolazy --inspect ../../scripts/opensearch_dashboards --dev",
     "build": "../../node_modules/.bin/plugin-helpers build",
-    "compile": "rm -rf ./target && node ../../scripts/build_kibana_platform_plugins.js --scan-dir . --filter enhancedTable"
+    "compile-and-build": "node ../../scripts/plugin_helpers.js build",
+    "compile": "rm -rf ./target && node ../../scripts/build_opensearch_dashboards_platform_plugins.js --scan-dir ."
   },
   "dependencies": {
     "expr-eval": "2.0.2"
   },
   "devDependencies": {
-    "dragula": "3.7.2",
-    "ui-select": "0.19.8"
   }
 }

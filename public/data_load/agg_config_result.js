@@ -1,7 +1,7 @@
 import { fieldFormatter } from '../field_formatter';
 
 function computeBasePath(pathname) {
-  const endIndex = pathname ? pathname.indexOf('/app/kibana') : -1;
+  const endIndex = pathname ? pathname.indexOf('/app/opensearch-dashboards') : -1;
   const basePath = endIndex !== -1 ? pathname.substring(0, endIndex) : '';
   return basePath;
 }

@@ -6,7 +6,7 @@ parserOptions:
   ecmaVersion: 2018
   sourceType: module
 rules:
-  "@kbn/eslint/require-license-header": off
+  "@osd/eslint/require-license-header": off
   "prettier/prettier": off
   "import/no-extraneous-dependencies": off
   "template-curly-spacing" : 0
