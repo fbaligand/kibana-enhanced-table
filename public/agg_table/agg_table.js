@@ -6,7 +6,7 @@ import { CSV_SEPARATOR_SETTING, CSV_QUOTE_VALUES_SETTING } from '../../../../src
 import aggTableTemplate from './agg_table.html';
 import { getFormatService } from '../services';
 import { fieldFormatter } from '../field_formatter';import { computeColumnTotal } from '../column_total_computer';
-import { handleCourierRequest } from '../data_load/kibana_cloned_code/courier';
+import { handleRequest } from '../data_load/kibana_cloned_code/request_handler';
 import { createTable } from '../data_load/document-table-response-handler';
 import { streamSaver } from './stream_saver';
 
@@ -50,11 +50,11 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
         const table = $scope.table;
 
         if ($scope.csvFullExport && self.csv.totalHits === undefined) {
-          self.csv.totalHits = _.get(table.request.searchSource, 'finalResponse.hits.total', -1);
+          self.csv.totalHits = self.csv.totalHits = table.totalHits;
         }
 
         if ($scope.csvFullExport && self.csv.totalHits > table.rows.length) {
-          self.exportFullAsCsv(formatted, table.request);
+          self.exportFullAsCsv(formatted, table.request, table.hits);
         }
         else {
           const csvContent = self.toCsv(table, formatted, true);
@@ -63,11 +63,10 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
         }
       };
 
-      self.exportFullAsCsv = async function (formatted, request) {
+      self.exportFullAsCsv = async function (formatted, request, initialHits) {
 
         // store initial table last sort value
         if (self.csv.lastSortValue === undefined) {
-          const initialHits = _.get(request.searchSource, 'finalResponse.hits.hits', []);
           self.csv.lastSortValue = initialHits[initialHits.length - 1].sort;
         }
 
@@ -87,11 +86,10 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
         let searchAfter = self.csv.lastSortValue;
         do {
           const hitsSize = Math.min(remainingSize, self.csv.maxHitsSize);
-          request.searchSource.setField('size', hitsSize);
-          request.searchSource.setField('search_after', searchAfter);
-          const response = await handleCourierRequest(request);
+          request.searchSourceFields.size = hitsSize;
+          request.searchSourceFields.search_after = searchAfter;
+          const response = await handleRequest(request).toPromise();
           response.aggs = request.aggs;
-          response.hits = _.get(request.searchSource, 'finalResponse.hits.hits', []);
           response.fieldColumns = $scope.fieldColumns;
           const table = createTable(response);
           csvBuffer = self.toCsv(table, formatted, false);

@@ -55,7 +55,7 @@ function createRow(hit, columns) {
 }
 
 export function createTable(response) {
-  const table = { columns: [], rows: [], request: response.request };
+  const table = { columns: [], rows: [], request: response.request, hits: response.hits, totalHits: response.totalHits };
 
   const aggConfigs = response.aggs;
   aggConfigs.aggs = [];
