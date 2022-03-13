@@ -1,23 +1,30 @@
 import { i18n } from '@kbn/i18n';
+import { get } from 'lodash';
+
 
 import { Adapters } from '../../../../../src/plugins/inspector/common';
 
-import { IAggConfigs } from '../../../../../src/plugins/data/common/search/aggs';
-import { ISearchSource } from '../../../../../src/plugins/data/common/search/search_source';
 import {
   calculateBounds,
   Filter,
   IndexPattern,
   Query,
-  tabifyAggResponse,
   TimeRange,
+  IAggConfigs,
+  ISearchStartSearchSource,
+  tabifyAggResponse,
 } from '../../../../../src/plugins/data/common';
 
 /**
  * Clone of: ../../../../../src/plugins/data/common/search/expressions/esaggs/request_handler.ts
- * Components: RequestHandlerParams and handleCourierRequest
+ * Customizations:
+ * - searchSourceFields param
+ * - response.totalHits
+ * - response.hits
  */
-interface RequestHandlerParams {
+
+/** @internal */
+export interface RequestHandlerParams {
   abortSignal?: AbortSignal;
   aggs: IAggConfigs;
   filters?: Filter[];
@@ -27,28 +34,35 @@ interface RequestHandlerParams {
   partialRows?: boolean;
   query?: Query;
   searchSessionId?: string;
-  searchSource: ISearchSource;
+  searchSourceService: ISearchStartSearchSource;
   timeFields?: string[];
   timeRange?: TimeRange;
   getNow?: () => Date;
+  searchSourceFields: { [key: string]: any };
 }
 
-export const handleCourierRequest = async ({
+export const handleRequest = async ({
   abortSignal,
   aggs,
   filters,
   indexPattern,
   inspectorAdapters,
-  metricsAtAllLevels,
   partialRows,
   query,
   searchSessionId,
-  searchSource,
+  searchSourceService,
   timeFields,
   timeRange,
   getNow,
+  searchSourceFields,
 }: RequestHandlerParams) => {
   const forceNow = getNow?.();
+  const searchSource = await searchSourceService.create();
+
+  searchSource.setField('index', indexPattern);
+  Object.keys(searchSourceFields).forEach(fieldName => {
+    searchSource.setField(fieldName as any, searchSourceFields[fieldName]);
+  });
 
   // Create a new search source that inherits the original search source
   // but has the appropriate timeRange applied via a filter.
@@ -60,7 +74,15 @@ export const handleCourierRequest = async ({
   const timeFilterSearchSource = searchSource.createChild({ callParentStartHandlers: true });
   const requestSearchSource = timeFilterSearchSource.createChild({ callParentStartHandlers: true });
 
+  // If timeFields have been specified, use the specified ones, otherwise use primary time field of index
+  // pattern if it's available.
+  const defaultTimeField = indexPattern?.getTimeField?.();
+  const defaultTimeFields = defaultTimeField ? [defaultTimeField.name] : [];
+  const allTimeFields = timeFields && timeFields.length > 0 ? timeFields : defaultTimeFields;
+
   aggs.setTimeRange(timeRange as TimeRange);
+  aggs.setForceNow(forceNow);
+  aggs.setTimeFields(allTimeFields);
 
   // For now we need to mirror the history of the passed search source, since
   // the request inspector wouldn't work otherwise.
@@ -78,15 +100,6 @@ export const handleCourierRequest = async ({
   requestSearchSource.onRequestStart((paramSearchSource, options) => {
     return aggs.onSearchRequestStart(paramSearchSource, options);
   });
-
-  // If timeFields have been specified, use the specified ones, otherwise use primary time field of index
-  // pattern if it's available.
-  const defaultTimeField = indexPattern?.getTimeField?.();
-  const defaultTimeFields = defaultTimeField ? [defaultTimeField.name] : [];
-  const allTimeFields = timeFields && timeFields.length > 0 ? timeFields : defaultTimeFields;
-
-  aggs.setForceNow(forceNow);
-  aggs.setTimeFields(allTimeFields);
 
   // If a timeRange has been specified and we had at least one timeField available, create range
   // filters for that those time fields
@@ -120,17 +133,16 @@ export const handleCourierRequest = async ({
 
   const parsedTimeRange = timeRange ? calculateBounds(timeRange, { forceNow }) : null;
   const tabifyParams = {
-    metricsAtAllLevels,
+    metricsAtAllLevels: aggs.hierarchical,
     partialRows,
     timeRange: parsedTimeRange
       ? { from: parsedTimeRange.min, to: parsedTimeRange.max, timeFields: allTimeFields }
       : undefined,
   };
 
-  //Need this so the enhancedTableRequestHandler can recover the hits for the document table
-  (searchSource as any).finalResponse = response;
-
-  const tabifiedResponse = tabifyAggResponse(aggs, response, tabifyParams);
-
-  return tabifiedResponse;
+  return {
+    ...tabifyAggResponse(aggs, response, tabifyParams),
+    totalHits: get(response, 'hits.total', -1),
+    hits: get(response, 'hits.hits', []),
+  };
 };

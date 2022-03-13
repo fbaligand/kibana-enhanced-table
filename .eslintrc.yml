@@ -9,7 +9,8 @@ rules:
   "@kbn/eslint/require-license-header": off
   "prettier/prettier": off
   "import/no-extraneous-dependencies": off
-  "template-curly-spacing" : 0
+  "template-curly-spacing": 0
+  "no-setter-return": off
   indent:
     - off
     - 2
