@@ -1,8 +1,6 @@
-import { IFieldFormat } from '../../../../../src/plugins/data/common';
-
 /**
- * Clone of: '../../../../../src/plugins/data/public/search/expressions/utils/serialize_agg_config.ts'
- * Component: serializeAggConfig
+ * Inspired from: '../../../../../src/plugins/data/common/search/tabify/response_writer.ts'
+ * Function: response
  */
 export function serializeAggConfig(aggConfig) {
   const sourceParams = {
@@ -18,9 +16,3 @@ export function serializeAggConfig(aggConfig) {
     sourceParams
   };
 }
-
-/**
- * Clone of: '../../../../../src/plugins/data/common/field_formats/utils.ts'
- * Component: FormatFactory
-*/
-export type FormatFactory = (mapping?) => IFieldFormat;

@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { i18n } from '@kbn/i18n';
 import { ExpressionFunctionDefinition, Render } from '../../../../src/plugins/expressions/public';
-import { getIndexPatterns, getFilterManager, getSearchService, getVisualization } from '../services';
+import { getIndexPatterns, getSearchService, getVisualization } from '../services';
 import { enhancedTableRequestHandler } from './enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
 import { documentTableResponseHandler } from './document-table-response-handler';
@@ -15,6 +15,7 @@ interface Arguments {
   visConfig?: string;
   uiState?: string;
   aggConfigs?: string;
+  timeFields?: string[];
 }
 
 export interface CommonVisRenderValue {
@@ -87,7 +88,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
       help: 'Aggregation configurations',
     },
   },
-  async fn(input, args, { inspectorAdapters, getSearchSessionId }) {
+  async fn(input, args, { inspectorAdapters, abortSignal, getSearchSessionId, getExecutionContext }) {
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
     const schemas = args.schemas ? JSON.parse(args.schemas) : {};
     const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
@@ -96,20 +97,22 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
     const aggs = indexPattern
       ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState)
       : undefined;
+    aggs.hierarchical = args.metricsAtAllLevels;
     const visType = getVisualization().get(visName);
 
     input = await enhancedTableRequestHandler({
-        partialRows: args.partialRows,
-        metricsAtAllLevels: args.metricsAtAllLevels,
-        visParams: visConfigParams,
-        timeRange: get(input, 'timeRange', null),
-        query: get(input, 'query', null),
-        filters: get(input, 'filters', null),
-        inspectorAdapters,
-        queryFilter: getFilterManager(),
+        abortSignal,
         aggs,
-        forceFetch: true,
+        filters: get(input, 'filters', null),
+        indexPattern,
+        inspectorAdapters,
+        partialRows: args.partialRows,
+        query: get(input, 'query', null),
         searchSessionId: getSearchSessionId(),
+        timeFields: args.timeFields,
+        timeRange: get(input, 'timeRange', null),
+        executionContext: getExecutionContext(),
+        visParams: visConfigParams,
     });
 
 
