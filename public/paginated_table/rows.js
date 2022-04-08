@@ -2,6 +2,10 @@ import $ from 'jquery';
 import _ from 'lodash';
 import AggConfigResult from '../data_load/agg_config_result';
 import tableCellFilterHtml from './table_cell_filter.html';
+import tableCellDataFetchHtml from './table_cell_download.html';
+import Overlay from './overlay';
+
+const overlay = new Overlay();
 
 export function KbnEnhancedRows($compile) {
   return {
@@ -43,17 +47,61 @@ export function KbnEnhancedRows($compile) {
           return $compile($template)(scope);
         }
 
+        function getDocument(documentId) {
+          overlay.dispayDocOverlay();
+          const fetchDocBaseUrl = '../api/kibana-enhanced-table/datafetch/' + documentId
+
+          fetch(fetchDocBaseUrl+"/find")
+            .then(resp => resp.json())
+            .then(file => {
+              if (file._id === undefined || file._id === null) {
+                overlay.handleNoFile();
+              } else {
+                if (file.metadata.contentType === "image/png" || file.metadata.contentType === "image/jpeg") {
+                  overlay.createImage(fetchDocBaseUrl, file);
+                } else {
+                  overlay.createFetchBtn(fetchDocBaseUrl, file);
+                }
+              }
+            })
+            .catch(err => { console.log(err) })
+        };
+
+        function createDataFetchCell(aggConfigResult) {
+          const $template = $(tableCellDataFetchHtml);
+          $template.addClass('kbnEnhancedTableCellFilter__hover');
+
+          const scope = $scope.$new();
+
+          scope.onDownloadClick = (event, negate) => {
+            // Don't add doc download if a link was clicked.
+            if ($(event.target).is('a')) {
+              return;
+            }
+            getDocument(aggConfigResult.value);
+          };
+
+          return $compile($template)(scope);
+        }
+
         let $cell;
         let $cellContent;
 
         if (contents instanceof AggConfigResult) {
           const field = contents.aggConfig.getField();
+          const isCellDownloadAble = contents.aggConfig.schema === "dataFetch";
           const isCellContentFilterable =
             contents.aggConfig.isFilterable()
             && (!field || field.filterable);
 
-          if (isCellContentFilterable) {
+          if (isCellContentFilterable && !isCellDownloadAble) {
             $cell = createFilterableCell(contents);
+            $cellContent = $cell.find('[data-cell-content]');
+          } else if (isCellDownloadAble) {
+            if ($('#'+overlay.docOverlayId).length < 1) {
+              overlay.createDocOverlay();
+            }
+            $cell = createDataFetchCell(contents);
             $cellContent = $cell.find('[data-cell-content]');
           } else {
             $cell = $cellContent = createCell();

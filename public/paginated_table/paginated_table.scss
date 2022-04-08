@@ -27,8 +27,12 @@
 .kbnTableCellFilter__hover-show {
 // so that the cell doesn't change size on hover
 visibility: hidden;
-} 
+}
 
-.kbnAggTable__paginated tr:hover td.cell-custom-background-hover, .kbnAggTable__paginated td.cell-custom-background-hover .kbnTableCellFilter {
+.kbnAggTable__paginated tr:hover td.cell-custom-background-hover, .kbnAggTable__paginated td.cell-custom-background-hover .kbnTableCellFilter .kbnTableCellDownload {
   opacity: .8;
+}
+
+.kbnTableCellDownloadIcon:hover {
+  color: #42c5ea;
 }
