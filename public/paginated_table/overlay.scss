@@ -1,0 +1,114 @@
+#docOverlay {
+  background-color: rgba(0,0,0,0.5);
+  bottom: 0;
+  display: block;
+  height: 100%;
+  left: 0;
+  overflow-y: scroll;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 20000;
+}
+
+#docOverlayContentContainer {
+  align-items: center;
+  display: inline-grid;
+  grid-template-columns: 60px 3fr 60px;
+  width: 100%;
+  height: calc(100% - 40px);
+}
+
+#overlayContentLeft, #overlayContentRight {
+  //background-color: rgba(0,0,0,0.96);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  color: #FFF;
+  font-size: 1.9em;
+  height: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 50px;
+  padding: 4px;
+  position: relative;
+  text-decoration: none;
+  transition: 0.11s;
+}
+
+#overlayContentRight {
+  float: right;
+}
+
+#overlayImage {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: default;
+  display: block;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 75%;
+  position: relative;
+}
+
+#docOverlayMenuId {
+  align-items: center;
+  background-color: rgba(0,0,0,0.96);
+  display: inline-grid;
+  grid-template-columns: 60px 3fr 60fr;
+  left: 0;
+  height: 40px;
+  padding: 1px;
+  position: sticky;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+#overlayButton {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  color: #FFF;
+  font-size: 1.6em;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 50px;
+  padding: 4px;
+  position: relative;
+  text-decoration: none;
+  transition: 0.11s;
+}
+
+#overlayButton:hover {
+  background-color: #16171c;
+  text-decoration: underline;
+}
+
+#overlayCloseBtn {
+  color: #FFF;
+  float: right;
+  font-size: 3em;
+  transition: 0.11s;
+  margin-right: 2px;
+}
+
+#overlayCloseBtn:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+#noFilePId {
+  background-color: #4a201e;
+  border-radius: 4px;
+  color: #F86B63;
+  cursor: default;
+  display: block;
+  font-size: larger;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 5px 5px;
+  position: relative;
+  text-align: center;
+  top: 48%;
+  width: 140px;
+}

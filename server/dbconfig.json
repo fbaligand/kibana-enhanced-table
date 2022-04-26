@@ -7,12 +7,7 @@
       "collection": "uploads",
       "mongoOptions": {
         "useNewUrlParser": true,
-        "useUnifiedTopology": true,
-        "db": { "authSource": "mongouploads" },
-        "auth": {
-          "user": "Matus",
-          "password": "strongPassword"
-        }
+        "useUnifiedTopology": true
       }
     }
 }

@@ -1,12 +1,13 @@
-const mongodb = require('mongodb');
-const ObjectId = require('mongodb').ObjectID;
-const dbconf = require('../dbconfig.json').db;
+import { schema } from '@kbn/config-schema';
+import { MongoClient, GridFSBucket, ObjectId } from 'mongodb';
 
-const mongoURI = dbconf.type+"://"+dbconf.host+":"+dbconf.port;
-const mongoOptions = dbconf.mongoOptions
-const dbName = dbconf.dbName;
-const collectionName = dbconf.collection;
-const collectionNameFiles = dbconf.collection+'.files';
+const dbconf = require('../dbconfig.json');
+
+const mongoURI = dbconf.db.type+'://'+dbconf.db.host+':'+dbconf.db.port;
+const mongoOptions = dbconf.db.mongoOptions;
+const dbName = dbconf.db.dbName;
+const collectionName = dbconf.db.collection;
+const collectionNameFiles = dbconf.db.collection+'.files';
 let bucket;
 let db;
 let collection;
@@ -19,54 +20,71 @@ const streamReadable = stream => {
   });
 };
 
-try {
-  mongodb.MongoClient.connect(mongoURI, mongoOptions, function(err, client) {
-    if(err) {
-      throw err;
-    }
-    db = client.db(dbName);
-    collection = db.collection(collectionName);
-    bucket = new mongodb.GridFSBucket(db, {
-      chunkSizeBytes: 1024,
-      bucketName: collectionName
-    });
+MongoClient.connect(mongoURI, mongoOptions).then((client) => {
+  db = client.db(dbName);
+  collection = db.collection(collectionName);
+  bucket = new GridFSBucket(db, {
+    chunkSizeBytes: 1024,
+    bucketName: collectionName
   });
-} catch (err) {
-  console.error(err);
-}
+}).catch(err => console.error(err));
 
-export default function (server) {
-  server.route([
-    {
+export default function (router) {
+  const validate = {
+    params: schema.object({
+      documentId: schema.string(),
+    }),
+  };
+
+  router.get({
       path: '/api/kibana-enhanced-table/datafetch/{documentId}/stream',
-      method: ['GET'],
-      handler: async (req, reply) => {
-        const stream = bucket.openDownloadStream(new ObjectId(req.params.documentId));
-        const readyStream = await streamReadable(stream);
-        return reply.response(readyStream).type(req.query.contentType);
-      },
+      validate,
     },
-    {
+    async (context, req, res) => {
+      const stream = bucket.openDownloadStream(new ObjectId(req.params.documentId));
+      const readyStream = await streamReadable(stream);
+      return res.ok({
+        body: readyStream,
+        headers: {
+          'content-type': req.query.contentType
+        }
+      });
+    },
+  );
+
+  router.get({
       path: '/api/kibana-enhanced-table/datafetch/{documentId}/find',
-      method: ['GET'],
-      handler: (req, reply) => {
-        return new Promise((resolve, reject) => {
-          db.collection(collectionNameFiles).findOne({'_id': new ObjectId(req.params.documentId)}).then((res, err) => {
-            if (err) return reject(err);
-            if (res == null) res = { message: "File not found!" };
-            resolve(reply.response(res));
-          });
-        }).catch((err) => { reply.response(err)});
-      }
+      validate,
     },
-    {
-      path: '/api/kibana-enhanced-table/datafetch/{documentId}/download',
-      method: ['GET'],
-      handler: async (req, reply) => {
-        const stream = bucket.openDownloadStream(new ObjectId(req.params.documentId));
-        const readyStream = await streamReadable(stream);
-        return reply.response(readyStream).type('application/octet-stream').header('Content-Disposition','attachment; filename=\"'+req.query.filename+'\"');
-      },
+    (context, req, res) => {
+
+      return new Promise((resolve, reject) => {
+        db.collection(collectionNameFiles).findOne({'_id': new ObjectId(req.params.documentId)}).then((resp, err) => {
+          if (err) return reject(err);
+          if (resp == null) resp = { message: 'File not found!' };
+          resolve(res.ok({ body: resp }));
+        }).catch(err => {
+          reject(console.error(err));
+        });
+      }).catch((err) => {
+        console.error(err);
+      });
     }
-    ]);
+  );
+  router.get({
+      path: '/api/kibana-enhanced-table/datafetch/{documentId}/download',
+      validate,
+    },
+    async (context, req, res) => {
+      const stream = bucket.openDownloadStream(new ObjectId(req.params.documentId));
+      const readyStream = await streamReadable(stream);
+      return res.ok({
+        body: readyStream,
+        headers: {
+          'Content-Disposition': 'attachment; filename="'+req.query.filename+'"',
+          'content-type': 'application/octet-stream'
+        }
+      });
+    }
+  );
 }
