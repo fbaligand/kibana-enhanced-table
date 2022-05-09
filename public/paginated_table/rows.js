@@ -49,23 +49,9 @@ export function KbnEnhancedRows($compile) {
           return $compile($template)(scope);
         }
 
-        function getDocument(documentId, documentIdList) {
-          console.log(documentIdList.find(el => el === documentId));
-          console.log(documentIdList.indexOf(documentId));
-
-          overlay.createDocOverlay();
-          const fetchDocBaseUrl = `../api/kibana-enhanced-table/datafetch/${documentId}`;
-
-          fetch(fetchDocBaseUrl+'/find')
-            .then(resp => resp.json())
-            .then(file => {
-              if (file._id === undefined || file._id === null) {
-                overlay.handleNoFile();
-              } else {
-                overlay.render(fetchDocBaseUrl, file, file.metadata.contentType);
-              }
-            })
-            .catch(err => { console.log(err); });
+        function openDocumentOverlay(documentId, documentIdList) {
+          overlay.createDocOverlay(documentId, documentIdList);
+          overlay.fetchDocument(documentId);
         }
 
         function createDataFetchCell(aggConfigResult) {
@@ -80,7 +66,7 @@ export function KbnEnhancedRows($compile) {
             if ($(event.target).is('a')) {
               return;
             }
-            getDocument(aggConfigResult.value, documentIds);
+            openDocumentOverlay(aggConfigResult.value, documentIds);
           };
 
           return $compile($template)(scope);

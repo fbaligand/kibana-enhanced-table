@@ -21,9 +21,6 @@
 }
 
 #overlayContentLeft, #overlayContentRight {
-  //background-color: rgba(0,0,0,0.96);
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  color: #FFF;
   font-size: 1.9em;
   height: 80px;
   margin-left: auto;
@@ -33,6 +30,12 @@
   position: relative;
   text-decoration: none;
   transition: 0.11s;
+
+  &:hover {
+    background-color: #16171cf7;
+    box-shadow: 0 2px 1px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    color: #FFF;
+  }
 }
 
 #overlayContentRight {
@@ -77,11 +80,11 @@
   position: relative;
   text-decoration: none;
   transition: 0.11s;
-}
 
-#overlayButton:hover {
-  background-color: #16171c;
-  text-decoration: underline;
+  &:hover {
+    background-color: #16171c;
+    text-decoration: underline;
+  }
 }
 
 #overlayCloseBtn {
@@ -90,10 +93,10 @@
   font-size: 3em;
   transition: 0.11s;
   margin-right: 2px;
-}
 
-#overlayCloseBtn:hover {
-  color: rgba(255, 255, 255, 0.85);
+  &:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
 }
 
 #noFilePId {
