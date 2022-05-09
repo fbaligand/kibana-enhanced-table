@@ -10,6 +10,7 @@ const overlayCloseId = 'overlayCloseBtn';
 const docOverlayMenuFilenameId = 'docOverlayMenuFilenameId';
 const kibanaBodyId = 'kibana-body';
 const noFilePId = 'noFilePId';
+const fileId = 'fileId';
 const KEYCODE_ESC = 27;
 const KEYCODE_ARROW_LEFT = 37;
 const KEYCODE_ARROW_RIGHT = 39;
@@ -38,6 +39,7 @@ export default class Overlay {
     this.kibanaBodyId = kibanaBodyId;
     this.noFilePId = noFilePId;
     this.fetchDocBaseUrl = fetchDocBaseUrl;
+    this.fileId = fileId;
   }
 
   createDocOverlay(documentId, documentIdList) {
@@ -104,6 +106,7 @@ export default class Overlay {
 
   setFetchBtn(fetchDocBaseUrl, file) {
     const fetchBtn = $('#'+this.overlayButtonId);
+    fetchBtn.removeAttr('hidden');
     fetchBtn.off('click');
     fetchBtn.on('click',e => e.stopPropagation());
     fetchBtn.on('click',() => { this.downloadDocument(fetchDocBaseUrl, file.filename, file.metadata.contentType) });
@@ -115,7 +118,7 @@ export default class Overlay {
     let img;
 
     if (!$(imgId).length) {
-      img = $('<img id="'+this.overlayImageId+'">');
+      img = $('<img id="'+this.overlayImageId+'" alt="'+file.filename+'">');
       img.appendTo('#'+this.docOverlayContent);
     } else {
       img = $(imgId);
@@ -130,10 +133,21 @@ export default class Overlay {
     this.setFileName(file);
 
     if (contentType === 'image/png' || contentType === 'image/jpeg') {
+      $('#'+this.fileId).remove();
       this.setImage(fetchDocBaseUrl, file);
     } else {
-      const img = $('#'+this.overlayImageId);
-      img.remove();
+      $('#'+this.overlayImageId).remove();
+
+      const fileId = '#'+this.fileId;
+      let messageElement;
+
+      if (!$(fileId).length) {
+        messageElement = $('<p id="'+this.fileId+'"></p>');
+        messageElement.appendTo('#'+this.docOverlayContent);
+      } else {
+        messageElement = $(fileId);
+      }
+      messageElement.text(`File "${file.filename}" is available for download`);
     }
   }
 
@@ -142,8 +156,8 @@ export default class Overlay {
   }
 
   handleNoFile(documentId) {
-    const message = `No file ${documentId} found`
-    const noFileId = '#'+this.noFilePId
+    $('#'+this.overlayButtonId).hide();
+    const noFileId = '#'+this.noFilePId;
     let noFile;
 
     if (!$(noFileId).length) {
@@ -152,7 +166,7 @@ export default class Overlay {
     } else {
       noFile = $(noFileId);
     }
-    noFile.text(message);
+    noFile.text(`No file "${documentId}" found`);
   }
 
   shuffle(isLeft) {

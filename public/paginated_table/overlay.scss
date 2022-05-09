@@ -92,26 +92,38 @@
   float: right;
   font-size: 3em;
   transition: 0.11s;
-  margin-right: 2px;
+  margin: 0 2px 0 2px;
+  padding: 0 2px 0 2px;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.85);
+    background-color: #16171c;
   }
 }
 
 #noFilePId {
   background-color: #4a201e;
-  border-radius: 4px;
   color: #F86B63;
+}
+
+#fileId {
+  background-color: #1f2127;
+  color: #36A2EF;
+}
+
+#noFilePId, #fileId{
+  border-radius: 4px;
   cursor: default;
   display: block;
   font-size: larger;
-  height: 40px;
+  height: fit-content;
   margin-left: auto;
   margin-right: auto;
+  max-width: 60%;
+  min-height: 40px;
   padding: 10px 5px 5px;
   position: relative;
   text-align: center;
   top: 48%;
-  width: 140px;
+  width: fit-content;
 }
+
