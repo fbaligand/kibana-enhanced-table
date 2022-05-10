@@ -147,7 +147,7 @@ export default class Overlay {
       } else {
         messageElement = $(fileId);
       }
-      messageElement.text(`File "${file.filename}" is available for download`);
+      messageElement.text(`${file.filename} is ready for download`);
     }
   }
 

@@ -1,33 +1,8 @@
 import { schema } from '@kbn/config-schema';
-import { MongoClient, GridFSBucket, ObjectId } from 'mongodb';
+import MongoConnector from "../connector/mongo_client";
 
-const dbconf = require('../dbconfig.json');
-
-const mongoURI = dbconf.db.type+'://'+dbconf.db.host+':'+dbconf.db.port;
-const mongoOptions = dbconf.db.mongoOptions;
-const dbName = dbconf.db.dbName;
-const collectionName = dbconf.db.collection;
-const collectionNameFiles = dbconf.db.collection+'.files';
-let bucket;
-let db;
-let collection;
-
-const streamReadable = stream => {
-  stream.pause();
-  return new Promise((resolve, reject) => {
-    stream.once('error', reject);
-    stream.once('readable', () => resolve(stream));
-  });
-};
-
-MongoClient.connect(mongoURI, mongoOptions).then((client) => {
-  db = client.db(dbName);
-  collection = db.collection(collectionName);
-  bucket = new GridFSBucket(db, {
-    chunkSizeBytes: 1024,
-    bucketName: collectionName
-  });
-}).catch(err => console.error(err));
+const mongoConnector = new MongoConnector();
+mongoConnector.connect();
 
 export default function (router) {
   const validate = {
@@ -41,8 +16,7 @@ export default function (router) {
       validate,
     },
     async (context, req, res) => {
-      const stream = bucket.openDownloadStream(new ObjectId(req.params.documentId));
-      const readyStream = await streamReadable(stream);
+      const readyStream = await mongoConnector.downloadStream(req.params.documentId);
       return res.ok({
         body: readyStream,
         headers: {
@@ -57,9 +31,8 @@ export default function (router) {
       validate,
     },
     (context, req, res) => {
-
       return new Promise((resolve, reject) => {
-        db.collection(collectionNameFiles).findOne({'_id': new ObjectId(req.params.documentId)}).then((resp, err) => {
+        mongoConnector.findOneDocument(req.params.documentId).then((resp, err) => {
           if (err) return reject(err);
           if (resp == null) resp = { message: 'File not found!' };
           resolve(res.ok({ body: resp }));
@@ -76,8 +49,7 @@ export default function (router) {
       validate,
     },
     async (context, req, res) => {
-      const stream = bucket.openDownloadStream(new ObjectId(req.params.documentId));
-      const readyStream = await streamReadable(stream);
+      const readyStream = await mongoConnector.downloadStream(req.params.documentId);
       return res.ok({
         body: readyStream,
         headers: {
