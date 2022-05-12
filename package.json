@@ -8,14 +8,14 @@
     "version": "kibana"
   },
   "scripts": {
-    "preinstall": "node ../../preinstall_check",
+    "preinstall": "node ../../../../../preinstall_check",
     "kbn": "node ../../scripts/kbn",
     "es": "node ../../scripts/es",
     "lint": "../../node_modules/.bin/eslint .",
     "start": "cd ../.. && node scripts/kibana --dev --oss",
     "start-xpack": "cd ../.. && node scripts/kibana --dev",
     "debug": "node --nolazy --inspect ../../scripts/kibana --dev",
-    "build": "../../node_modules/.bin/plugin-helpers build",
+    "build": "node ../../scripts/plugin_helpers build",
     "compile-and-build": "node ../../scripts/plugin_helpers.js build",
     "compile": "rm -rf ./target && node ../../scripts/plugin_helpers.js build --kibana-version none --skip-archive && mv build/kibana/enhancedTable/target . && rm -rf build/*"
   },
