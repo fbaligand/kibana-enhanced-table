@@ -1,7 +1,7 @@
 import { clone } from 'lodash';
 import React, { useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
-import { FormattedMessage } from '@kbn/i18n/react';
+import { FormattedMessage } from '@kbn/i18n-react';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
 
 import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';

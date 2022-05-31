@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
-import { FormattedMessage } from '@kbn/i18n/react';
+import { FormattedMessage } from '@kbn/i18n-react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
 import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
