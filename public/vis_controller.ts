@@ -5,7 +5,7 @@ import $ from 'jquery';
 import { CoreSetup } from '../../../src/core/public';
 import { VisParams } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getKibanaLegacy, getVisualization } from './services';
+import { getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 // @ts-ignore
 import enhancedTableVisTemplate from './enhanced-table-vis.html';
@@ -53,8 +53,12 @@ export function getEnhancedTableVisualizationController(
         initAngularBootstrap();
         this.tableVisModule = getAngularModule(innerAngularName, coreStart);
         initTableVisLegacyModule(this.tableVisModule);
-        getKibanaLegacy().loadFontAwesome();
+        this.loadFontAwesome();
       }
+    }
+
+    async loadFontAwesome() {
+      await import('./font_awesome');
     }
 
     async render(

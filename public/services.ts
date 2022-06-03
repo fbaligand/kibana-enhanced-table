@@ -1,16 +1,11 @@
 import { createGetterSetter } from '../../../src/plugins/kibana_utils/public';
 import { NotificationsStart } from '../../../src/core/public';
 import { DataPublicPluginStart, FilterManager, IndexPatternsContract } from '../../../src/plugins/data/public';
-import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
 import { VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
 export const [getFormatService, setFormatService] = createGetterSetter<
   DataPublicPluginStart['fieldFormats']
 >('table data.fieldFormats');
-
-export const [getKibanaLegacy, setKibanaLegacy] = createGetterSetter<KibanaLegacyStart>(
-  'table kibanaLegacy'
-);
 
 export const [getNotifications, setNotifications] = createGetterSetter<
   NotificationsStart
