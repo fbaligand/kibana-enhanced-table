@@ -262,7 +262,7 @@ yarn start
 ```
 Now, you can open your browser,
  
- - In your browser, open the generated URL in the console. It is something like: http://localhost:5601/abc
+ - In your browser, call the generated URL in the console. It is something like: http://localhost:5601/abc
  - Now, each time you change the code, the plugin will be reloaded with the changes.
  - Happy coding :-)
 
@@ -270,9 +270,10 @@ Now, you can open your browser,
 ```bash
 yarn build
 ```
-A prompt will ask you what is Opensearch-Dashboards version.  
-Give the version (example: 1.2.0), and type ENTER.  
-Then, the result archive is generated into `build` directory.  
+
+The result archive is generated into `build` directory under the name ${npm_package_config_id}-${npm_package_version}.zip
+
+
 
 
 ## Donation

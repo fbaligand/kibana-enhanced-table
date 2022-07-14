@@ -7,6 +7,9 @@
   "opensearch-dashboards": {
     "version": "opensearch-dashboards"
   },
+  "config": {
+    "id": "enhancedTable"
+  },
   "scripts": {
     "preinstall": "node ../../preinstall_check",
     "osd": "node ../../scripts/osd",
@@ -14,9 +17,10 @@
     "lint": "../../node_modules/.bin/eslint .",
     "start": "cd ../.. && node scripts/opensearch_dashboards --dev",
     "debug": "node --nolazy --inspect ../../scripts/opensearch_dashboards --dev",
-    "build": "../../node_modules/.bin/plugin-helpers build",
-    "compile-and-build": "node ../../scripts/plugin_helpers.js build",
-    "compile": "rm -rf ./target && node ../../scripts/build_opensearch_dashboards_platform_plugins.js --scan-dir ."
+    "build": "yarn plugin-helpers build",
+    "compile": "rm -rf ./target && node ../../scripts/build_opensearch_dashboards_platform_plugins.js --scan-dir .",
+    "plugin-helpers": "node ../../scripts/plugin_helpers",
+    "postbuild": "echo Renaming build artifact to [${npm_package_config_id}-${npm_package_version}.zip] && mv build/${npm_package_config_id}*.zip build/${npm_package_config_id}-${npm_package_version}.zip"
   },
   "dependencies": {
     "expr-eval": "2.0.2"
