@@ -210,32 +210,61 @@ Thanks for their great work !
 
 ## Development
 
-To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
-- execute these commands :
-``` bash
-git clone https://github.com/opensearch-project/OpenSearch-Dashboards
+You can run the osd-enhanced-table plugin in development mode that supports hot code reload. 
+
+Follow those steps:
+
+### Clone OpenSearch-Dashboards & kibina-enhanced-table
+```bash
+git clone https://github.com/opensearch-project/OpenSearch-Dashboards -b 1.0.0
 cd OpenSearch-Dashboards
-git reset --hard vX.Y.Z # replace 'X.Y.Z' by desired OpenSearch-Dashboards version
-cd plugins
-git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
-git checkout opensearch-dashboards
+git clone https://github.com/fbaligand/kibana-enhanced-table.git -b osd plugins/osd-enhanced-table
 ```
-- install the version of Node.js listed in the OpenSearch-Dashboards/.node-version file
-- ensure that node binary is both in PATH environment variable and in OpenSearch-Dashboards/node folder
-- install the latest version of yarn: `npm install -g yarn`
-- execute these commands :
-``` bash
-cd OpenSearch-Dashboards
+### Update OpenSearch-Dashboards config 
+
+Update `OpenSearch-Dashboards/config/opensearch_dashboards.yml` with opensearch hosts and user credentials.
+opensearch.hosts: [""]
+opensearch.username: ""
+opensearch.password: "" 
+
+- - -
+
+If you do not have opensearch server running yet, 
+you can use the `opensearchproject/opensearch` docker image
+
+```bash
+docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:latest
+```
+and update config with the following settings:
+
+```yaml 
+opensearch.hosts: ["https://localhost:9200"]
+opensearch.username: "admin" # Default username on the docker image
+opensearch.password: "admin" # Default password on the docker image
+opensearch.ssl.verificationMode: none
+```
+### Install Node.js and yarn
+install the version of Node.js listed in the .node-version file.
+```bash
+volta install node@$(<.node-version)
+npm install -g yarn
+```
+
+### Build with Hot Reload 
+```bash
+cd plugins/osd-enhanced-table
 yarn osd bootstrap
-cd plugins/enhancedTable
 yarn install
 yarn start
 ```
-- in your browser, call `http://localhost:5601` and enjoy!
+Now, you can open your browser,
+ 
+ - In your browser, open the generated URL in the console. It is something like: http://localhost:5601/abc
+ - Now, each time you change the code, the plugin will be reloaded with the changes.
+ - Happy coding :-)
 
-
-To build a distributable archive, execute this command :
-``` bash
+### Build a distributable archive
+```bash
 yarn build
 ```
 A prompt will ask you what is Opensearch-Dashboards version.  
