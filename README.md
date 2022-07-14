@@ -223,9 +223,12 @@ git clone https://github.com/fbaligand/kibana-enhanced-table.git -b osd plugins/
 ### Update OpenSearch-Dashboards config 
 
 Update `OpenSearch-Dashboards/config/opensearch_dashboards.yml` with opensearch hosts and user credentials.
+
+```yaml
 opensearch.hosts: [""]
 opensearch.username: ""
 opensearch.password: "" 
+```
 
 - - -
 
