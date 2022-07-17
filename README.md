@@ -218,7 +218,7 @@ Follow those steps:
 ```bash
 git clone https://github.com/opensearch-project/OpenSearch-Dashboards -b 1.0.0
 cd OpenSearch-Dashboards
-git clone https://github.com/fbaligand/kibana-enhanced-table.git -b osd plugins/osd-enhanced-table
+git clone https://github.com/fbaligand/kibana-enhanced-table.git -b osd plugins/enhancedTable
 ```
 ### Update OpenSearch-Dashboards config 
 
@@ -255,7 +255,7 @@ npm install -g yarn
 
 ### Build with Hot Reload 
 ```bash
-cd plugins/osd-enhanced-table
+cd plugins/enhancedTable
 yarn osd bootstrap
 yarn install
 yarn start
@@ -271,7 +271,9 @@ Now, you can open your browser,
 yarn build
 ```
 
-The result archive is generated into `build` directory under the name ${npm_package_config_id}-${npm_package_version}.zip
+The result archive is generated into `build` directory under the name enhancedTable-X.Y.Z-A.B.C.zip where:
+- X.Y.Z is ${npm_package_version}
+- A.B.C is the OpenSearch-Dashboards version
 
 
 
