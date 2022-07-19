@@ -17,7 +17,7 @@
     "build": "yarn plugin-helpers build",
     "compile": "rm -rf ./target && node ../../scripts/build_opensearch_dashboards_platform_plugins.js --scan-dir .",
     "plugin-helpers": "node ../../scripts/plugin_helpers",
-    "postbuild": "old=build/*.zip && new=\"$(echo $old | cut -f 1 -d '-')-${npm_package_version}-$(echo $old | cut -f 2 -d '-')\" && echo renaming build artifact to $new && mv $old $new"
+    "postbuild": "old=(build/*.zip) && new=\"$(echo $old | cut -f 1 -d '-')-${npm_package_version}_osd-$(echo $old | cut -f 2 -d '-')\" && echo renaming build artifact to $new && mv $old $new"
   },
   "dependencies": {
     "expr-eval": "2.0.2"

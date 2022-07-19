@@ -210,7 +210,7 @@ Thanks for their great work !
 
 ## Development
 
-You can run the osd-enhanced-table plugin in development mode that supports hot code reload. 
+You can run the enhanced-table plugin in development mode that supports hot code reload. 
 
 Follow those steps:
 
@@ -262,7 +262,7 @@ yarn start
 ```
 Now, you can open your browser,
  
- - In your browser, call the generated URL in the console. It is something like: http://localhost:5601/abc
+ - In your browser, open the generated URL displayed in the console. It is something like: `http://localhost:5601/abc`
  - Now, each time you change the code, the plugin will be reloaded with the changes.
  - Happy coding :-)
 
@@ -271,12 +271,9 @@ Now, you can open your browser,
 yarn build
 ```
 
-The result archive is generated into `build` directory under the name enhancedTable-X.Y.Z-A.B.C.zip where:
-- X.Y.Z is ${npm_package_version}
+The result artifact located at `build/enhancedTable-X.Y.Z_osd-A.B.C.zip` where:
+- X.Y.Z is the `${npm_package_version}`
 - A.B.C is the OpenSearch-Dashboards version
-
-
-
 
 ## Donation
 
