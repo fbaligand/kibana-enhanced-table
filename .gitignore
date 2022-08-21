@@ -6,4 +6,5 @@ npm-debug.log*
 package-lock.json
 yarn.lock
 .project
+.idea
 *.zip

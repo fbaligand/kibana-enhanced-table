@@ -139,6 +139,7 @@ function EnhancedTableVisController ($scope, config) {
 
     // add 'table' & 'row' param for functions that require whole table
     realFormula = realFormula.replace(/(total)\s*\(/g, '$1(table, row, ');
+    realFormula = realFormula.replace(/(rowval)\s*\(/g, '$1(table, row, ');
 
     // replace 'total' variable by 'totalHits'
     realFormula = realFormula.replace(/([^\w]|^)total([^(\w]|$)/g, '$1totalHits$2');
@@ -230,6 +231,7 @@ function EnhancedTableVisController ($scope, config) {
         }
       }
       catch (e) {
+        console.log(e)
         return defaultValue;
       }
     };
@@ -257,7 +259,123 @@ function EnhancedTableVisController ($scope, config) {
       catch (e) {
         return defaultValue;
       }
-    };
+    }
+
+    parser.functions.rowval = function (table, row, col, fallback, pQuery ) {
+      const parseQuery = (query) => {
+        try {
+          return JSON.parse(query);
+        } catch (ee) {
+          throw new EnhancedTableError(`Invalid query format, expected valid JSON. ${ee}`);
+        }
+      }
+      const findCol = (row, col) => {
+        if ( typeof col === 'string' ) {
+          const matches = col.match(/col(\d+)/);
+          if (matches) {
+            col = parseInt(matches[1])
+          }
+        }
+        const value = parser.functions.col(rows[0], col, null)
+
+        if (value !== undefined) {
+          return value;
+        }
+        return 0;
+      }
+
+      const checkFilter = (row, filter) => {
+        if (Array.isArray(filter)) {
+          for (const _filter of filter) {
+            if (!checkFilter(row, _filter)) {
+              return false;
+            }
+          }
+          return true;
+        }
+        if (typeof filter === 'object') {
+          for (let [key, val] of Object.entries(filter)) {
+            if (typeof val === 'number' || typeof val === 'string') {
+              let colName = key;
+              const matches = key.match(/col(\d+)/);
+              if ( matches ) {
+                colName = parseInt( matches[1] )
+              }
+              const col = parser.functions.col(row, colName, null);
+              if (col !== val) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }
+      }
+      const findSumAvg = (rows, output) => {
+        let cnt = 0;
+        const sum = rows.reduce(function (prev, curr, idx, arr) {
+          const value = parser.functions.col(curr, output, null)
+          if (value !== undefined) {
+            cnt += 1;
+            return prev + curr;
+          }
+          return curr;
+        }, 0);
+        const avg = cnt > 0 ? sum / cnt: 0;
+        return {sum: sum, avg: avg};
+      }
+
+      const findMinMax = (rows, output) => {
+        let max = null;
+        let min = null;
+        const sum = rows.reduce(function (prev, curr, idx, arr) {
+          const value = parser.functions.col(curr, output, null)
+          if (value !== undefined) {
+            if ( max === null || max > value ) {
+              max = value;
+            }
+            if ( min === null || min < value ) {
+              min = value;
+            }
+          }
+          return 0;
+        }, 0);
+        return {max: max, min: min};
+      }
+
+      let query = null;
+      let rows = table.rows;
+
+      if ( pQuery !== undefined ) {
+        query = parseQuery(pQuery);
+      }
+
+      if (query && query.filters) {
+        rows = rows.filter((row) => {
+          return checkFilter(row, query.filters)
+        });
+      }
+      console.log('',rows)
+
+      if ( !query || !query.type ) {
+        return rows.length > 0 ? findCol( rows[0], col) : fallback;
+      }
+      if ( query.type === 'SUM' ) {
+        const {sum} = findSumAvg(rows, query.output, 0)
+        return sum;
+      }
+      if ( query.type === 'AVG' ) {
+        const {sum,avg} = findSumAvg(rows, query.output, 0)
+        return avg;
+      }
+      if ( query.type === 'MIN' ) {
+        const {max,min} = findMinMax(rows, query.output, 0)
+        return min;
+      }
+      if ( query.type === 'MAX' ) {
+        const {max,min} = findMinMax(rows, query.output, 0)
+        return max;
+      }
+    }
     parser.functions.sumSplitCols = function (row) {
       let splitCol = splitColIndex;
       let sum = 0;
