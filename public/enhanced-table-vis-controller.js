@@ -234,7 +234,6 @@ function EnhancedTableVisController ($scope, config) {
         }
       }
       catch (e) {
-        console.log(e)
         return defaultValue;
       }
     };
@@ -262,8 +261,7 @@ function EnhancedTableVisController ($scope, config) {
       catch (e) {
         return defaultValue;
       }
-    }
-
+    };
     parser.functions.sumSplitCols = function (row) {
       let splitCol = splitColIndex;
       let sum = 0;
