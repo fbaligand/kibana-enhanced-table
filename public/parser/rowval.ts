@@ -35,7 +35,7 @@ class Val {
         this.isVar = true;
       }
 
-      matches = val.match(/^(base|row)[(.*?)]$/)
+      matches = val.match(/^(base|row)\[(.*?)]$/)
       if (matches) {
         this.id  = matches[2]
         this.src = matches[1] === 'base' ? ValueSource.Base :  ValueSource.Row;
