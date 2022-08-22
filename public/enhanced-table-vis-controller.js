@@ -8,7 +8,9 @@ import { computeTimeRange } from './time_range_computer';
 // third-party dependencies
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
-import {make_rowval} from "./parser/rowval";
+
+import * as parser_rowval   from "./parser/rowval";
+import * as parser_percents from "./parser/percents";
 
 // EnhancedTableVis AngularJS controller
 function EnhancedTableVisController ($scope, config) {
@@ -262,16 +264,6 @@ function EnhancedTableVisController ($scope, config) {
       }
     }
 
-    parser.functions.rowval = make_rowval(EnhancedTableError,parser);
-
-    parser.functions.percentFrom = function (num,from) {
-      return from >= 0 ? num * 100 / from : 0;
-    }
-
-    parser.functions.percentOf = function (num,percent) {
-      return num*percent / 100;
-    }
-
     parser.functions.sumSplitCols = function (row) {
       let splitCol = splitColIndex;
       let sum = 0;
@@ -293,6 +285,12 @@ function EnhancedTableVisController ($scope, config) {
     parser.functions.parseDate = function (dateString) {
       return Date.parse(dateString);
     };
+
+    // add from parser directory
+    (parser_rowval  ).addParser(parser,EnhancedTableError);
+    (parser_percents).addParser(parser)
+
+
 
     // parse formula and return final formula object
     try {

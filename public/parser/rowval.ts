@@ -22,6 +22,7 @@ class Val {
     this.isBoolean = colType === 'boolean';
 
     this.isVal = true;
+    this.isVar = false;
     this.id  = 0;
     this.src = ValueSource.None;
 
@@ -31,6 +32,7 @@ class Val {
         this.id = parseInt(matches[2]);
         this.src = matches[1] === 'base' ? ValueSource.Base :  ValueSource.Row;
         this.isVal = false;
+        this.isVar = true;
       }
 
       matches = val.match(/^(base|row)[(.*?)]$/)
@@ -38,16 +40,18 @@ class Val {
         this.id  = matches[2]
         this.src = matches[1] === 'base' ? ValueSource.Base :  ValueSource.Row;
         this.isVal = false;
+        this.isVar = true;
       }
     }
   }
 
   val: any;
-  public readonly isString  : boolean = false;
-  public readonly isBoolean : boolean = false;
-  public readonly isNumber  : boolean = false;
-  public readonly isVal     : boolean = false;
-  public readonly id : number | string = 0;
+  public readonly isString  : boolean;
+  public readonly isBoolean : boolean;
+  public readonly isNumber  : boolean;
+  public readonly isVal     : boolean;
+  public readonly isVar     : boolean;
+  public readonly id : number | string;
   public readonly src : ValueSource = ValueSource.None;
 
 }
@@ -56,7 +60,7 @@ class Row {
     this.row = row;
   }
 
-  colId(name:string) : string | number {
+  colId(name: string|number) : string | number {
     let id : string | number = name;
     if (typeof name === 'string') {
       const matches = name.match(/col(\d+)/);
@@ -67,7 +71,7 @@ class Row {
     return id;
   }
 
-  colVal(name:string) : any {
+  colVal(name: string|number) : any {
     const colId = this.colId(name);
     const value = parser.functions.col(this.row, colId, null)
     if (value !== undefined) {
@@ -201,9 +205,9 @@ class ActionMin extends ActionBase {
   }
 }
 
-class Filters {
+class Filter {
   constructor(qFilters: string) {
-    this.filters = this.parse(qFilters)
+    this.filter = this.parse(qFilters)
   }
 
   parse(qFilters) : any {
@@ -214,8 +218,8 @@ class Filters {
     }
   }
 
-  valid(row, base, filter) {
-    return this.valid1(new Row(row), new Row(base), filter)
+  valid(row, base) {
+    return this.valid1(row, base, this.filter)
   }
 
   valid1(row, base , filter) {
@@ -230,16 +234,41 @@ class Filters {
 
     if (typeof filter === 'object') {
       for (let [filterName, filterVal] of Object.entries(filter)) {
-        const col1 = row.colId(filterName)
-        const val1 = row.colVal(filterVal)
+        const colIdx1 = row.colId(filterName)
+        const colVal1 = row.colVal(filterName)
 
         const val2 = new Val(filterVal)
+
         if (val2.isVal) {
           if (val2.isBoolean) {
-            const val1 = row.colVal(col1)
+            if (val2.val === true) {
+              const colVal2 = base.colVal(colIdx1)
+              if (colVal1 !== colVal2) {
+                return false;
+              }
+            }
+            continue;
+          } else {
+            if (colVal1 !== val2.val) {
+              return false;
+            }
+            continue;
           }
-          if (val1 !== val2) {
-            return false;
+        }
+        if (val2.isVar) {
+          let srcRow;
+
+          if (val2.src === ValueSource.Row) {
+            srcRow = row;
+          }
+          if (val2.src === ValueSource.Base) {
+            srcRow = base;
+          }
+          if (srcRow) {
+            const colVal2 = srcRow.colVal(val2.id)
+            if (colVal1 !== colVal2) {
+              return false;
+            }
           }
         }
       }
@@ -247,12 +276,8 @@ class Filters {
     }
   }
 
-  private filters: any;
+  private filter: any;
 }
-
-
-
-
 
 const actions = new Actions();
 
@@ -264,22 +289,23 @@ actions.add( new ActionMax()   );
 actions.add( new ActionMin()   );
 
 
-export function make_rowval(_EnhancedTableError, _parser ) {
+export function addParser(_parser, _EnhancedTableError ) {
   EnhancedTableError = _EnhancedTableError;
-  parser = _parser;
-  return function (table, base1, colName, actionName, fallback, qFilters) {
+  parser = _parser
+
+  parser.functions.rowval = function (table, base1, colName, actionName, fallback, qFilters) {
     const base = new Row(base1);
 
-    let filters = null;
+    let filter = null;
     let rows = table.rows;
 
     if (qFilters !== undefined) {
-      filters = new Filters(qFilters);
+      filter = new Filter(qFilters);
     }
 
-    if (false && filters) {
+    if (filter) {
       rows = rows.filter((row) => {
-        return filters.valid(row, base, filters)
+        return filter.valid(new Row(row), base)
       });
     }
 
@@ -294,3 +320,5 @@ export function make_rowval(_EnhancedTableError, _parser ) {
     return action.calc(rows, base1, colName, fallback);
   }
 }
+
+// sample : percentFrom( col2, rowval( "col2" , "sum"  , 0, '{ "col0" : true }'  )) // col2 share from all rows group by col0
