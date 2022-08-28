@@ -94,10 +94,10 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
     const indexPattern = args.index ? await getIndexPatterns().get(args.index) : null;
 
     const aggConfigsState = args.aggConfigs ? JSON.parse(args.aggConfigs) : [];
+    const aggOptions = { hierarchical: args.metricsAtAllLevels };
     const aggs = indexPattern
-      ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState)
+      ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState, aggOptions)
       : undefined;
-    aggs.hierarchical = args.metricsAtAllLevels;
     const visType = getVisualization().get(visName);
 
     input = await enhancedTableRequestHandler({
