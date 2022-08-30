@@ -289,11 +289,7 @@ actions.add( new ActionMax()   );
 actions.add( new ActionMin()   );
 
 
-export function addParser(_parser, _EnhancedTableError ) {
-  EnhancedTableError = _EnhancedTableError;
-  parser = _parser
-
-  parser.functions.rowval = function (table, base1, colName, actionName, fallback, qFilters) {
+function rowValue(table: any, base1: unknown, colName: unknown, actionName: string, fallback: unknown, qFilters: any) : unknown {
     const base = new Row(base1);
 
     let filter = null;
@@ -317,8 +313,30 @@ export function addParser(_parser, _EnhancedTableError ) {
     if (!action) {
       return fallback;
     }
-    return action.calc(rows, base1, colName, fallback);
-  }
+    return action.calc(rows, base, colName, fallback);
 }
 
-// sample : percentFrom( col2, rowval( "col2" , "sum"  , 0, '{ "col0" : true }'  )) // col2 share from all rows group by col0
+function colShare( table: any, base1: unknown, colName: string, fallback:unknown = 0, qFilters = {} ) {
+  const sum = ( rowValue(table, base1, colName, "sum", 0, qFilters )) as number;
+  const val = (new Row(base1)).colVal(colName);
+  return sum !== 0 ? 100*val/sum : fallback;
+}
+
+function colChange( table: any, base1: unknown, colName: string, fallback:unknown = 0, qFilters = {} ) {
+  const oldVal = ( rowValue(table, base1, colName, "first", 0, qFilters )) as number;
+  const newVal = (new Row(base1)).colVal(colName);
+  return oldVal !== 0 ? (100*(newVal-oldVal)) / oldVal : fallback;
+}
+export function addParser(_parser, _EnhancedTableError ) {
+  EnhancedTableError = _EnhancedTableError;
+  parser = _parser
+
+  parser.functions.rowValue = rowValue;
+  parser.functions.colShare = colShare;
+  parser.functions.colChange= colChange;
+}
+
+
+
+// sample : percentFrom( col2, rowsl( "col2" , "sum"  , 0, '{ "col0" : true }'  )) // col2 share from all rows group by col0
+// sample : colShare( "col2", 0, '{ "col0" : true }'  ) // col2 share from all rows group by col0

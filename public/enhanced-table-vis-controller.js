@@ -9,8 +9,9 @@ import { computeTimeRange } from './time_range_computer';
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
-import * as parser_rowval   from "./parser/rowval";
+import * as parser_rows     from "./parser/rows";
 import * as parser_percents from "./parser/percents";
+import * as parser_strings  from "./parser/strings";
 
 // EnhancedTableVis AngularJS controller
 function EnhancedTableVisController ($scope, config) {
@@ -140,9 +141,10 @@ function EnhancedTableVisController ($scope, config) {
     realFormula = realFormula.replace(/(col)\s*\(/g, '$1(row, ');
     realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
 
-    // add 'table' & 'row' param for functions that require whole table
-    realFormula = realFormula.replace(/(total)\s*\(/g, '$1(table, row, ');
-    realFormula = realFormula.replace(/(rowval)\s*\(/g, '$1(table, row, ');
+    const functionsWithTableRow = ['total', 'rowValue', 'colShare', 'colChange' ];
+    for ( const functionName of functionsWithTableRow ) {
+      realFormula = realFormula.replace( new RegExp(`(${functionName})\\s*\\(`, 'g'), '$1(table, row, ');
+    }
 
     // replace 'total' variable by 'totalHits'
     realFormula = realFormula.replace(/([^\w]|^)total([^(\w]|$)/g, '$1totalHits$2');
@@ -285,8 +287,9 @@ function EnhancedTableVisController ($scope, config) {
     };
 
     // add from parser directory
-    (parser_rowval  ).addParser(parser,EnhancedTableError);
-    (parser_percents).addParser(parser)
+    (parser_rows  ).addParser(parser,EnhancedTableError);
+    (parser_percents).addParser(parser);
+    (parser_strings ).addParser(parser);
 
 
 
