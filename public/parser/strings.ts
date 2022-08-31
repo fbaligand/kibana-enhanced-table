@@ -61,7 +61,7 @@ function strColor(ss: string, hue? : number, saturation?: number, lightness?:num
   if ( hRange     === undefined ) { hRange     = 180; }
   if ( saturation === undefined ) { saturation =  80; }
   if ( sRange     === undefined ) { sRange     =  20; }
-  if ( lightness  === undefined ) { lightness  =  20; }
+  if ( lightness  === undefined ) { lightness  =  90; }
   if ( lRange     === undefined ) { lRange     =  20; }
 
   function findHashes(ss) {
