@@ -1,3 +1,5 @@
+import { createHash } from 'crypto'
+import { Readable } from 'stream'
 export let EnhancedTableError : any = Error;
 export let parser: any;
 
@@ -54,25 +56,21 @@ function findReNamed( ss: string , reStr : string ) : { [key: string]: string; }
 function strJoin(s1:string, s2: string) : string {
   return s1 + s2;
 }
-function strColor(ss: string, hue? : number, saturation?: number, lightness?:number, hRange?: number, sRange?: number, lRange?: number) : string {
+function strColor(ss: string, hue? : number, saturation?: number, lightness?:number,  hRange?: number, sRange?: number, lRange?: number) : string {
   if ( hue        === undefined ) { hue        = 180; }
   if ( hRange     === undefined ) { hRange     = 180; }
   if ( saturation === undefined ) { saturation =  80; }
   if ( sRange     === undefined ) { sRange     =  20; }
-  if ( lightness  === undefined ) { lightness  =  80; }
+  if ( lightness  === undefined ) { lightness  =  20; }
   if ( lRange     === undefined ) { lRange     =  20; }
 
-  let hash1 = 0x9123;
-  let hash2 = 0x811C;
-  let hash3 = 0x1C91;
-
-  const cc = ss.length
-  for (let ii = 0; ii <  2; ii++) {
-    for (let kk = 0; kk < ss.length; kk++) {
-      hash1 = ((3 * hash1 + ss.charCodeAt((kk + 1 ) % cc)) | 0)
-      hash2 = ((3 * hash2 ^ ss.charCodeAt((kk + 3 ) % cc)) | 0)
-      hash3 = ((3 * hash3 + ss.charCodeAt((cc - kk) % cc)) | 0)
-    }
+  function findHashes(ss) {
+    const hashes = [];
+    let hash = strHash(ss);
+    hashes[0] = parseInt(hash.substring(0,2),16);
+    hashes[1] = parseInt(hash.substring(2,4),16);
+    hashes[2] = parseInt(hash.substring(4,6),16);
+    return hashes;
   }
 
   function findVal(val : number, min: number, max: number, rangeFull: number, rangeChange: number ) : number {
@@ -86,11 +84,17 @@ function strColor(ss: string, hue? : number, saturation?: number, lightness?:num
     return val
 
   }
-  saturation = findVal( saturation , 0, 100, sRange, hash1)
-  lightness  = findVal( lightness  , 0, 100, lRange, hash2)
-  hue        = findVal( hue        , 0, 360, hRange, hash3)
+  const hashes = findHashes(ss);
+  hue        = findVal( hue        , 0, 360, hRange, hashes[0])
+  saturation = findVal( saturation , 0, 100, sRange, hashes[1])
+  lightness  = findVal( lightness  , 0, 100, lRange, hashes[2])
 
   return `hsl(${(hue)}, ${saturation}%, ${lightness}%)`;
+}
+
+function strHash(ss: string, algorithm : string = 'sha1') : string {
+  const hash = createHash(algorithm);
+  return hash.update(ss).digest('hex');
 }
 
 export function addParser(parser) {
@@ -99,4 +103,5 @@ export function addParser(parser) {
   parser.functions.findReNamed  = findReNamed;
   parser.functions.strColor     = strColor;
   parser.functions.strJoin      = strJoin;
+  parser.functions.strHash      = strHash;
 }
