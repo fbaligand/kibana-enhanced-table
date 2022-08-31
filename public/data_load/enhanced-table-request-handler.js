@@ -70,7 +70,7 @@ export async function enhancedTableRequestHandler ({
       }
     }]);
     if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) {
-      searchSource.getField('sort').push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
+      searchSource.getField('sort').push({'_doc': {}});
     }
   }
 
