@@ -74,7 +74,7 @@ export async function enhancedTableRequestHandler ({
       }
     }];
     if (visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) {
-      searchSourceBody.sort.push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
+      searchSourceBody.sort.push({'_doc': {}});
     }
   }
 
