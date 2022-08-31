@@ -47,7 +47,7 @@ export async function enhancedTableRequestHandler ({
       }
     }];
     if ((visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) || visParams.csvFullExport) {
-      searchSourceFields.sort.push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
+      searchSourceFields.sort.push({'_doc': {}});
     }
   }
 
