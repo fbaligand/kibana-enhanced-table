@@ -428,13 +428,26 @@ function EnhancedTableVisController ($scope, config) {
     const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
     const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
+    const standardFieldFormatter = new FieldFormat(fieldFormatParams, getConfig);
+    let fieldFormatter = standardFieldFormatter;
+    if (computedColumn.format === 'number') {
+      fieldFormatter = {
+        convert: (value) => {
+          let result = standardFieldFormatter.convert(value);
+          if (result.indexOf('e-') !== -1) {
+            result = standardFieldFormatter.convert(0);
+          }
+          return result;
+        }
+      };
+    }
 
     // create new column object
     const newColumn = {
       id: `computed-col-${index}`,
       aggConfig: aggs.createAggConfig({ schema: aggSchema, type: aggType }, { addToAggConfigs: false }),
       title: computedColumn.label,
-      fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
+      fieldFormatter: fieldFormatter,
       applyTemplateOnTotal: computedColumn.applyTemplate && computedColumn.applyTemplateOnTotal,
       dataAlignmentClass: `text-${computedColumn.alignment}`,
       formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns, totalFunc, computedColsPerSplitCol),
