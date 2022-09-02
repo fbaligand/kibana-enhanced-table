@@ -1,7 +1,6 @@
 {
   "id": "enhancedTable",
-  "version": "opensearch-dashboards",
-  "opensearchDashboardsVersion": "1.2.0",
+  "version": "opensearchDashboards",
   "server": false,
   "ui": true,
   "requiredPlugins": [
