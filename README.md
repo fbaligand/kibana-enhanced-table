@@ -215,13 +215,13 @@ To run enhanced-table plugin in development mode (that enables hot code reload),
 ``` bash
 git clone https://github.com/opensearch-project/OpenSearch-Dashboards
 cd OpenSearch-Dashboards
-git reset --hard vX.Y.Z # replace 'X.Y.Z' by desired OpenSearch-Dashboards version
+git checkout X.Y.Z # replace 'X.Y.Z' by desired OpenSearch-Dashboards version
 cd plugins
 git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
-git checkout opensearch-dashboards
+git checkout osd
 ```
 - install the version of Node.js listed in the OpenSearch-Dashboards/.node-version file
-- ensure that node binary is both in PATH environment variable and in OpenSearch-Dashboards/node folder
+- ensure that node binary directory is in PATH environment variable
 - install the latest version of yarn: `npm install -g yarn`
 - execute these commands :
 ``` bash
@@ -236,7 +236,7 @@ yarn start
 
 To build a distributable archive, execute this command :
 ``` bash
-yarn build
+yarn compile-and-build
 ```
 A prompt will ask you what is Opensearch-Dashboards version.  
 Give the version (example: 1.2.0), and type ENTER.  
