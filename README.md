@@ -220,10 +220,10 @@ cd plugins
 git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
 git checkout osd
 ```
-- install the version of Node.js listed in the OpenSearch-Dashboards/.node-version file
+- install the version of Node.js noted in `OpenSearch-Dashboards/.node-version` file
 - ensure that node binary directory is in PATH environment variable
 - install the latest version of yarn: `npm install -g yarn`
-- execute these commands :
+- execute these commands:
 ``` bash
 cd OpenSearch-Dashboards
 yarn osd bootstrap
@@ -234,13 +234,11 @@ yarn start
 - in your browser, call `http://localhost:5601` and enjoy!
 
 
-To build a distributable archive, execute this command :
+To build a distributable archive, execute this command:
 ``` bash
-yarn compile-and-build
+yarn compile-and-build --opensearch-dashboards-version X.Y.Z # replace 'X.Y.Z' by target OSD version
 ```
-A prompt will ask you what is Opensearch-Dashboards version.  
-Give the version (example: 1.2.0), and type ENTER.  
-Then, the result archive is generated into `build` directory.  
+The zip archive is generated into `build` directory.
 
 
 ## Donation
