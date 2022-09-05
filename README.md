@@ -215,14 +215,13 @@ To run enhanced-table plugin in development mode (that enables hot code reload),
 ``` bash
 git clone https://github.com/elastic/kibana.git
 cd kibana
-git reset --hard vX.Y.Z # replace 'X.Y.Z' by desired Kibana version
-mkdir plugins
+git checkout vX.Y.Z # replace 'X.Y.Z' by desired Kibana version
 cd plugins
 git clone https://github.com/fbaligand/kibana-enhanced-table.git enhanced-table
 ```
-- install the version of Node.js listed in the `kibana/.node-version` file
-- ensure that `node` binary is both in `PATH` environment variable and in `kibana/node` folder
-- install the latest version of [yarn](https://yarnpkg.com)
+- install the version of Node.js noted in `kibana/.node-version` file
+- ensure that node binary directory is in PATH environment variable
+- install the latest version of [yarn](https://yarnpkg.com): `npm install -g yarn`
 - execute these commands :
 ``` bash
 cd kibana
@@ -236,8 +235,10 @@ yarn start
 
 To build a distributable archive, execute this command :
 ``` bash
-yarn build --kibana-version X.Y.Z # replace 'X.Y.Z' by desired Kibana version
+yarn compile-and-build --kibana-version X.Y.Z # replace 'X.Y.Z' by target Kibana version
 ```
+The zip archive is generated into `build` directory.
+
 
 ## Donation
 
