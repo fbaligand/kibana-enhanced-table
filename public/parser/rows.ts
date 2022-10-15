@@ -1,7 +1,3 @@
-const colSrcNone = 0;
-const colSrcRow  = 1;
-const colSrcBase = 2;
-
 export let EnhancedTableError : any;
 export let parser: any;
 
@@ -276,7 +272,71 @@ class Filter {
     }
   }
 
+  cache(base) {
+    const cacheInfo = {
+      filter: new Filter(JSON.stringify(this.filter)),
+      cacheable: true
+    }
+    return this.cache1(base, cacheInfo, cacheInfo.filter.filter)
+  }
+
+  cache1(base, cacheInfo, filter) {
+    if ( !cacheInfo.cacheable) {
+      return cacheInfo;
+    }
+    if (Array.isArray(filter)) {
+      for (const _filter of filter) {
+        this.cache1(base, cacheInfo, _filter)
+      }
+      return cacheInfo;
+    }
+
+    if (typeof filter === 'object') {
+      for (let [filterName, filterVal] of Object.entries(filter)) {
+        const val2 = new Val(filterVal)
+        if (val2.isVal) {
+          if (val2.isBoolean) {
+            if (val2.val === true) {
+              const colIdx1 = base.colId(filterName)
+              filter[filterName] = base.colVal(colIdx1)
+            }
+          }
+        }
+        if (val2.isVar) {
+          cacheInfo.cacheable = false;
+        }
+      }
+      return cacheInfo;
+    }
+  }
+
   private filter: any;
+}
+
+class RowValueKey {
+  constructor(filter, base, colName, actionName, fallback) {
+    let cacheInfo = filter.cache(base)
+    this.filter = cacheInfo.filter
+    this.colName = colName
+    this.actionName = actionName
+    this.fallback = fallback
+    this.cacheable = cacheInfo.cacheable;
+    this.key = this.findKey()
+  }
+  findKey() : string {
+    return JSON.stringify({
+      'colName':this.colName,
+      'actionName': this.actionName,
+      'fallback': this.fallback,
+      'filter' : this.filter
+    })
+  }
+  public readonly filter;
+  public readonly colName;
+  public readonly actionName;
+  public readonly fallback;
+  public readonly key;
+  public readonly cacheable;
 }
 
 const actions = new Actions();
@@ -290,30 +350,37 @@ actions.add( new ActionMin()   );
 
 
 function rowValue(table: any, base1: unknown, colName: unknown, actionName: string, fallback: unknown, qFilters: any) : unknown {
+    if ( table.rowValueCache === undefined ) {
+      table.rowValueCache = new Map()
+    }
     const base = new Row(base1);
 
     let filter = null;
     let rows = table.rows;
 
-    if (qFilters !== undefined) {
-      filter = new Filter(qFilters);
+
+    filter = new Filter(qFilters !== undefined ? qFilters : []);
+    const rowValueKey = (new RowValueKey(filter, base,colName,actionName, fallback))
+    if ( rowValueKey.cacheable && table.rowValueCache.has(rowValueKey.key) ) {
+       return table.rowValueCache.get(rowValueKey.key)
     }
 
-    if (filter) {
-      rows = rows.filter((row) => {
-        return filter.valid(new Row(row), base)
-      });
-    }
+    rows = rows.filter((row) => {
+      return filter.valid(new Row(row), base)
+    });
 
     if (actionName === '' || actionName === undefined) {
       actionName = 'first'
     }
 
     const action = actions.find(actionName);
-    if (!action) {
-      return fallback;
+
+    let rv = action ? action.calc(rows, base, colName, fallback) : fallback;
+
+    if ( rowValueKey.cacheable ) {
+      table.rowValueCache.set(rowValueKey.key, rv)
     }
-    return action.calc(rows, base, colName, fallback);
+    return rv
 }
 
 function colShare( table: any, base1: unknown, colName: string, fallback:unknown = 0, qFilters = {} ) {
