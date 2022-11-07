@@ -57,8 +57,8 @@ This project is a Kibana plugin that provides two visualizations:
 - Add a row number column
 - Ability to add the visualization to a Canvas workpad (Kibana 7.9+)
 - Ability to use dashboard drilldowns (Kibana 7.9+)
-- Kibana supported versions: all versions from 5.5 to 8.4
-- OpenSearch Dashboards supported versions : all versions from 1.0 to 2.2
+- Kibana supported versions: all versions from 5.5 to 8.5
+- OpenSearch Dashboards supported versions : all versions from 1.0 to 2.3
 
 ## Demo
 
