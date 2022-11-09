@@ -197,6 +197,32 @@ total(colRef, defaultValue)  | Returns column total referenced by `colRef` (if i
 [uniq(array)](https://lodash.com/docs/3.10.1#uniq)   | Removes duplicates from provided array so that array contains only unique values.
 
 
+## Row Functions
+
+Function     | Description
+:----------- | :----------
+rowValue(colName: string, actionName: string, fallback, qFilters: any)  | filter all rows that match `qFilters`, group all values of `colName`, then calc the to single value based `actionName`.  if there are no rows , return `fallback`<br><br> `colName` can be a string or colX where X is the index of the column. <br><br> `actionNmae` can be `first`, `last`, `max`, `min`, `sum`, `avg` <br><br> `qFilters` : a json object in { "key": value } format <br> --- `key` format is the same  `colName`. <br> --- if the value is true, then the row `colName` must match `colName` of the current row <br> ---  if value is `base.colX` or `base[name]` the row must match the column in the current row <br> ---  if value is `row.colX` or `row[name]` the row must match the other column in the row <br> --- otherwise the row must match value
+colShare( colName: string, fallback:unknown = 0, qFilters = {} ) | find the percent of the value of `colName` in current row from the sum of  all values of `colName` in all the rows that match the `qFllter`. If no rows matched return `fallback`
+colChange( colName: string, fallback:unknown = 0, qFilters = {} ) | find the percent of the value of `colName` in current row from the value of `colName` in first row that match the `qFllter`. If no rows matched return `fallback`
+
+## String Functions
+Function     | Description
+:----------- | :----------
+findRe( ss: string , pattern : string, group: number or string, fallback: string ) | search the regular expression `pattern` in `ss`. If found return `group` in the match, otherwise return `fallback`. `group` can be number ( for unnamed groups) or string ( for named groups)
+function findReGroups( ss: string , reStr : string ) : string[] | search the regular expression `pattern` in `ss`. return array of unnamed groups
+function findReNamed( ss: string , reStr : string ) : { [key: string]: string; } |  search the regular expression `pattern` in `ss`. return object of named groups
+strJoin(s1:string, s2: string) | return joining of `s1` and `s2`
+strColor(ss: string, hue? : number, saturation?: number, lightness?:number,  hRange?: number, sRange?: number, lRange?: number) : string | return a css color based on a `ss` 
+strHash(ss: string, algorithm : string = 'sha1') : string | return an hash of `ss` using the `algorithm`
+
+
+## Percent Functions
+Function     | Description
+:----------- | :----------
+percentFrom (num: number, from: number) : number | return how much percent is `num` from `from`
+percentOf(num: number, percent: number) : number  | return `percent%` of `num` 
+percentChange(valNew: number, valOld: number) : number | return the percent change `valNew` from `valOld`
+
 ## Change Log
 
 Versions and Release Notes are listed in [Releases](https://github.com/fbaligand/kibana-enhanced-table/releases) page
