@@ -1,12 +1,14 @@
-import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
+import type { CoreSetup, CoreStart, Plugin } from '@kbn/core/public';
+import type { Plugin as ExpressionsPublicPlugin } from '@kbn/expressions-plugin/public';
+import type { VisualizationsSetup, VisualizationsStart } from '@kbn/visualizations-plugin/public';
+import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
+import { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
+import { DataPublicPluginStart } from '@kbn/data-plugin/public';
 
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFilterManager, setFormatService, setIndexPatterns, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
-import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
+import { setDataViewsStart, setFormatService, setNotifications, setSearchService, setVisualization } from './services';
 
 import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } from './vis_legacy_renderer';
 import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
@@ -16,49 +18,47 @@ import { enhancedTableExpressionFunction, documentTableExpressionFunction } from
 
 /** @internal */
 export interface TablePluginSetupDependencies {
-  visualizations: VisualizationsSetup;
   expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
+  visualizations: VisualizationsSetup;
 }
 
 /** @internal */
 export interface TablePluginStartDependencies {
+  fieldFormats: FieldFormatsStart;
+  dataViews: DataViewsPublicPluginStart;
   data: DataPublicPluginStart;
   visualizations: VisualizationsStart;
 }
 
 /** @internal */
-export class EnhancedTablePlugin implements Plugin<void, void> {
-  initializerContext: PluginInitializerContext;
-  createBaseVisualization: any;
-
-  constructor(initializerContext: PluginInitializerContext) {
-    this.initializerContext = initializerContext;
-  }
+export class EnhancedTablePlugin
+  implements Plugin<void, void, TablePluginSetupDependencies, TablePluginStartDependencies> {
 
   public setup(
-    core: CoreSetup,
-    { visualizations, expressions }: TablePluginSetupDependencies
+    core: CoreSetup<TablePluginStartDependencies>,
+    { expressions, visualizations }: TablePluginSetupDependencies
   ) {
     expressions.registerFunction(enhancedTableExpressionFunction);
-    expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core, this.initializerContext));
+    expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core));
     visualizations.createBaseVisualization(
-      enhancedTableVisTypeDefinition(core, this.initializerContext)
+      enhancedTableVisTypeDefinition(core)
     );
 
     expressions.registerFunction(documentTableExpressionFunction);
-    expressions.registerRenderer(getDocumentTableVisLegacyRenderer(core, this.initializerContext));
+    expressions.registerRenderer(getDocumentTableVisLegacyRenderer(core));
     visualizations.createBaseVisualization(
-      documentTableVisTypeDefinition(core, this.initializerContext)
-      );
+      documentTableVisTypeDefinition(core)
+    );
   }
 
-  public start(core: CoreStart, deps: TablePluginStartDependencies) {
-    setFormatService(deps.data.fieldFormats);
+  public start(
+    core: CoreStart,
+    { data, dataViews, fieldFormats, visualizations }: TablePluginStartDependencies
+  ) {
+    setFormatService(fieldFormats);
     setNotifications(core.notifications);
-    setQueryService(deps.data.query);
-    setSearchService(deps.data.search);
-    setIndexPatterns(deps.data.indexPatterns);
-    setFilterManager(deps.data.query.filterManager);
-    setVisualization(deps.visualizations);
+    setSearchService(data.search);
+    setDataViewsStart(dataViews);
+    setVisualization(visualizations);
   }
 }

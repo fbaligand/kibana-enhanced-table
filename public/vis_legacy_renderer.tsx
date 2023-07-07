@@ -1,5 +1,5 @@
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
-import { ExpressionRenderDefinition } from '../../../src/plugins/expressions';
+import { CoreSetup } from '@kbn/core/public';
+import { ExpressionRenderDefinition } from '@kbn/expressions-plugin/public';
 import { CommonVisRenderValue } from './data_load/visualization_fn';
 import { TablePluginStartDependencies } from './plugin';
 import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from './types';
@@ -7,24 +7,21 @@ import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from './types';
 const tableVisRegistry = new Map<HTMLElement, any>();
 
 export const getEnhancedTableVisLegacyRenderer: (
-  core: CoreSetup<TablePluginStartDependencies>,
-  context: PluginInitializerContext
-) => ExpressionRenderDefinition<CommonVisRenderValue> = (core, context) => ({
-  ...getCommonVisLegacyRenderer(core,context,ENH_TABLE_VIS_NAME)
+  core: CoreSetup<TablePluginStartDependencies>
+) => ExpressionRenderDefinition<CommonVisRenderValue> = (core) => ({
+  ...getCommonVisLegacyRenderer(core,ENH_TABLE_VIS_NAME)
 });
 
 export const getDocumentTableVisLegacyRenderer: (
-  core: CoreSetup<TablePluginStartDependencies>,
-  context: PluginInitializerContext
-) => ExpressionRenderDefinition<CommonVisRenderValue> = (core, context) => ({
-  ...getCommonVisLegacyRenderer(core,context,DOC_TABLE_VIS_NAME)
+  core: CoreSetup<TablePluginStartDependencies>
+) => ExpressionRenderDefinition<CommonVisRenderValue> = (core) => ({
+  ...getCommonVisLegacyRenderer(core,DOC_TABLE_VIS_NAME)
 });
 
 const getCommonVisLegacyRenderer: (
   core: CoreSetup<TablePluginStartDependencies>,
-  context: PluginInitializerContext,
   visName: VisName
-) => ExpressionRenderDefinition<CommonVisRenderValue> = (core, context, visName) => ({
+) => ExpressionRenderDefinition<CommonVisRenderValue> = (core, visName) => ({
   name: visName,
   reuseDomNode: true,
   render: async (domNode, config, handlers) => {

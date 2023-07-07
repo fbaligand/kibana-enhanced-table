@@ -5,10 +5,10 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-import { CoreStart, IUiSettingsClient } from 'kibana/public';
+import { CoreStart, IUiSettingsClient } from '@kbn/core/public';
 import { i18nDirective, i18nFilter, I18nProvider } from './angular/i18n';
 import { watchMultiDecorator } from './angular/watch_multi';
-import { PaginateDirectiveProvider, PaginateControlsDirectiveProvider} from './paginate/paginate.js';
+import { PaginateDirectiveProvider, PaginateControlsDirectiveProvider} from './paginate/paginate';
 import { KbnAccessibleClickProvider, PrivateProvider } from './angular/utils';
 
 const thirdPartyAngularDependencies = ['ngSanitize', 'ui.bootstrap', 'RecursionHelper'];

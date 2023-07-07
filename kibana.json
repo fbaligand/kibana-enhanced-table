@@ -1,20 +1,21 @@
 {
   "id": "enhancedTable",
   "version": "kibana",
-  "server": false,
   "owner": {
     "name": "fbaligand"
   },
   "ui": true,
+  "server": false,
   "requiredPlugins": [
-    "visualizations",
-    "expressions",
     "data",
-    "inspector",
-    "kibanaUtils",
-    "kibanaReact",
+    "visualizations",
     "share",
-    "charts",
-    "visDefaultEditor"
+    "dataViews",
+    "expressions",
+    "kibanaUtils",
+    "visDefaultEditor",
+    "fieldFormats",
+    "inspector",
+    "kibanaReact"
   ]
 }

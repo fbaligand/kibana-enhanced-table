@@ -2,15 +2,16 @@
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
-import { CoreSetup } from '../../../src/core/public';
-import { VisParams } from '../../../src/plugins/visualizations/public';
+import { CoreSetup } from '@kbn/core/public';
+import { VisParams } from '@kbn/visualizations-plugin/public';
+import { BaseVisType } from '@kbn/visualizations-plugin/public';
+import { IInterpreterRenderHandlers } from '@kbn/expressions-plugin/public';
+
 import { getAngularModule } from './get_inner_angular';
 import { getVisualization } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 // @ts-ignore
 import enhancedTableVisTemplate from './enhanced-table-vis.html';
-import { BaseVisType } from '../../../src/plugins/visualizations/public/vis_types';
-import { IInterpreterRenderHandlers } from '../../../src/plugins/expressions';
 
 const innerAngularName = 'kibana/enhanced_table_vis';
 
@@ -26,7 +27,7 @@ export function getEnhancedTableVisualizationController(
     $compile: ICompileService | undefined;
     params: object;
     handlers: any;
-    vis: BaseVisType;
+    vis: BaseVisType | undefined;
 
     constructor(domeElement: Element, visName: string) {
       this.el = $(domeElement);

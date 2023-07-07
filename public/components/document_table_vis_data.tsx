@@ -3,8 +3,8 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
-import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
-import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
+import { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
+import { NumberInputOption, SelectOption } from '@kbn/vis-default-editor-plugin/public';
 import { FieldColumnEditor } from './field_column';
 import { FieldParamEditor } from './field';
 import { EnhancedTableVisParams } from './enhanced_table_vis_options';

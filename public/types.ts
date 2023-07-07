@@ -1,5 +1,5 @@
-import { IFieldFormat } from '../../../src/plugins/data/public';
-import { DatatableColumn, DatatableRow } from '../../../src/plugins/expressions';
+import { IFieldFormat } from '@kbn/field-formats-plugin/common';
+import { DatatableColumn, DatatableRow } from '@kbn/expressions-plugin/public';
 import { DocumentTableVisDataParams } from './components/document_table_vis_data';
 import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
 

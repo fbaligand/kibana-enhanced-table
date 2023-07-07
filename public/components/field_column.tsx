@@ -2,7 +2,7 @@ import { clone } from 'lodash';
 import React, { useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
-import { IndexPatternField } from '../../../../src/plugins/data/public';
+import { FieldSpec } from '@kbn/data-plugin/common';
 
 import { TextInputOption } from './text_input';
 import { FieldParamEditor } from './field';
@@ -10,7 +10,7 @@ import { FieldParamEditor } from './field';
 
 export interface FieldColumn {
   label: string;
-  field: IndexPatternField;
+  field: FieldSpec;
   enabled: boolean;
   brandNew?: boolean;
 }
@@ -35,7 +35,15 @@ function removeFieldColumn(fieldColumns: FieldColumn[], fieldColumnToRemove: Fie
 }
 
 function renderButtons (fieldColumn, fieldColumns, showError, setValue, setFieldColumns, dragHandleProps) {
-  const actionIcons = [];
+  interface ActionIcon {
+    id: string;
+    type: string;
+    tooltip: string;
+    color?: string;
+    disabled?: boolean;
+    onClick?: () => void;
+  }
+  const actionIcons: ActionIcon[] = [];
 
   if (showError) {
     actionIcons.push({

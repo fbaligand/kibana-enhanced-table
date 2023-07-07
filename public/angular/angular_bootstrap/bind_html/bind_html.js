@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import angular from 'angular';
 
 export function initBindHtml() {

@@ -3,7 +3,7 @@ import { i18n } from '@kbn/i18n';
 import tableVisTemplate from './enhanced-table-vis.html';
 import { DocumentTableData } from './components/document_table_vis_data';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
-import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
+import { VIS_EVENT_TO_TRIGGER } from '@kbn/visualizations-plugin/public';
 import { documentTableToExpressionAst } from './to_ast';
 import { DOC_TABLE_VIS_NAME } from './types';
 

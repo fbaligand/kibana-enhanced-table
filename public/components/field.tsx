@@ -4,8 +4,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { EuiComboBox, EuiComboBoxOptionOption, EuiFormRow } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 
-import { IndexPatternField } from '../../../../src/plugins/data/public';
-import { ComboBoxGroupedOptions } from '../../../../src/plugins/vis_default_editor/public/utils';
+import { ComboBoxGroupedOptions } from '@kbn/vis-default-editor-plugin/public';
+import { DataViewField } from '@kbn/data-views-plugin/public';
+
 
 const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {
   defaultMessage: 'Field',
@@ -13,14 +14,14 @@ const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {
 
 export interface FieldParamEditorProps {
   customLabel?: string;
-  indexPatternFields: IndexPatternField[];
+  indexPatternFields: DataViewField[];
   showValidation: boolean;
-  value: IndexPatternField;
-  setValue(value?: IndexPatternField): void;
+  value: DataViewField;
+  setValue(value?: DataViewField): void;
 }
 
-function createIndexedFields(indexPatternFields: IndexPatternField[]): ComboBoxGroupedOptions<IndexPatternField> {
-  const indexedFields = [];
+function createIndexedFields(indexPatternFields: DataViewField[]): ComboBoxGroupedOptions<DataViewField> {
+  const indexedFields: any[] = [];
   indexPatternFields.forEach(field => {
     let indexedField = indexedFields.find(f => f.label === field.type);
     if (!indexedField) {
@@ -43,12 +44,12 @@ function FieldParamEditor({
 }: FieldParamEditorProps) {
   const indexedFields = React.useMemo(() => createIndexedFields(indexPatternFields), [indexPatternFields]);
   const [isDirty, setIsDirty] = useState(false);
-  const selectedOptions: ComboBoxGroupedOptions<IndexPatternField> = value
+  const selectedOptions: ComboBoxGroupedOptions<DataViewField> = value
     ? [{ label: value.displayName || value.name, target: value }]
     : [];
 
   const onChange = (options: EuiComboBoxOptionOption[]) => {
-    const selectedOption: IndexPatternField = get(options, '0.target');
+    const selectedOption: DataViewField = get(options, '0.target');
     setValue(selectedOption);
   };
 

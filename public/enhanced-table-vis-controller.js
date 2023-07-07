@@ -7,7 +7,7 @@ import { computeTimeRange } from './time_range_computer';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
-import handlebars from 'handlebars/dist/handlebars';
+import Handlebars, { compileFnName } from '@kbn/handlebars';
 
 // EnhancedTableVis AngularJS controller
 function EnhancedTableVisController ($scope, tableConfig) {
@@ -20,6 +20,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
 
   const getConfig = (...args) => tableConfig.get(...args);
 
+  const handlebars = Handlebars.create();
   handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 
   // controller methods
@@ -374,7 +375,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
 
     // return final template object
     return {
-      compiledTemplate: handlebars.compile(realTemplate),
+      compiledTemplate: handlebars[compileFnName](realTemplate),
       paramsCols: templateParamsCols,
       paramsTotals: templateParamsTotals,
       totalFunc: totalFunc

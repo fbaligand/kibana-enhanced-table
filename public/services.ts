@@ -1,32 +1,21 @@
-import { createGetterSetter } from '../../../src/plugins/kibana_utils/public';
-import { NotificationsStart } from '../../../src/core/public';
-import { DataPublicPluginStart, FilterManager, IndexPatternsContract } from '../../../src/plugins/data/public';
-import { VisualizationsStart } from '../../../src/plugins/visualizations/public';
+import { createGetterSetter } from '@kbn/kibana-utils-plugin/public';
+import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
+import type { NotificationsStart } from '@kbn/core/public';
+import type { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
+import type { DataPublicPluginStart } from '@kbn/data-plugin/public';
+import type { VisualizationsStart } from '@kbn/visualizations-plugin/public';
 
-export const [getFormatService, setFormatService] = createGetterSetter<
-  DataPublicPluginStart['fieldFormats']
->('table data.fieldFormats');
+export const [getFormatService, setFormatService] =
+  createGetterSetter<FieldFormatsStart>('FieldFormats');
 
-export const [getNotifications, setNotifications] = createGetterSetter<
-  NotificationsStart
->('Notifications');
+export const [getNotifications, setNotifications] =
+  createGetterSetter<NotificationsStart>('Notifications');
 
-export const [getQueryService, setQueryService] = createGetterSetter<
-  DataPublicPluginStart['query']
->('Query');
+export const [getDataViewsStart, setDataViewsStart] =
+  createGetterSetter<DataViewsPublicPluginStart>('dataViews');
 
-export const [getSearchService, setSearchService] = createGetterSetter<
-  DataPublicPluginStart['search']
->('Search');
+export const [getSearchService, setSearchService] =
+  createGetterSetter<DataPublicPluginStart['search']>('Search');
 
-export const [getIndexPatterns, setIndexPatterns] = createGetterSetter<IndexPatternsContract>(
-  'IndexPatterns'
-);
-
-export const [getFilterManager, setFilterManager] = createGetterSetter<FilterManager>(
-  'FilterManager'
-);
-
-export const [getVisualization, setVisualization] = createGetterSetter<VisualizationsStart>(
-  'Visualization'
-);
+export const [getVisualization, setVisualization] =
+  createGetterSetter<VisualizationsStart>('Visualization');

@@ -6,10 +6,11 @@
  * Side Public License, v 1.
  */
 import { i18n } from '@kbn/i18n';
+import { IServiceProvider } from 'angular';
 
 export type I18nServiceType = typeof i18n.translate;
 
-export function I18nProvider() {
+export function I18nProvider(): IServiceProvider {
   this.addTranslation = i18n.addTranslation;
   this.getTranslation = i18n.getTranslation;
   this.setLocale = i18n.setLocale;
@@ -22,4 +23,5 @@ export function I18nProvider() {
   this.init = i18n.init;
   this.load = i18n.load;
   this.$get = () => i18n.translate;
+  return this;
 }

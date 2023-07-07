@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import angular from 'angular';
 
 export function initBootstrapPosition() {
@@ -57,7 +55,7 @@ export function initBootstrapPosition() {
             const elBCR = this.offset(element);
             let offsetParentBCR = { top: 0, left: 0 };
             const offsetParentEl = parentOffsetEl(element[0]);
-            if (offsetParentEl != $document[0]) {
+            if (offsetParentEl !== $document[0]) {
               offsetParentBCR = this.offset(angular.element(offsetParentEl));
               offsetParentBCR.top += offsetParentEl.clientTop - offsetParentEl.scrollTop;
               offsetParentBCR.left += offsetParentEl.clientLeft - offsetParentEl.scrollLeft;
@@ -98,15 +96,12 @@ export function initBootstrapPosition() {
             const pos0 = positionStrParts[0];
             const pos1 = positionStrParts[1] || 'center';
 
-            let hostElPos;
-            let targetElWidth;
-            let targetElHeight;
             let targetElPos;
 
-            hostElPos = appendToBody ? this.offset(hostEl) : this.position(hostEl);
+            const hostElPos = appendToBody ? this.offset(hostEl) : this.position(hostEl);
 
-            targetElWidth = targetEl.prop('offsetWidth');
-            targetElHeight = targetEl.prop('offsetHeight');
+            const targetElWidth = targetEl.prop('offsetWidth');
+            const targetElHeight = targetEl.prop('offsetHeight');
 
             const shiftWidth = {
               center: function() {
