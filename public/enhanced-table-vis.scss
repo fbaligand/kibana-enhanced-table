@@ -69,4 +69,11 @@
     cursor: pointer;
   }
 
+  .pagination-other-pages .euiPaginationButton-isActive {
+    cursor: default;
+    text-decoration: underline;
+    font-weight: 700;
+    color: #07C;
+  }
+
 }
