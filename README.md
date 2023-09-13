@@ -213,21 +213,20 @@ Thanks for their great work !
 To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
 - execute these commands :
 ``` bash
-git clone https://github.com/elastic/kibana.git
-cd kibana
-git checkout vX.Y.Z # replace 'X.Y.Z' by desired Kibana version
-cd plugins
-git clone https://github.com/fbaligand/kibana-enhanced-table.git enhanced-table
+git clone --depth 1 -b X.Y https://github.com/elastic/kibana.git # replace 'X.Y' by desired Kibana version
+cd kibana/plugins
+git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
+cd ..
 ```
-- install the version of Node.js noted in `kibana/.node-version` file
+- install the version of Node.js noted in `kibana/.node-version` file (for instance using `nvm use` command)
 - ensure that node binary directory is in PATH environment variable
 - install the latest version of [yarn](https://yarnpkg.com): `npm install -g yarn`
-- execute these commands :
+- execute these commands (starting from 'kibana' directory) :
 ``` bash
-cd kibana
 yarn kbn bootstrap
-cd plugins/kibana-enhanced-table
+cd plugins/enhancedTable
 yarn install
+yarn compile
 yarn start
 ```
 - in your browser, call `http://localhost:5601` and enjoy!
