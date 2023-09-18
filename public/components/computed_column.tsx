@@ -396,7 +396,7 @@ function ComputedColumnEditor({
                         defaultMessage="Template"
                       />
                       &nbsp;(
-                        <a ng-href="https://handlebarsjs.com/guide/expressions.html" target="_blank">Handlebars</a>
+                        <a href="https://handlebarsjs.com/guide/expressions.html" target="_blank">Handlebars</a>
                       &nbsp;syntax)
                     </>
                   }

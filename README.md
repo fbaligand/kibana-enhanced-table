@@ -225,6 +225,7 @@ cd ..
 ``` bash
 yarn kbn bootstrap
 cd plugins/enhancedTable
+export NODE_OPTIONS="--openssl-legacy-provider"
 yarn install
 yarn compile
 yarn start

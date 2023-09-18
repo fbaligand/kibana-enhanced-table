@@ -18,6 +18,17 @@
     justify-content: flex-end;
   }
 
+  .pagination-other-pages .euiPaginationButton-isActive {
+    cursor: default;
+    text-decoration: underline;
+    font-weight: 700;
+    color: #07C;
+  }
+
+  .euiButtonEmpty .euiButtonEmpty__content {
+    padding: 0 8px;
+  }
+
   .pagination-size {
     display: none;
   }
@@ -67,13 +78,6 @@
 
   a {
     cursor: pointer;
-  }
-
-  .pagination-other-pages .euiPaginationButton-isActive {
-    cursor: default;
-    text-decoration: underline;
-    font-weight: 700;
-    color: #07C;
   }
 
 }
