@@ -28,7 +28,7 @@ export async function enhancedTableRequestHandler ({
     if (!visParams.fieldColumns.some(fieldColumn => fieldColumn.field.name === '_source')) {
       searchSourceFields._source = visParams.fieldColumns.map(fieldColumn => fieldColumn.field.name);
     }
-    searchSourceFields.docvalue_fields = visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.readFromDocValues).map(fieldColumn => fieldColumn.field.name);
+    searchSourceFields.docvalue_fields = visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.aggregatable).map(fieldColumn => fieldColumn.field.name);
     const scriptFields = {};
     visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.scripted).forEach(fieldColumn => {
       scriptFields[fieldColumn.field.name] = {
