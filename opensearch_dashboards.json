@@ -8,7 +8,6 @@
     "expressions",
     "data",
     "inspector",
-    "opensearchDashboardsLegacy",
     "opensearchDashboardsUtils",
     "opensearchDashboardsReact",
     "share",

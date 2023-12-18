@@ -1,10 +1,9 @@
-import { CoreSetup, PluginInitializerContext } from 'opensearch-dashboards/public';
+import { CoreSetup, PluginInitializerContext } from '../../../src/core/public';
 import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
 import $ from 'jquery';
 
 import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getOpenSearchDashboardsLegacy } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 
 const innerAngularName = 'opensearch-dashboards/enhanced_table_vis';
@@ -46,8 +45,12 @@ export function getEnhancedTableVisualizationController(
       }
     }
 
+    async loadFontAwesome() {
+      await import('./angular/font_awesome');
+    }
+
     async render(esResponse: object, visParams: VisParams) {
-      getOpenSearchDashboardsLegacy().loadFontAwesome();
+      this.loadFontAwesome();
       await this.initLocalAngular();
 
       return new Promise((resolve, reject) => {
