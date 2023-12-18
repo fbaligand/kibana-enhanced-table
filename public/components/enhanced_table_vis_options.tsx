@@ -510,7 +510,7 @@ function EnhancedTableOptions({
 
             <TextInputOption
               label={i18n.translate('visTypeEnhancedTable.params.filterBarWidth', {
-                defaultMessage: 'Total label',
+                defaultMessage: 'Filter bar width',
               })}
               paramName="filterBarWidth"
               value={stateParams.filterBarWidth}
