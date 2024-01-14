@@ -827,7 +827,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
           if (computedColsPerSplitCol && newCol.totalFormula !== undefined) {
             newCol.total = computeFormulaValue(newCol.totalFormula, table, row, totalHits, timeRange, undefined, computedColsPerSplitCol, splitColIndex);
           }
-          if (computedColsPerSplitCol && newCol.template !== undefined) {
+          if (computedColsPerSplitCol && newCol.formula !== undefined) {
             newCol.totalFormatter = createTotalFormatter(_.clone(table), newCol, row, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
           }
           newCols.splice(spliceIndex, 0, newCol);
