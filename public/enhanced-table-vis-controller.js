@@ -833,6 +833,7 @@ function EnhancedTableVisController ($scope, config) {
             newColDefaultMetric = new AggConfigResult(row[i].aggConfig, null, DEFAULT_METRIC_VALUE, DEFAULT_METRIC_VALUE, row[i].filters);
           }
           else {
+            refRowForComputedColumn[splitColIndex] = row[splitColIndex];
             newColDefaultMetric = createComputedCell(table, newCol, refRowForComputedColumn, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
           }
           newColDefaultMetrics.splice(spliceIndex - splitColIndex, 0, newColDefaultMetric);
