@@ -153,7 +153,7 @@ This is the common documentation for all computed settings:
     - `minutes`: minutes count in time range (rounded up to the nearest whole number)
     - `seconds`: seconds count in time range (rounded up to the nearest whole number)
     - `milliseconds`: milliseconds count in time range
-  - `from` / `to`: object containing all informations on `from` and `to` dates of current time range
+  - <a aria-hidden="true" tabindex="-1" id="time-range-from-to" name="time-range-from-to"></a>`from` / `to`: object containing all informations on `from` and `to` dates of current time range
     - `fullYear`: result of [Date.getFullYear()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getFullYear)
     - `month`: result of [Date.getMonth()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMonth)
     - `date`: result of [Date.getDate()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDate)
@@ -183,7 +183,10 @@ Function     | Description
 :----------- | :----------
 col(colRef, defaultValue)  | Returns column value referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
 countSplitCols()  | Returns the count of all split columns (only if 'Split cols' bucket is used).
+[dateObject(params)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)  | Given standard `Date` constructor params (milliseconds since Epoch, ...), builds and returns a date object, same structure than [timeRange from/to object](#time-range-from-to). The result can be used in template (ex: `{{ rawValue.fullYear }}`).
+durationObject(durationInMillis)  | Given a duration in milliseconds, builds and returns a duration object, that breaks down the duration in years, months, weeks, days, hours, minutes, seconds and milliseconds. The result can be used in template (ex: `{{ rawValue.hours }}`).
 [encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component.
+formattedCol(colRef, defaultValue)  | Returns formatted column value referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
 [indexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf)  | Returns the index within the calling String or Array object of the first occurrence of the specified value, starting the search at fromIndex. Returns -1 if the value is not found.
 [isArray(value)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray)  | Determines whether the passed value is an Array.
 [lastIndexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/lastIndexOf)  | Returns the index within the calling String or Array object of the last occurrence of the specified value, searching backwards from fromIndex. Returns -1 if the value is not found.
