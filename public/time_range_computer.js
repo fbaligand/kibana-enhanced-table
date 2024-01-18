@@ -147,7 +147,7 @@ function getDayOfWeekNumber(dayOfWeek) {
   }
 }
 
-function computeDateStructure(date) {
+export function computeDateStructure(date) {
   return {
     fullYear: date.getFullYear(),
     month: date.getMonth(),
