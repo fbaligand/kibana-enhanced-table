@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 import { getNotifications, getFormatService } from './services';
-import { computeTimeRange } from './time_range_computer';
+import { computeTimeRange, computeDateStructure } from './time_range_computer';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
@@ -134,7 +134,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
     realFormula = realFormula.replace(totalRefRegex, (match, colIndex) => 'total' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // add 'row' param for functions that require whole row
-    realFormula = realFormula.replace(/(col)\s*\(/g, '$1(row, ');
+    realFormula = realFormula.replace(/(col|formattedCol)\s*\(/g, '$1(row, ');
     realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
 
     // add 'table' & 'row' param for functions that require whole table
@@ -233,6 +233,25 @@ function EnhancedTableVisController ($scope, tableConfig) {
         return defaultValue;
       }
     };
+    parser.functions.formattedCol = function (row, colRef, defaultValue) {
+      try {
+        let colIndex = colRef;
+        if (typeof colRef === 'string') {
+          colIndex = findColIndexByTitle(columns, colRef, inputFormula, formulaType, splitColIndex);
+        }
+        if (colIndex < currentCol) {
+          colIndex = getRealColIndex(colIndex, splitColIndex);
+          const colValue = row[colIndex].value;
+          return colValue !== undefined ? row[colIndex].toString() : defaultValue;
+        }
+        else {
+          return defaultValue;
+        }
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
     parser.functions.total = function (table, row, colRef, defaultValue) {
       try {
         let colIndex = colRef;
@@ -278,6 +297,32 @@ function EnhancedTableVisController ($scope, tableConfig) {
     };
     parser.functions.parseDate = function (dateString) {
       return Date.parse(dateString);
+    };
+    parser.functions.dateObject = function (...params) {
+      const date = new Date(...params);
+      return computeDateStructure(date);
+    };
+    parser.functions.durationObject = function (durationInMillis) {
+      const result = {};
+      result.milliseconds = durationInMillis % 1000;
+      const durationInSeconds = Math.floor(durationInMillis / 1000);
+      result.seconds = durationInSeconds % 60;
+      const durationInMinutes = Math.floor(durationInSeconds / 60);
+      result.minutes = durationInMinutes % 60;
+      const durationInHours = Math.floor(durationInMinutes / 60);
+      result.hours = durationInHours % 24;
+      const durationInDays = Math.floor(durationInHours / 24);
+
+      let remainingDays = durationInDays;
+      result.years = Math.floor(remainingDays / 365);
+      remainingDays = remainingDays % 365;
+      result.months = Math.floor(remainingDays / 30);
+      remainingDays = remainingDays % 30;
+      result.weeks = Math.floor(remainingDays / 7);
+      remainingDays = remainingDays % 7;
+      result.days = remainingDays;
+
+      return result;
     };
 
     // parse formula and return final formula object
