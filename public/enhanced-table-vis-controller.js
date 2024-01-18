@@ -458,6 +458,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     let result = this.column.fieldFormatter.convert(this.value);
     if (this.templateContext !== undefined) {
       this.templateContext.value = result;
+      this.templateContext.rawValue = this.value;
       result = this.column.template.compiledTemplate(this.templateContext);
     }
     if (contentType !== 'html') {
