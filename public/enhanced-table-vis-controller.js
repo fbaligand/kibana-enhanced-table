@@ -139,7 +139,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
     realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
 
     // add 'table' & 'row' param for functions that require whole table
-    realFormula = realFormula.replace(/(total)\s*\(/g, '$1(table, row, ');
+    realFormula = realFormula.replace(/(total|cell|formattedCell)\s*\(/g, '$1(table, row, ');
 
     // replace 'total' variable by 'totalHits'
     realFormula = realFormula.replace(/([^\w]|^)total([^(\w]|$)/g, '$1totalHits$2');
@@ -248,6 +248,48 @@ function EnhancedTableVisController ($scope, tableConfig) {
         else {
           return defaultValue;
         }
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
+    parser.functions.cell = function (table, currentRow, rowRef, colRef, defaultValue) {
+      try {
+        let rowIndex;
+        if (rowRef === 'first') {
+          rowIndex = 0;
+        }
+        else if (rowRef === 'last') {
+          rowIndex = table.rows.length - 1;
+        }
+        else {
+          const currentRowIndex = _.indexOf(table.rows, currentRow);
+          rowIndex = currentRowIndex + rowRef;
+        }
+
+        const targetRow = table.rows[rowIndex];
+        return parser.functions.col(targetRow, colRef, defaultValue);
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
+    parser.functions.formattedCell = function (table, currentRow, rowRef, colRef, defaultValue) {
+      try {
+        let rowIndex;
+        if (rowRef === 'first') {
+          rowIndex = 0;
+        }
+        else if (rowRef === 'last') {
+          rowIndex = table.rows.length - 1;
+        }
+        else {
+          const currentRowIndex = _.indexOf(table.rows, currentRow);
+          rowIndex = currentRowIndex + rowRef;
+        }
+
+        const targetRow = table.rows[rowIndex];
+        return parser.functions.formattedCol(targetRow, colRef, defaultValue);
       }
       catch (e) {
         return defaultValue;
