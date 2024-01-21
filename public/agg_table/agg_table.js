@@ -25,7 +25,7 @@ import { uiModules } from 'ui/modules';
 import aggTableTemplate from './agg_table.html';
 import { fieldFormats } from 'ui/registry/field_formats';
 import { encode } from 'iconv-lite';
-import { computeColumnTotal } from '../column_total_computer';
+import { computeColumnTotal } from '../utils/column_total_computer';
 
 uiModules
   .get('kibana', ['RecursionHelper'])
