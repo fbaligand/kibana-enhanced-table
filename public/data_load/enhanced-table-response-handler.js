@@ -1,6 +1,6 @@
 import { get, findLastIndex } from 'lodash';
 import AggConfigResult from './agg_config_result';
-import { fieldFormatter } from '../field_formatter';
+import { fieldFormatter } from '../utils/field_formatter';
 
 /**
  * Takes an array of tabified rows and splits them by column value:
