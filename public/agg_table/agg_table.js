@@ -23,7 +23,7 @@ import { encode } from 'iconv-lite';
 import { npStart } from 'ui/new_platform';
 
 import aggTableTemplate from './agg_table.html';
-import { computeColumnTotal } from '../column_total_computer';
+import { computeColumnTotal } from '../utils/column_total_computer';
 
 export function KbnEnhancedAggTable(config, RecursionHelper) {
   const fieldFormats = npStart.plugins.data.fieldFormats;
