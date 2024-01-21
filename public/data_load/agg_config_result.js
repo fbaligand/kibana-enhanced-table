@@ -1,4 +1,4 @@
-import { fieldFormatter } from '../field_formatter';
+import { fieldFormatter } from '../utils/field_formatter';
 
 function computeBasePath(pathname) {
   const endIndex = pathname ? pathname.indexOf('/app/opensearch-dashboards') : -1;
