@@ -23,7 +23,7 @@ import { encode } from 'iconv-lite';
 import { npStart } from 'ui/new_platform';
 
 import aggTableTemplate from './agg_table.html';
-import { computeColumnTotal } from '../column_total_computer';
+import { computeColumnTotal } from '../utils/column_total_computer';
 import { handleCourierRequest } from '../data_load/kibana_cloned_code/courier';
 import { createTable } from '../data_load/document-table-response-handler';
 import { streamSaver } from './stream_saver';
