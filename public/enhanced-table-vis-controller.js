@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 import { getNotifications, getFormatService } from './services';
-import { computeTimeRange, computeDateStructure } from './time_range_computer';
+import { computeTimeRange, computeDateStructure, computeDurationStructureBrokenDownByTimeUnit } from './time_range_computer';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
@@ -215,6 +215,16 @@ function EnhancedTableVisController ($scope, tableConfig) {
     parser.functions.isArray = function (value) {
       return Array.isArray(value);
     };
+    parser.functions.parseDate = function (dateString) {
+      return Date.parse(dateString);
+    };
+    parser.functions.dateObject = function (...params) {
+      const date = new Date(...params);
+      return computeDateStructure(date);
+    };
+    parser.functions.durationObject = function (durationInMillis) {
+      return computeDurationStructureBrokenDownByTimeUnit(durationInMillis);
+    };
     parser.functions.col = function (row, colRef, defaultValue) {
       try {
         let colIndex = colRef;
@@ -337,35 +347,6 @@ function EnhancedTableVisController ($scope, tableConfig) {
         splitCol++;
       }
       return count;
-    };
-    parser.functions.parseDate = function (dateString) {
-      return Date.parse(dateString);
-    };
-    parser.functions.dateObject = function (...params) {
-      const date = new Date(...params);
-      return computeDateStructure(date);
-    };
-    parser.functions.durationObject = function (durationInMillis) {
-      const result = {};
-      result.milliseconds = durationInMillis % 1000;
-      const durationInSeconds = Math.floor(durationInMillis / 1000);
-      result.seconds = durationInSeconds % 60;
-      const durationInMinutes = Math.floor(durationInSeconds / 60);
-      result.minutes = durationInMinutes % 60;
-      const durationInHours = Math.floor(durationInMinutes / 60);
-      result.hours = durationInHours % 24;
-      const durationInDays = Math.floor(durationInHours / 24);
-
-      let remainingDays = durationInDays;
-      result.years = Math.floor(remainingDays / 365);
-      remainingDays = remainingDays % 365;
-      result.months = Math.floor(remainingDays / 30);
-      remainingDays = remainingDays % 30;
-      result.weeks = Math.floor(remainingDays / 7);
-      remainingDays = remainingDays % 7;
-      result.days = remainingDays;
-
-      return result;
     };
 
     // parse formula and return final formula object
