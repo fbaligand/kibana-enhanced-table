@@ -20,8 +20,9 @@
 import { uiModules } from 'ui/modules';
 import _ from 'lodash';
 
-import { computeColumnTotal } from './column_total_computer';
-import { computeTimeRange, computeDateStructure, computeDurationStructureBrokenDownByTimeUnit } from './time_range_computer';
+import { computeColumnTotal } from './utils/column_total_computer';
+import { computeTimeRange } from './utils/time_utils';
+import { formulaFunctions } from './utils/formula_functions';
 
 import { fieldFormats } from 'ui/registry/field_formats';
 import { AggConfig } from 'ui/vis/agg_config';
@@ -189,69 +190,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // create formula parser with custom functions
     const parser = new Parser();
-    parser.functions.now = function () {
-      return Date.now();
-    };
-    parser.functions.indexOf = function (strOrArray, searchValue, fromIndex) {
-      return strOrArray.indexOf(searchValue, fromIndex);
-    };
-    parser.functions.lastIndexOf = function (strOrArray, searchValue, fromIndex) {
-      if (fromIndex) {
-        return strOrArray.lastIndexOf(searchValue, fromIndex);
-      }
-      else {
-        return strOrArray.lastIndexOf(searchValue);
-      }
-    };
-    parser.functions.replace = function (str, substr, newSubstr) {
-      return str.replace(substr, newSubstr);
-    };
-    parser.functions.replaceRegexp = function (str, regexp, newSubstr) {
-      return str.replace(new RegExp(regexp, 'g'), newSubstr);
-    };
-    parser.functions.search = function (str, regexp) {
-      return str.search(regexp);
-    };
-    parser.functions.substring = function (str, indexStart, indexEnd) {
-      return str.substring(indexStart, indexEnd);
-    };
-    parser.functions.toLowerCase = function (str) {
-      return str.toLowerCase();
-    };
-    parser.functions.toUpperCase = function (str) {
-      return str.toUpperCase();
-    };
-    parser.functions.trim = function (str) {
-      return str.trim();
-    };
-    parser.functions.encodeURIComponent = function (str) {
-      return encodeURIComponent(str);
-    };
-    parser.functions.sort = function (array, compareFunction) {
-      if (!Array.isArray(array)) {
-        array = [array];
-      }
-      return array.sort(compareFunction);
-    };
-    parser.functions.uniq = function (array) {
-      if (!Array.isArray(array)) {
-        array = [array];
-      }
-      return _.uniq(array);
-    };
-    parser.functions.isArray = function (value) {
-      return Array.isArray(value);
-    };
-    parser.functions.parseDate = function (dateString) {
-      return Date.parse(dateString);
-    };
-    parser.functions.dateObject = function (...params) {
-      const date = new Date(...params);
-      return computeDateStructure(date);
-    };
-    parser.functions.durationObject = function (durationInMillis) {
-      return computeDurationStructureBrokenDownByTimeUnit(durationInMillis);
-    };
+    _.forEach(formulaFunctions, function (functionDefinition, functionName) {
+      parser.functions[functionName] = functionDefinition;
+    });
+
     parser.functions.col = function (row, colRef, defaultValue) {
       try {
         let colIndex = colRef;
