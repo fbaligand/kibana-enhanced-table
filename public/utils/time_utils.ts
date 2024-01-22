@@ -9,6 +9,81 @@ interface TimeRangeOutput {
   to: any;
 }
 
+const timeUnits = [
+  {
+    name: 'years',
+    shortName: 'y',
+    durationInMillis: 365 * 24 * 60 * 60 * 1000
+  },
+  {
+    name: 'months',
+    shortName: 'mon',
+    durationInMillis: 30 * 24 * 60 * 60 * 1000
+  },
+  {
+    name: 'weeks',
+    shortName: 'w',
+    durationInMillis: 7 * 24 * 60 * 60 * 1000
+  },
+  {
+    name: 'days',
+    shortName: 'd',
+    durationInMillis: 24 * 60 * 60 * 1000
+  },
+  {
+    name: 'hours',
+    shortName: 'h',
+    durationInMillis: 60 * 60 * 1000
+  },
+  {
+    name: 'minutes',
+    shortName: 'min',
+    durationInMillis: 60 * 1000
+  },
+  {
+    name: 'seconds',
+    shortName: 's',
+    durationInMillis: 1000
+  },
+  {
+    name: 'milliseconds',
+    shortName: 'ms',
+    durationInMillis: 1
+  }
+];
+
+
+export class DurationHumanVeryPreciseFormat {
+
+  inputFormat: string;
+  outputFormat: string;
+  useShortSuffix: string;
+  includeSpaceWithSuffix: string;
+
+  constructor({ inputFormat, outputFormat, useShortSuffix, includeSpaceWithSuffix }) {
+    this.inputFormat = inputFormat;
+    this.outputFormat = outputFormat;
+    this.useShortSuffix = useShortSuffix;
+    this.includeSpaceWithSuffix = includeSpaceWithSuffix;
+  }
+
+  convert(duration: number): string {
+    const durationTimeUnit = timeUnits.find(timeUnit => timeUnit.name === this.inputFormat);
+    const durationObject = computeDurationStructureBrokenDownByTimeUnit(duration * durationTimeUnit!.durationInMillis);
+
+    let result = '';
+    timeUnits.forEach(timeUnit => {
+      if (durationObject[timeUnit.name] > 0) {
+        const suffix = this.useShortSuffix ? timeUnit.shortName : timeUnit.name;
+        const space = this.includeSpaceWithSuffix ? ' ' : '';
+        result += `${durationObject[timeUnit.name]}${space}${suffix} `;
+      }
+    });
+
+    return result.trim();
+  }
+}
+
 function incrementDateUnit(date: Date, incrementCount: number, unit: string) {
   if (unit === 'y') {
     date.setFullYear(date.getFullYear() + incrementCount);

@@ -16,6 +16,12 @@ export interface ComputedColumn {
   format: string;
   pattern: string;
   datePattern: string;
+  durationInputFormat: string;
+  durationOutputFormat: string;
+  durationOutputPrecision: number;
+  durationShowSuffix: boolean;
+  durationUseShortSuffix: boolean;
+  durationIncludeSpaceWithSuffix: boolean;
   alignment: string;
   applyAlignmentOnTitle: boolean;
   applyAlignmentOnTotal: boolean;
@@ -48,7 +54,7 @@ function removeComputedColumn(computedColumns: ComputedColumn[], computedColumnT
 }
 
 function renderButtons (computedColumn, computedColumns, showError, setValue, setComputedColumns, dragHandleProps) {
-  const actionIcons = [];
+  const actionIcons: any[] = [];
 
   if (showError) {
     actionIcons.push({
@@ -155,6 +161,136 @@ function formatOptions() {
       text: i18n.translate('visTypeEnhancedTable.params.computedColumns.formatOptions.date', {
         defaultMessage: 'Date',
       }),
+    },
+    {
+      value: 'duration',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.formatOptions.duration', {
+        defaultMessage: 'Duration',
+      }),
+    }
+  ];
+}
+
+function durationInputFormatOptions() {
+  return [
+    {
+      value: 'milliseconds',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.milliseconds', {
+        defaultMessage: 'Milliseconds',
+      }),
+    },
+    {
+      value: 'seconds',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.seconds', {
+        defaultMessage: 'Seconds',
+      }),
+    },
+    {
+      value: 'minutes',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.minutes', {
+        defaultMessage: 'Minutes',
+      }),
+    },
+    {
+      value: 'hours',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.hours', {
+        defaultMessage: 'Hours',
+      }),
+    },
+    {
+      value: 'days',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.days', {
+        defaultMessage: 'Days',
+      }),
+    },
+    {
+      value: 'weeks',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.weeks', {
+        defaultMessage: 'Weeks',
+      }),
+    },
+    {
+      value: 'months',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.months', {
+        defaultMessage: 'Months',
+      }),
+    },
+    {
+      value: 'years',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.years', {
+        defaultMessage: 'Years',
+      }),
+    }
+  ];
+}
+
+function durationOutputFormatOptions() {
+  return [
+    {
+      value: 'humanize',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.humanize', {
+        defaultMessage: 'Human-readable (approximate)',
+      }),
+    },
+    {
+      value: 'humanizePrecise',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.humanizePrecise', {
+        defaultMessage: 'Human-readable (precise)',
+      }),
+    },
+    {
+      value: 'humanizeVeryPrecise',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.humanizeVeryPrecise', {
+        defaultMessage: 'Human-readable (very precise)',
+      }),
+    },
+    {
+      value: 'asMilliseconds',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.milliseconds', {
+        defaultMessage: 'Milliseconds',
+      }),
+    },
+    {
+      value: 'asSeconds',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.seconds', {
+        defaultMessage: 'Seconds',
+      }),
+    },
+    {
+      value: 'asMinutes',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.minutes', {
+        defaultMessage: 'Minutes',
+      }),
+    },
+    {
+      value: 'asHours',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.hours', {
+        defaultMessage: 'Hours',
+      }),
+    },
+    {
+      value: 'asDays',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.days', {
+        defaultMessage: 'Days',
+      }),
+    },
+    {
+      value: 'asWeeks',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.weeks', {
+        defaultMessage: 'Weeks',
+      }),
+    },
+    {
+      value: 'asMonths',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.months', {
+        defaultMessage: 'Months',
+      }),
+    },
+    {
+      value: 'asYears',
+      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.years', {
+        defaultMessage: 'Years',
+      }),
     }
   ];
 }
@@ -203,6 +339,7 @@ function ComputedColumnEditor({
   const showError = !isEditorOpen && !validState;
   const isFormulaValid = computedColumn.formula !== '';
   const isCustomColumnPositionValid = (computedColumn.customColumnPosition === undefined || computedColumn.customColumnPosition === '' || computedColumn.customColumnPosition >= 0);
+  const isDurationOutputPrecisionValid = (computedColumn.durationOutputPrecision === undefined || computedColumn.durationOutputPrecision === '' || computedColumn.durationOutputPrecision >= 0);
 
   if (computedColumn.brandNew) {
     computedColumn.brandNew = undefined;
@@ -222,9 +359,9 @@ function ComputedColumnEditor({
   );
 
   useEffect(() => {
-    setValidity(isFormulaValid, isCustomColumnPositionValid);
-    setValidState(isFormulaValid && isCustomColumnPositionValid);
-  }, [isFormulaValid, isCustomColumnPositionValid, setValidity, setValidState]);
+    setValidity(isFormulaValid, isCustomColumnPositionValid, isDurationOutputPrecisionValid);
+    setValidState(isFormulaValid && isCustomColumnPositionValid && isDurationOutputPrecisionValid);
+  }, [isFormulaValid, isCustomColumnPositionValid, isDurationOutputPrecisionValid, setValidity, setValidState]);
 
   return (
     <>
@@ -332,6 +469,78 @@ function ComputedColumnEditor({
                   paramName="datePattern"
                   value={computedColumn.datePattern}
                   setValue={setValue}
+                />
+              }
+
+              {computedColumn.format === 'duration' &&
+                <SelectOption
+                  label={i18n.translate('visTypeTable.params.computedColumns.durationInputFormat', {
+                    defaultMessage: 'Input format',
+                  })}
+                  options={durationInputFormatOptions()}
+                  paramName="durationInputFormat"
+                  value={computedColumn.durationInputFormat}
+                  setValue={setValue}
+                />
+              }
+
+              {computedColumn.format === 'duration' &&
+                <SelectOption
+                  label={i18n.translate('visTypeTable.params.computedColumns.durationOutputFormat', {
+                    defaultMessage: 'Output format',
+                  })}
+                  options={durationOutputFormatOptions()}
+                  paramName="durationOutputFormat"
+                  value={computedColumn.durationOutputFormat}
+                  setValue={setValue}
+                />
+              }
+
+              {computedColumn.format === 'duration' && computedColumn.durationOutputFormat !== 'humanize' && computedColumn.durationOutputFormat !== 'humanizeVeryPrecise' &&
+                <NumberInputOption
+                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputPrecision', {
+                    defaultMessage: 'Decimal places',
+                  })}
+                  isInvalid={!isDurationOutputPrecisionValid}
+                  min={0}
+                  paramName="durationOutputPrecision"
+                  value={computedColumn.durationOutputPrecision}
+                  setValue={setValue}
+                />
+              }
+
+              {computedColumn.format === 'duration' && !computedColumn.durationOutputFormat?.startsWith('humanize') &&
+                <SwitchOption
+                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationShowSuffix', {
+                    defaultMessage: 'Show suffix',
+                  })}
+                  paramName="durationShowSuffix"
+                  value={computedColumn.durationShowSuffix}
+                  setValue={setValue}
+                />
+              }
+
+              {computedColumn.format === 'duration' && computedColumn.durationOutputFormat !== 'humanize' &&
+                <SwitchOption
+                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationUseShortSuffix', {
+                    defaultMessage: 'Use short suffix',
+                  })}
+                  paramName="durationUseShortSuffix"
+                  value={computedColumn.durationUseShortSuffix}
+                  setValue={setValue}
+                  disabled={!computedColumn.durationShowSuffix && !computedColumn.durationOutputFormat?.startsWith('humanize')}
+                />
+              }
+
+              {computedColumn.format === 'duration' && computedColumn.durationOutputFormat !== 'humanize' &&
+                <SwitchOption
+                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationIncludeSpaceWithSuffix', {
+                    defaultMessage: 'Include space between suffix and value',
+                  })}
+                  paramName="durationIncludeSpaceWithSuffix"
+                  value={computedColumn.durationIncludeSpaceWithSuffix}
+                  setValue={setValue}
+                  disabled={!computedColumn.durationShowSuffix && !computedColumn.durationOutputFormat?.startsWith('humanize')}
                 />
               }
 

@@ -3,10 +3,11 @@ import _ from 'lodash';
 import { computeColumnTotal } from './utils/column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 import { getNotifications, getFormatService } from './services';
-import { computeTimeRange } from './utils/time_utils';
+import { computeTimeRange, DurationHumanVeryPreciseFormat } from './utils/time_utils';
 import { formulaFunctions } from './utils/formula_functions';
 
 // third-party dependencies
+import numeralLanguages from '@elastic/numeral/languages';
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
@@ -19,7 +20,10 @@ function EnhancedTableVisController ($scope, tableConfig) {
     }
   }
 
+  // get numeral language
   const getConfig = (...args) => tableConfig.get(...args);
+  const formatNumberLocale = getConfig('format:number:defaultLocale') || 'en';
+  const numeralLanguage = _.find(numeralLanguages, language => language.id === formatNumberLocale);
 
   handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 
@@ -411,23 +415,40 @@ function EnhancedTableVisController ($scope, tableConfig) {
   const createColumn = function (computedColumn, index, splitColIndex, columns, showTotal, totalFunc, aggs, computedColsPerSplitCol) {
 
     const fieldFormats = getFormatService();
-    const FieldFormat = fieldFormats.getType(computedColumn.format);
+    let FieldFormat = fieldFormats.getType(computedColumn.format);
+    if (computedColumn.format === 'duration' && computedColumn.durationOutputFormat === 'humanizeVeryPrecise') {
+      FieldFormat = DurationHumanVeryPreciseFormat;
+    }
     const fieldFormatParamsByFormat = {
       'string': {},
       'number': { pattern: computedColumn.pattern },
-      'date': { pattern: computedColumn.datePattern }
+      'date': { pattern: computedColumn.datePattern },
+      'duration': { inputFormat: computedColumn.durationInputFormat, outputFormat: computedColumn.durationOutputFormat, outputPrecision: computedColumn.durationOutputPrecision, showSuffix: computedColumn.durationShowSuffix, useShortSuffix: computedColumn.durationUseShortSuffix, includeSpaceWithSuffix: computedColumn.durationIncludeSpaceWithSuffix }
     };
     const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
-    const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
-    const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
+    const aggSchema = (computedColumn.format === 'number' || computedColumn.format === 'duration') ? 'metric' : 'bucket';
+    const aggType = (computedColumn.format === 'number' || computedColumn.format === 'duration') ? 'count' : 'filter';
     const standardFieldFormatter = new FieldFormat(fieldFormatParams, getConfig);
     let fieldFormatter = standardFieldFormatter;
+
     if (computedColumn.format === 'number') {
       fieldFormatter = {
         convert: (value) => {
           let result = standardFieldFormatter.convert(value);
           if (result.indexOf('e-') !== -1) {
             result = standardFieldFormatter.convert(0);
+          }
+          return result;
+        }
+      };
+    }
+
+    if (computedColumn.format === 'duration') {
+      fieldFormatter = {
+        convert: (value) => {
+          let result = standardFieldFormatter.convert(value);
+          if (numeralLanguage !== undefined) {
+            result = result.replace('.', numeralLanguage.lang.delimiters.decimal);
           }
           return result;
         }
