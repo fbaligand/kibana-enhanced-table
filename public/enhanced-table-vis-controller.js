@@ -49,10 +49,16 @@ function EnhancedTableVisController ($scope, Private, config) {
 
   const createTemplateContext = function (table, column, row, totalHits, timeRange, computedColsPerSplitCol, splitColIndex) {
 
-    // inject column value references
     const templateContext = { total: totalHits, totalHits, timeRange };
+
+    // inject column value references
     _.forEach(column.template.paramsCols, function (templateParamCol) {
       templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
+    });
+
+    // inject formatted column references
+    _.forEach(column.template.paramsFormattedCols, function (templateParamCol) {
+      templateContext[`formattedCol${templateParamCol}`] = row[templateParamCol].toString();
     });
 
     // inject column total references
@@ -384,6 +390,23 @@ function EnhancedTableVisController ($scope, Private, config) {
       templateParamsCols.push(colIndex);
     }
 
+    // convert formattedCol[0] syntax to formattedCol0 syntax
+    realTemplate = realTemplate.replace(/formattedCol\[(\d+)\]\s*\}\}/g, 'formattedCol$1}}');
+
+    // convert formattedCol['colTitle'] syntax to formattedCol0 syntax
+    realTemplate = realTemplate.replace(/formattedCol\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
+    // set the right column index, depending splitColIndex
+    const formattedColRefRegex = /formattedCol(\d+)\s*\}\}/g;
+    realTemplate = realTemplate.replace(formattedColRefRegex, (match, colIndex) => 'formattedCol' + getRealColIndex(parseInt(colIndex), splitColIndex) + '}}');
+
+    // add template param formattedCols
+    const templateParamsFormattedCols = [];
+    while ((regexMatch = formattedColRefRegex.exec(realTemplate)) !== null) {
+      const colIndex = parseInt(regexMatch[1]);
+      templateParamsFormattedCols.push(colIndex);
+    }
+
     // convert total[0] syntax to total0 syntax
     realTemplate = realTemplate.replace(/total\[(\d+)\]\s*\}\}/g, 'total$1}}');
 
@@ -408,6 +431,7 @@ function EnhancedTableVisController ($scope, Private, config) {
     return {
       compiledTemplate: handlebars.compile(realTemplate),
       paramsCols: templateParamsCols,
+      paramsFormattedCols: templateParamsFormattedCols,
       paramsTotals: templateParamsTotals,
       totalFunc: totalFunc
     };
