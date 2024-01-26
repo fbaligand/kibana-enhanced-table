@@ -605,8 +605,8 @@ function ComputedColumnEditor({
                         defaultMessage="Template"
                       />
                       &nbsp;(
-                        <a ng-href="https://handlebarsjs.com/guide/expressions.html" target="_blank">Handlebars</a>
-                      &nbsp;syntax)
+                        <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-column-template-documentation" target="_blank">documentation</a>
+                      )
                     </>
                   }
                   paramName="template"
