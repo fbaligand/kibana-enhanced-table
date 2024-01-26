@@ -195,6 +195,69 @@ total(colRef, defaultValue)  | Returns column total referenced by `colRef` (if i
 [uniq(array)](https://lodash.com/docs/3.10.1#uniq)   | Removes duplicates from provided array so that array contains only unique values.
 
 
+## Computed Column Template documentation
+
+This is the documentation for "Template" setting in computed columns.  
+A template is a [Handlebars](https://handlebarsjs.com/guide/expressions.html) expression.  
+Examples:  
+- `<strong>{{value}} items</strong>`
+- `{{timeRange.from.localeDateString}} - {{timeRange.to.localeDateString}}`
+- `<a href="my-dashboard?param={{{encodeURIComponent rawValue}}}">{{value}}</a>`
+- `{{#if rawValue}}OK{{else}}KO{{/if}}`
+
+
+### Available variables
+
+- `col0, col1, ..., colN`: raw value of a previous column, referenced by its index (0-based index)
+- `col['COLUMN_LABEL']`: raw value of a previous column, referenced by its label
+- `formmattedCol, formmattedCol1, ..., colN`: formatted value of a previous column, referenced by its index (0-based index)
+- `formattedCol['COLUMN_LABEL']`: formatted value of a previous column, referenced by its label
+- `total0, total1, ..., totalN`: total of a previous column, referenced by its index (0-based index)
+- `total['COLUMN_LABEL']`: total of a previous column, referenced by its label
+- `total`, `totalHits`: total hits count matched by Elasticsearch query (given search bar & filter bar)
+- `value`: value of current computed column, formatted using "Format" setting
+- `rawValue`: value of current computed column, not formatted
+- `timeRange`: informations about current time range, selected in Kibana time picker
+  - `duration`: object containing time range duration, in different units
+    - `years`: years count in time range (rounded up to the nearest whole number)
+    - `months`: months count in time range (rounded up to the nearest whole number)
+    - `weeks`: weeks count in time range (rounded up to the nearest whole number)
+    - `days`: days count in time range (rounded up to the nearest whole number)
+    - `hours`: hours count in time range (rounded up to the nearest whole number)
+    - `minutes`: minutes count in time range (rounded up to the nearest whole number)
+    - `seconds`: seconds count in time range (rounded up to the nearest whole number)
+    - `milliseconds`: milliseconds count in time range
+  - `from` / `to`: object containing all informations on `from` and `to` dates of current time range
+    - `fullYear`: result of [Date.getFullYear()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getFullYear)
+    - `month`: result of [Date.getMonth()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMonth)
+    - `date`: result of [Date.getDate()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDate)
+    - `day`: result of [Date.getDay()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay)
+    - `hours`: result of [Date.getHours()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getHours)
+    - `minutes`: result of [Date.getMinutes()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMinutes)
+    - `seconds`: result of [Date.getSeconds()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getSeconds)
+    - `milliseconds`: result of [Date.getMilliseconds()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMilliseconds)
+    - `time`: result of [Date.getTime()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)
+    - `timezoneOffset`: result of [Date.getTimezoneOffset()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+    - `dateString`: result of [Date.toDateString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toDateString)
+    - `isoString`: result of [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+    - `localeDateString`: result of [Date.toLocaleDateString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString)
+    - `localeString`: result of [Date.toLocaleString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString)
+    - `localeTimeString`: result of [Date.toLocaleTimeString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleTimeString)
+    - `string`: result of [Date.toString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString)
+    - `timeString`: result of [Date.toTimeString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toTimeString)
+    - `utcString`: result of [Date.toUTCString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString)
+
+
+### Available helpers
+
+- All pre-defined helpers provided by [Handlebars](https://handlebarsjs.com/guide/builtin-helpers.html)
+- Additional custom helpers listed in table below.
+
+Helper     | Description
+:----------- | :----------
+[encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component. Example: `<a href="my-dashboard?param={{{encodeURIComponent rawValue}}}">{{value}}</a>`
+
+
 ## Change Log
 
 Versions and Release Notes are listed in [Releases](https://github.com/fbaligand/kibana-enhanced-table/releases) page
