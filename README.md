@@ -127,6 +127,8 @@ This is the common documentation for all computed settings:
 
 - `col0, col1, ..., colN`: value of a previous column, referenced by its index (0-based index)
 - `col['COLUMN_LABEL']`: value of a previous column, referenced by its label
+- `formmattedCol, formmattedCol1, ..., colN`: formatted value of a previous column, referenced by its index (0-based index)
+- `formattedCol['COLUMN_LABEL']`: formatted value of a previous column, referenced by its label
 - `total0, total1, ..., totalN`: total of a previous column, referenced by its index (0-based index)
 - `total['COLUMN_LABEL']`: total of a previous column, referenced by its label
 - `total`, `totalHits`: total hits count matched by Elasticsearch query (given search bar & filter bar)

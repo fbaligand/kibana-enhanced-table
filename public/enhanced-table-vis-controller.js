@@ -149,6 +149,27 @@ function EnhancedTableVisController ($scope, config) {
       formulaParamsCols.push(colIndex);
     }
 
+    // convert formattedCol[0] syntax to formattedCol0 syntax
+    realFormula = realFormula.replace(/formattedCol\[(\d+)\]/g, 'formattedCol$1');
+
+    // convert formattedCol['colTitle'] syntax to formattedCol0 syntax
+    realFormula = realFormula.replace(/formattedCol\['([^\]]+)'\]/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
+    // set the right column index, depending splitColIndex
+    const formattedColRefRegex = /formattedCol(\d+)/g;
+    realFormula = realFormula.replace(formattedColRefRegex, (match, colIndex) => 'formattedCol' + getRealColIndex(parseInt(colIndex), splitColIndex));
+
+    // extract formula param formattedCols
+    const formulaParamsFormattedCols = [];
+    while ((regexMatch = formattedColRefRegex.exec(realFormula)) !== null) {
+      let colIndex = parseInt(regexMatch[1]);
+      if (colIndex >= currentCol) {
+        colIndex = getOriginalColIndex(colIndex, splitColIndex);
+        throw new EnhancedTableError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
+      }
+      formulaParamsFormattedCols.push(colIndex);
+    }
+
     // convert total[0] syntax to total0 syntax
     realFormula = realFormula.replace(/total\[(\d+)\]/g, 'total$1');
 
@@ -320,6 +341,7 @@ function EnhancedTableVisController ($scope, config) {
       return {
         expression: parser.parse(realFormula),
         paramsCols: formulaParamsCols,
+        paramsFormattedCols: formulaParamsFormattedCols,
         paramsTotals: formulaParamsTotals,
         totalFunc: totalFunc,
         formulaType: formulaType,
@@ -338,6 +360,11 @@ function EnhancedTableVisController ($scope, config) {
       // inject column value references
       _.forEach(formula.paramsCols, function (formulaParamCol) {
         formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
+      });
+
+      // inject formatted column value references
+      _.forEach(formula.paramsFormattedCols, function (formulaParamCol) {
+        formulaParams[`formattedCol${formulaParamCol}`] = row[formulaParamCol].toString();
       });
 
       // inject column total references
