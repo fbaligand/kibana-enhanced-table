@@ -245,7 +245,7 @@ function EnhancedTableOptions({
               />
               &nbsp;
               <EuiIconTip
-                content="Reference a column by its index (1,2,3), by its label (Example Column) or both (1,2,column_3). Write the column label as is (no surrounding quotes) and separate them using a comma. It is recommended to reference a column by its label."
+                content="Reference a column by its index (1,2,3), by its label (Example Column) or both (1, 2, column3, &quot;column 4&quot;, &apos;column 5&apos;). Separate columns using a comma and optionally surround column labels by single or double quotes."
                 position="right"
               />
             </>
