@@ -668,8 +668,10 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     }
   };
 
+  const INTEGER_REGEX = /^\d+$/;
+
   const isInt = (item) => {
-    return /^ *[0-9]+ *$/.test(item);
+    return INTEGER_REGEX.test(item);
   };
 
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
@@ -684,18 +686,27 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
         table.refRowWithHiddenCols = _.clone(table.rows[0]);
       }
 
+      let hiddenColumnIndices = [];
+
       // retrieve real col indices
-      let hiddenColumnIndices = _.map(hiddenColumns, function (item) {
+      const hiddenColumnsRegex = / *([^"',][^,]*|"[^"]+"|'[^']+') *(,|$)/g;
+      let regexMatch;
+      while ((regexMatch = hiddenColumnsRegex.exec(hiddenColumns)) !== null) {
+        let colRef = regexMatch[1].trim();
         try {
-          if (!isInt(item)) {
-            item = findColIndexByTitle(table.columns, item, item, splitColIndex);
+          if (!isInt(colRef)) {
+            if (colRef.startsWith('"') || colRef.startsWith('\'')) {
+              colRef = colRef.substring(1, colRef.length - 1);
+            }
+            colRef = findColIndexByTitle(table.columns, colRef, colRef, splitColIndex);
           }
-          return getRealColIndex(parseInt(item), splitColIndex);
+          colRef = getRealColIndex(parseInt(colRef), splitColIndex);
         }
         catch(e) {
-          return table.columns.length;
+          console.warn(e);
         }
-      });
+        hiddenColumnIndices.push(colRef);
+      }
 
       // sort from higher to lower index and keep uniq indices
       hiddenColumnIndices = _.uniq(hiddenColumnIndices.sort( (a,b) => b - a));
@@ -1139,7 +1150,7 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
         // remove hidden columns
         if (params.hiddenColumns) {
-          hideColumns(tableGroups.tables, params.hiddenColumns.split(','), splitColIndex);
+          hideColumns(tableGroups.tables, params.hiddenColumns, splitColIndex);
         }
 
         // process 'Split Cols' bucket: transform rows to cols
