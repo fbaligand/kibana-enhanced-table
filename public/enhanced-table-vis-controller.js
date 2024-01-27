@@ -140,6 +140,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // convert col['colTitle'] syntax to col0 syntax
     realFormula = realFormula.replace(/col\['([^\]]+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
 
+    // convert col["colTitle"] syntax to col0 syntax
+    realFormula = realFormula.replace(/col\["([^\]]+)"\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)/g;
     realFormula = realFormula.replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex));
@@ -163,6 +166,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // convert formattedCol['colTitle'] syntax to formattedCol0 syntax
     realFormula = realFormula.replace(/formattedCol\['([^\]]+)'\]/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
 
+    // convert formattedCol["colTitle"] syntax to formattedCol0 syntax
+    realFormula = realFormula.replace(/formattedCol\["([^\]]+)"\]/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
     // set the right column index, depending splitColIndex
     const formattedColRefRegex = /formattedCol(\d+)/g;
     realFormula = realFormula.replace(formattedColRefRegex, (match, colIndex) => 'formattedCol' + getRealColIndex(parseInt(colIndex), splitColIndex));
@@ -183,6 +189,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // convert total['colTitle'] syntax to total0 syntax
     realFormula = realFormula.replace(/total\['([^\]]+)'\]/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
+    // convert total["colTitle"] syntax to total0 syntax
+    realFormula = realFormula.replace(/total\["([^\]]+)"\]/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
 
     // set the right total index, depending splitColIndex
     const totalRefRegex = /total(\d+)/g;
@@ -410,6 +419,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // convert col['colTitle'] syntax to col0 syntax
     realTemplate = realTemplate.replace(/col\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
 
+    // convert col["colTitle"] syntax to col0 syntax
+    realTemplate = realTemplate.replace(/col\["([^\]]+)"\]\s*\}\}/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)\s*\}\}/g;
     realTemplate = realTemplate.replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex) + '}}');
@@ -428,6 +440,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
     // convert formattedCol['colTitle'] syntax to formattedCol0 syntax
     realTemplate = realTemplate.replace(/formattedCol\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
 
+    // convert formattedCol["colTitle"] syntax to formattedCol0 syntax
+    realTemplate = realTemplate.replace(/formattedCol\["([^\]]+)"\]\s*\}\}/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
     // set the right column index, depending splitColIndex
     const formattedColRefRegex = /formattedCol(\d+)\s*\}\}/g;
     realTemplate = realTemplate.replace(formattedColRefRegex, (match, colIndex) => 'formattedCol' + getRealColIndex(parseInt(colIndex), splitColIndex) + '}}');
@@ -444,6 +459,9 @@ module.controller('EnhancedTableVisController', function ($scope, Private, confi
 
     // convert total['colTitle'] syntax to total0 syntax
     realTemplate = realTemplate.replace(/total\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
+    // convert total["colTitle"] syntax to total0 syntax
+    realTemplate = realTemplate.replace(/total\["([^\]]+)"\]\s*\}\}/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
 
     // replace 'total' variable by 'totalHits'
     realTemplate = realTemplate.replace(/\{\{\s*total\s*\}\}/g, '{{totalHits}}');
