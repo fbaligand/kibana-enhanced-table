@@ -20,7 +20,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to compute column total using formula
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
-  - Support for duration pretty format using Kibana duration format
+  - Support for duration pretty format using Kibana duration format (with same options than Kibana Duration format)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](https://handlebarsjs.com/guide/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
@@ -58,8 +58,8 @@ This project is a Kibana plugin that provides two visualizations:
 - Add a row number column
 - Ability to add the visualization to a Canvas workpad (Kibana 7.9+)
 - Ability to use dashboard drilldowns (Kibana 7.9+)
-- Kibana supported versions: all versions from 5.5 to 8.4
-- OpenSearch Dashboards supported versions : all versions from 1.0 to 2.2
+- Kibana supported versions: all versions from 5.5 to 8.12
+- OpenSearch Dashboards supported versions : all versions from 1.x to 2.x
 
 ## Demo
 
