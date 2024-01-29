@@ -12,6 +12,20 @@ visualization.enhanced-table {
   @import 'agg_table/index';
 }
 
+.enhanced-table-vis {
+  $euiColorBackground: #fbfcfd;
+  $euiColorBorder: #d3dae6;
+  $euiColorFont: #343741;
+  @import 'enhanced-table-vis-kui';
+}
+
+.theme-dark.enhanced-table-vis {
+  $euiColorBackground: #16171c;
+  $euiColorBorder: #343741;
+  $euiColorFont: #dfe5ef;
+  @import 'enhanced-table-vis-kui';
+}
+
 @import 'paginated_table/index';
 @import 'enhanced-table-vis';
 @import 'enhanced-table-vis-params';

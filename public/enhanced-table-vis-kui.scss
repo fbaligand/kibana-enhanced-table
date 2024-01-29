@@ -1,0 +1,141 @@
+.kuiButton {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  height: 30px;
+  line-height: 1.5;
+  padding: 4px 12px 5px;
+  text-decoration: none
+}
+
+.kuiButton:disabled,a.kuiButton.kuiButton-isDisabled {
+  cursor: not-allowed;
+  opacity: .5
+}
+
+.kuiButton:enabled:active,a.kuiButton:not(.kuiButton-isDisabled):active {
+  -webkit-transform: translateY(1px);
+  transform: translateY(1px)
+}
+
+.kuiButton--danger {
+  border: 1px solid #bd271e;
+  color: #bd271e
+}
+
+.kuiButton--danger:not(a):enabled:focus,a.kuiButton--danger:not(.kuiButton-isDisabled):focus {
+  -webkit-box-shadow: 0 0 0 1px #fff,0 0 0 2px #bd271e;
+  box-shadow: 0 0 0 1px #fff,0 0 0 2px #bd271e;
+  color: #bd271e;
+  outline: none!important;
+  z-index: 1
+}
+
+.kuiButton--danger:enabled:active,.kuiButton--danger:enabled:hover,a.kuiButton--danger:not(.kuiButton-isDisabled):active,a.kuiButton--danger:not(.kuiButton-isDisabled):hover {
+  background-color: #bd271e1a;
+  border: 1px solid #911e17;
+  color: #911e17!important
+}
+
+
+
+.kuiLocalSearch {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 8px;
+  width: 100%
+}
+
+.kuiLocalSearchInput {
+  -webkit-box-flex: 1;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: $euiColorBackground;
+  border: 1px solid $euiColorBorder;
+  border-radius: 4px;
+  border-radius: 4px 0 0 4px;
+  color: $euiColorFont;
+  -webkit-flex: 1 1 100%;
+  -ms-flex: 1 1 100%;
+  flex: 1 1 100%;
+  font-family: Inter UI,-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 32px;
+  padding: 3px 12px;
+  -webkit-transition: border-color .1s linear;
+  transition: border-color .1s linear
+}
+
+.kuiLocalSearchInput:invalid {
+  border-color: #bd271e
+}
+
+.kuiLocalSearchInput:focus {
+  border-color: #006bb4;
+  outline: none
+}
+
+.kuiLocalSearchInput:disabled {
+  cursor: not-allowed;
+  opacity: .4
+}
+
+.kuiLocalSearchInput:focus {
+  -webkit-box-shadow: none;
+  box-shadow: none
+}
+
+.kuiLocalSearchInput.kuiLocalSearchInput-isInvalid {
+  border-color: #bd271e
+}
+
+.kuiLocalSearchInput--secondary {
+  -webkit-box-flex: 0;
+  border-left-width: 0;
+  border-radius: 0;
+  -webkit-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  height: 32px
+}
+
+.kuiLocalSearchAssistedInput {
+  -webkit-box-flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex: 1 1 100%;
+  -ms-flex: 1 1 100%;
+  flex: 1 1 100%;
+  position: relative
+}
+
+.kuiLocalSearchButton {
+  background-color: #006bb4;
+  border: 0;
+  border-radius: 0 4px 4px 0;
+  color: #fff;
+  font-size: 16px;
+  height: 32px;
+  line-height: 0;
+  width: 43px
+}
+
+.kuiLocalSearchButton:focus {
+  -webkit-box-shadow: 0 0 0 1px $euiColorBorder,0 0 0 2px #006bb4;
+  box-shadow: 0 0 0 1px $euiColorBorder,0 0 0 2px #006bb4;
+  outline: none!important;
+  z-index: 1
+}
