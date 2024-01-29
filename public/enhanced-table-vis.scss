@@ -35,7 +35,11 @@
   .filterInput {
     border-color: #D9D9D9;
     border-width: 1px;
+    outline: none !important;
+    outline-width: 0 !important;
     box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
   }
 
   .filterInput:focus {
