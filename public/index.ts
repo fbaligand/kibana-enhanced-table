@@ -1,5 +1,5 @@
 import './index.scss';
-import { PluginInitializerContext } from 'opensearch-dashboards/public';
+import { PluginInitializerContext } from '../../../src/core/public';
 import { EnhancedTablePlugin as Plugin } from './plugin';
 
 export function plugin(initializerContext: PluginInitializerContext) {

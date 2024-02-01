@@ -20,6 +20,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to compute column total using formula
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
+  - Support for duration pretty format using Kibana duration format (with same options than Kibana Duration format)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](https://handlebarsjs.com/guide/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
@@ -57,8 +58,8 @@ This project is a Kibana plugin that provides two visualizations:
 - Add a row number column
 - Ability to add the visualization to a Canvas workpad (Kibana 7.9+)
 - Ability to use dashboard drilldowns (Kibana 7.9+)
-- Kibana supported versions: all versions from 5.5 to 7.17
-- OpenSearch Dashboards supported versions : all versions from 1.0.0 to 1.2.0
+- Kibana supported versions: all versions from 5.5 to 8.12
+- OpenSearch Dashboards supported versions : all versions from 1.x to 2.x
 
 ## Demo
 
@@ -134,10 +135,98 @@ This is the common documentation for all computed settings:
 
 - `col0, col1, ..., colN`: value of a previous column, referenced by its index (0-based index)
 - `col['COLUMN_LABEL']`: value of a previous column, referenced by its label
+- `formmattedCol, formmattedCol1, ..., colN`: formatted value of a previous column, referenced by its index (0-based index)
+- `formattedCol['COLUMN_LABEL']`: formatted value of a previous column, referenced by its label
 - `total0, total1, ..., totalN`: total of a previous column, referenced by its index (0-based index)
 - `total['COLUMN_LABEL']`: total of a previous column, referenced by its label
 - `total`, `totalHits`: total hits count matched by Elasticsearch query (given search bar & filter bar)
 - `value`: value of current computed column (only available in "Cell computed CSS" feature)
+- `timeRange`: informations about current time range, selected in Kibana time picker
+  - `duration`: object containing time range duration, in different units
+    - `years`: years count in time range (rounded up to the nearest whole number)
+    - `months`: months count in time range (rounded up to the nearest whole number)
+    - `weeks`: weeks count in time range (rounded up to the nearest whole number)
+    - `days`: days count in time range (rounded up to the nearest whole number)
+    - `hours`: hours count in time range (rounded up to the nearest whole number)
+    - `minutes`: minutes count in time range (rounded up to the nearest whole number)
+    - `seconds`: seconds count in time range (rounded up to the nearest whole number)
+    - `milliseconds`: milliseconds count in time range
+  - <a aria-hidden="true" tabindex="-1" id="time-range-from-to" name="time-range-from-to"></a>`from` / `to`: object containing all informations on `from` and `to` dates of current time range
+    - `fullYear`: result of [Date.getFullYear()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getFullYear)
+    - `month`: result of [Date.getMonth()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMonth)
+    - `date`: result of [Date.getDate()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDate)
+    - `day`: result of [Date.getDay()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay)
+    - `hours`: result of [Date.getHours()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getHours)
+    - `minutes`: result of [Date.getMinutes()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMinutes)
+    - `seconds`: result of [Date.getSeconds()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getSeconds)
+    - `milliseconds`: result of [Date.getMilliseconds()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMilliseconds)
+    - `time`: result of [Date.getTime()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)
+    - `timezoneOffset`: result of [Date.getTimezoneOffset()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+    - `dateString`: result of [Date.toDateString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toDateString)
+    - `isoString`: result of [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+    - `localeDateString`: result of [Date.toLocaleDateString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString)
+    - `localeString`: result of [Date.toLocaleString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString)
+    - `localeTimeString`: result of [Date.toLocaleTimeString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleTimeString)
+    - `string`: result of [Date.toString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString)
+    - `timeString`: result of [Date.toTimeString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toTimeString)
+    - `utcString`: result of [Date.toUTCString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString)
+
+
+### Available functions
+
+- All pre-defined functions provided by [expr-eval](https://github.com/silentmatt/expr-eval#pre-defined-functions)
+- Additional custom functions listed in table below (ex: `col['Expiration Date'] > now() ? 'OK' : 'KO'`)
+
+Function     | Description
+:----------- | :----------
+cell(rowRef, colRef, defaultValue)  | Returns table cell value referenced by `rowRef` and `colRef` (if it exists), or else `defaultValue`. `rowRef` is either `'first'` (for first row), `'last'` (for last row) or a number that is the relative target row position compared to current row (ex: `-1` means the previous row). `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
+col(colRef, defaultValue)  | Returns column value referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
+countSplitCols()  | Returns the count of all split columns (only if 'Split cols' bucket is used).
+[dateObject(params)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)  | Given standard `Date` constructor params (milliseconds since Epoch, ...), builds and returns a date object, same structure than [timeRange from/to object](#time-range-from-to). The result can be used in template (ex: `{{ rawValue.fullYear }}`).
+durationObject(durationInMillis)  | Given a duration in milliseconds, builds and returns a duration object, that breaks down the duration in years, months, weeks, days, hours, minutes, seconds and milliseconds. The result can be used in template (ex: `{{ rawValue.hours }}`).
+[encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component.
+formattedCell(rowRef, colRef, defaultValue)  | Returns formatted table cell value referenced by `rowRef` and `colRef` (if it exists), or else `defaultValue`. `rowRef` is either `'first'` (for first row), `'last'` (for last row) or a number that is the relative target row position compared to current row (ex: `-1` means the previous row). `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
+formattedCol(colRef, defaultValue)  | Returns formatted column value referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
+[indexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf)  | Returns the index within the calling String or Array object of the first occurrence of the specified value, starting the search at fromIndex. Returns -1 if the value is not found.
+[isArray(value)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray)  | Determines whether the passed value is an Array.
+[lastIndexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/lastIndexOf)  | Returns the index within the calling String or Array object of the last occurrence of the specified value, searching backwards from fromIndex. Returns -1 if the value is not found.
+[now()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now)  | Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
+[parseDate(dateString)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse)  | Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC and the date obtained by parsing the given string representation of a date. If the argument doesn't represent a valid date, NaN is returned. Useful to parse date columns in 'Document Table' visualization.
+[replace(str, substr, replacement)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)  | Returns a new string with first match of substr replaced by a replacement. Only the first occurrence will be replaced.
+[replaceRegexp(str, regexp, replacement)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)  | Returns a new string with all matches of a regexp replaced by a replacement. All the occurrences will be replaced.
+[search(str, regexp)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search)   | Executes a search for a match between a regular expression on 'str' String. Returns the index of the first match or -1 if not found.
+[sort(array\[, compareFunction\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)   | Sorts the elements of an array in place and returns the sorted array. A compare function can be provided to customize the sort order. Example for an array of numbers: `comparator(a, b) = a - b; sort(col0, comparator)`
+[substring(str, indexStart\[, indexEnd\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring)   | Returns the part of the string between the start and end indexes, or to the end of the string (if no index end is provided).
+sumSplitCols()   | Returns the sum of all split column values (only if 'Split cols' bucket is used).
+[toLowerCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase)   | Returns the calling string value converted to lowercase.
+[toUpperCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toUpperCase)   | Returns the calling string value converted to uppercase.
+total(colRef, defaultValue)  | Returns column total referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
+[trim(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim)   | Removes whitespace from both ends of a string.
+[uniq(array)](https://lodash.com/docs/3.10.1#uniq)   | Removes duplicates from provided array so that array contains only unique values.
+
+
+## Computed Column Template documentation
+
+This is the documentation for "Template" setting in computed columns.  
+A template is a [Handlebars](https://handlebarsjs.com/guide/expressions.html) expression.  
+Examples:  
+- `<strong>{{value}} items</strong>`
+- `{{timeRange.from.localeDateString}} - {{timeRange.to.localeDateString}}`
+- `<a href="my-dashboard?param={{{encodeURIComponent rawValue}}}">{{value}}</a>`
+- `{{#if rawValue}}OK{{else}}KO{{/if}}`
+
+
+### Available variables
+
+- `col0, col1, ..., colN`: raw value of a previous column, referenced by its index (0-based index)
+- `col['COLUMN_LABEL']`: raw value of a previous column, referenced by its label
+- `formmattedCol, formmattedCol1, ..., colN`: formatted value of a previous column, referenced by its index (0-based index)
+- `formattedCol['COLUMN_LABEL']`: formatted value of a previous column, referenced by its label
+- `total0, total1, ..., totalN`: total of a previous column, referenced by its index (0-based index)
+- `total['COLUMN_LABEL']`: total of a previous column, referenced by its label
+- `total`, `totalHits`: total hits count matched by Elasticsearch query (given search bar & filter bar)
+- `value`: value of current computed column, formatted using "Format" setting
+- `rawValue`: value of current computed column, not formatted
 - `timeRange`: informations about current time range, selected in Kibana time picker
   - `duration`: object containing time range duration, in different units
     - `years`: years count in time range (rounded up to the nearest whole number)
@@ -169,32 +258,14 @@ This is the common documentation for all computed settings:
     - `utcString`: result of [Date.toUTCString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString)
 
 
-### Available functions
+### Available helpers
 
-- All pre-defined functions provided by [expr-eval](https://github.com/silentmatt/expr-eval#pre-defined-functions)
-- Additional custom functions listed in table below (ex: `col['Expiration Date'] > now() ? 'OK' : 'KO'`)
+- All pre-defined helpers provided by [Handlebars](https://handlebarsjs.com/guide/builtin-helpers.html)
+- Additional custom helpers listed in table below.
 
-Function     | Description
+Helper     | Description
 :----------- | :----------
-col(colRef, defaultValue)  | Returns column value referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
-countSplitCols()  | Returns the count of all split columns (only if 'Split cols' bucket is used).
-[encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component.
-[indexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf)  | Returns the index within the calling String or Array object of the first occurrence of the specified value, starting the search at fromIndex. Returns -1 if the value is not found.
-[isArray(value)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray)  | Determines whether the passed value is an Array.
-[lastIndexOf(strOrArray, searchValue\[, fromIndex\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/lastIndexOf)  | Returns the index within the calling String or Array object of the last occurrence of the specified value, searching backwards from fromIndex. Returns -1 if the value is not found.
-[now()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now)  | Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC
-[parseDate(dateString)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse)  | Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC and the date obtained by parsing the given string representation of a date. If the argument doesn't represent a valid date, NaN is returned. Useful to parse date columns in 'Document Table' visualization.
-[replace(str, substr, replacement)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)  | Returns a new string with first match of substr replaced by a replacement. Only the first occurrence will be replaced.
-[replaceRegexp(str, regexp, replacement)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)  | Returns a new string with all matches of a regexp replaced by a replacement. All the occurrences will be replaced.
-[search(str, regexp)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search)   | Executes a search for a match between a regular expression on 'str' String. Returns the index of the first match or -1 if not found.
-[sort(array\[, compareFunction\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)   | Sorts the elements of an array in place and returns the sorted array. A compare function can be provided to customize the sort order. Example for an array of numbers: `comparator(a, b) = a - b; sort(col0, comparator)`
-[substring(str, indexStart\[, indexEnd\])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring)   | Returns the part of the string between the start and end indexes, or to the end of the string (if no index end is provided).
-sumSplitCols()   | Returns the sum of all split column values (only if 'Split cols' bucket is used).
-[toLowerCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase)   | Returns the calling string value converted to lowercase.
-[toUpperCase(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toUpperCase)   | Returns the calling string value converted to uppercase.
-total(colRef, defaultValue)  | Returns column total referenced by `colRef` (if it exists), or else `defaultValue`. `colRef` is either the column label (ex: `'Count'`) or the column index (ex: `1`).
-[trim(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim)   | Removes whitespace from both ends of a string.
-[uniq(array)](https://lodash.com/docs/3.10.1#uniq)   | Removes duplicates from provided array so that array contains only unique values.
+[encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component. Example: `<a href="my-dashboard?param={{{encodeURIComponent rawValue}}}">{{value}}</a>`
 
 
 ## Row Functions

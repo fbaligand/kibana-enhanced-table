@@ -1,6 +1,6 @@
 {
   "name": "enhanced-table",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "description": "This visualization plugin is like a Data Table, but with enhanced features like computed columns, filter bar and pivot table",
   "license": "Apache-2.0",
   "homepage": "https://github.com/fbaligand/kibana-enhanced-table",
@@ -20,7 +20,10 @@
     "postbuild": "old=(build/*.zip) && new=\"$(echo $old | cut -f 1 -d '-')-${npm_package_version}_osd-$(echo $old | cut -f 2 -d '-')\" && echo renaming build artifact to $new && mv $old $new"
   },
   "dependencies": {
-    "expr-eval": "2.0.2"
+    "angular": "^1.8.0",
+    "angular-recursion": "^1.0.5",
+    "angular-sanitize": "^1.8.2",
+   "expr-eval": "2.0.2"
   },
   "devDependencies": {
   }

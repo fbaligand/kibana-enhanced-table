@@ -31,7 +31,7 @@ function createColumn(fieldColumn, index, aggConfigs) {
 const createCell = function (hit, column, parent) {
   let value = get(hit._source, column.aggConfig.fieldName(), null);
   if (value === null || column.aggConfig.getField().type !== 'string') {
-    if ((column.aggConfig.getField().readFromDocValues || column.aggConfig.getField().scripted) && hit.fields !== undefined) {
+    if ((column.aggConfig.getField().aggregatable || column.aggConfig.getField().scripted) && hit.fields !== undefined) {
       value = get(hit.fields, column.aggConfig.fieldName(), null);
       if (value !== null && value.length === 1) {
         value = value[0];

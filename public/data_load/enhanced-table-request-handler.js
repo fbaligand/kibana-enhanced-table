@@ -31,7 +31,7 @@ export async function enhancedTableRequestHandler ({
     if (!visParams.fieldColumns.some(fieldColumn => fieldColumn.field.name === '_source')) {
       searchSource.setField('_source', visParams.fieldColumns.map(fieldColumn => fieldColumn.field.name));
     }
-    searchSource.setField('docvalue_fields', visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.readFromDocValues).map(fieldColumn => fieldColumn.field.name));
+    searchSource.setField('docvalue_fields', visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.aggregatable).map(fieldColumn => fieldColumn.field.name));
     const scriptFields = {};
     visParams.fieldColumns.filter(fieldColumn => fieldColumn.field.scripted).forEach(fieldColumn => {
       scriptFields[fieldColumn.field.name] = {
@@ -51,7 +51,7 @@ export async function enhancedTableRequestHandler ({
       }
     }]);
     if ((visParams.hitsSize !== undefined && visParams.hitsSize > MAX_HITS_SIZE) || visParams.csvFullExport) {
-      searchSource.getField('sort').push({'_id': {'order': 'asc','unmapped_type': 'keyword'}});
+      searchSource.getField('sort').push({'_doc': {}});
     }
   }
 

@@ -5,8 +5,7 @@ import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService, setOpenSearchDashboardsLegacy, setNotifications, setQueryService, setSearchService } from './services';
-import { OpenSearchDashboardsLegacyStart } from '../../../src/plugins/opensearch_dashboards_legacy/public';
+import { setFormatService, setNotifications, setQueryService, setSearchService } from './services';
 
 
 /** @internal */
@@ -17,7 +16,6 @@ export interface TablePluginSetupDependencies {
 /** @internal */
 export interface TablePluginStartDependencies {
   data: DataPublicPluginStart;
-  opensearchDashboardsLegacy: OpenSearchDashboardsLegacyStart;
 }
 
 /** @internal */
@@ -42,9 +40,8 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
       );
   }
 
-  public start(core: CoreStart, { data, opensearchDashboardsLegacy }: TablePluginStartDependencies) {
+  public start(core: CoreStart, { data }: TablePluginStartDependencies) {
     setFormatService(data.fieldFormats);
-    setOpenSearchDashboardsLegacy(opensearchDashboardsLegacy);
     setNotifications(core.notifications);
     setQueryService(data.query);
     setSearchService(data.search);

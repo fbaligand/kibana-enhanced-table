@@ -5,16 +5,16 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-import { i18nDirective, i18nFilter, I18nProvider } from '@osd/i18n/angular';
+import { i18nDirective, i18nFilter, I18nProvider } from './angular/i18n';
 import { CoreStart, IUiSettingsClient, PluginInitializerContext } from '../../../src/core/public';
-import {
-  initAngularBootstrap,
-  PaginateDirectiveProvider,
-  PaginateControlsDirectiveProvider,
-  PrivateProvider,
-  watchMultiDecorator,
-  OsdAccessibleClickProvider,
-} from '../../../src/plugins/opensearch_dashboards_legacy/public';
+
+import { initAngularBootstrap } from './angular/angular_bootstrap';
+
+import { PaginateDirectiveProvider, PaginateControlsDirectiveProvider } from './paginate/paginate';
+
+import { PrivateProvider, OsdAccessibleClickProvider } from './angular/utils';
+
+import { watchMultiDecorator } from './angular/watch_multi';
 
 initAngularBootstrap();
 

@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
-import { computeColumnTotal } from './column_total_computer';
+import { computeColumnTotal } from './utils/column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 import { getNotifications, getFormatService } from './services';
-import { computeTimeRange } from './time_range_computer';
+import { computeTimeRange } from './utils/time_utils';
+import { formulaFunctions } from './utils/formula_functions';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
@@ -30,10 +31,16 @@ function EnhancedTableVisController ($scope, config) {
 
   const createTemplateContext = function (table, column, row, totalHits, timeRange, computedColsPerSplitCol, splitColIndex) {
 
-    // inject column value references
     const templateContext = { total: totalHits, totalHits, timeRange };
+
+    // inject column value references
     _.forEach(column.template.paramsCols, function (templateParamCol) {
       templateContext[`col${templateParamCol}`] = row[templateParamCol].value;
+    });
+
+    // inject formatted column references
+    _.forEach(column.template.paramsFormattedCols, function (templateParamCol) {
+      templateContext[`formattedCol${templateParamCol}`] = row[templateParamCol].toString();
     });
 
     // inject column total references
@@ -110,6 +117,9 @@ function EnhancedTableVisController ($scope, config) {
     // convert col['colTitle'] syntax to col0 syntax
     realFormula = realFormula.replace(/col\['([^\]]+)'\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
 
+    // convert col["colTitle"] syntax to col0 syntax
+    realFormula = realFormula.replace(/col\["([^\]]+)"\]/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)/g;
     realFormula = realFormula.replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex));
@@ -127,21 +137,48 @@ function EnhancedTableVisController ($scope, config) {
       formulaParamsCols.push(colIndex);
     }
 
+    // convert formattedCol[0] syntax to formattedCol0 syntax
+    realFormula = realFormula.replace(/formattedCol\[(\d+)\]/g, 'formattedCol$1');
+
+    // convert formattedCol['colTitle'] syntax to formattedCol0 syntax
+    realFormula = realFormula.replace(/formattedCol\['([^\]]+)'\]/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
+    // convert formattedCol["colTitle"] syntax to formattedCol0 syntax
+    realFormula = realFormula.replace(/formattedCol\["([^\]]+)"\]/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
+    // set the right column index, depending splitColIndex
+    const formattedColRefRegex = /formattedCol(\d+)/g;
+    realFormula = realFormula.replace(formattedColRefRegex, (match, colIndex) => 'formattedCol' + getRealColIndex(parseInt(colIndex), splitColIndex));
+
+    // extract formula param formattedCols
+    const formulaParamsFormattedCols = [];
+    while ((regexMatch = formattedColRefRegex.exec(realFormula)) !== null) {
+      let colIndex = parseInt(regexMatch[1]);
+      if (colIndex >= currentCol) {
+        colIndex = getOriginalColIndex(colIndex, splitColIndex);
+        throw new EnhancedTableError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
+      }
+      formulaParamsFormattedCols.push(colIndex);
+    }
+
     // convert total[0] syntax to total0 syntax
     realFormula = realFormula.replace(/total\[(\d+)\]/g, 'total$1');
 
     // convert total['colTitle'] syntax to total0 syntax
     realFormula = realFormula.replace(/total\['([^\]]+)'\]/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
 
+    // convert total["colTitle"] syntax to total0 syntax
+    realFormula = realFormula.replace(/total\["([^\]]+)"\]/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, inputFormula, formulaType, splitColIndex));
+
     // set the right total index, depending splitColIndex
     const totalRefRegex = /total(\d+)/g;
     realFormula = realFormula.replace(totalRefRegex, (match, colIndex) => 'total' + getRealColIndex(parseInt(colIndex), splitColIndex));
 
     // add 'row' param for functions that require whole row
-    realFormula = realFormula.replace(/(col)\s*\(/g, '$1(row, ');
+    realFormula = realFormula.replace(/(col|formattedCol)\s*\(/g, '$1(row, ');
     realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
 
-    const functionsWithTableRow = ['total', 'rowValue', 'colShare', 'colChange' ];
+    const functionsWithTableRow = ['total', 'cell', 'formattedCell', 'rowValue', 'colShare', 'colChange' ];
     for ( const functionName of functionsWithTableRow ) {
       realFormula = realFormula.replace( new RegExp(`(${functionName})\\s*\\(`, 'g'), '$1(table, row, ');
     }
@@ -167,59 +204,10 @@ function EnhancedTableVisController ($scope, config) {
 
     // create formula parser with custom functions
     const parser = new Parser();
-    parser.functions.now = function () {
-      return Date.now();
-    };
-    parser.functions.indexOf = function (strOrArray, searchValue, fromIndex) {
-      return strOrArray.indexOf(searchValue, fromIndex);
-    };
-    parser.functions.lastIndexOf = function (strOrArray, searchValue, fromIndex) {
-      if (fromIndex) {
-        return strOrArray.lastIndexOf(searchValue, fromIndex);
-      }
-      else {
-        return strOrArray.lastIndexOf(searchValue);
-      }
-    };
-    parser.functions.replace = function (str, substr, newSubstr) {
-      return str.replace(substr, newSubstr);
-    };
-    parser.functions.replaceRegexp = function (str, regexp, newSubstr) {
-      return str.replace(new RegExp(regexp, 'g'), newSubstr);
-    };
-    parser.functions.search = function (str, regexp) {
-      return str.search(regexp);
-    };
-    parser.functions.substring = function (str, indexStart, indexEnd) {
-      return str.substring(indexStart, indexEnd);
-    };
-    parser.functions.toLowerCase = function (str) {
-      return str.toLowerCase();
-    };
-    parser.functions.toUpperCase = function (str) {
-      return str.toUpperCase();
-    };
-    parser.functions.trim = function (str) {
-      return str.trim();
-    };
-    parser.functions.encodeURIComponent = function (str) {
-      return encodeURIComponent(str);
-    };
-    parser.functions.sort = function (array, compareFunction) {
-      if (!Array.isArray(array)) {
-        array = [array];
-      }
-      return array.sort(compareFunction);
-    };
-    parser.functions.uniq = function (array) {
-      if (!Array.isArray(array)) {
-        array = [array];
-      }
-      return _.uniq(array);
-    };
-    parser.functions.isArray = function (value) {
-      return Array.isArray(value);
-    };
+    _.forEach(formulaFunctions, function (functionDefinition, functionName) {
+      parser.functions[functionName] = functionDefinition;
+    });
+
     parser.functions.col = function (row, colRef, defaultValue) {
       try {
         let colIndex = colRef;
@@ -234,6 +222,67 @@ function EnhancedTableVisController ($scope, config) {
         else {
           return defaultValue;
         }
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
+    parser.functions.formattedCol = function (row, colRef, defaultValue) {
+      try {
+        let colIndex = colRef;
+        if (typeof colRef === 'string') {
+          colIndex = findColIndexByTitle(columns, colRef, inputFormula, formulaType, splitColIndex);
+        }
+        if (colIndex < currentCol) {
+          colIndex = getRealColIndex(colIndex, splitColIndex);
+          const colValue = row[colIndex].value;
+          return colValue !== undefined ? row[colIndex].toString() : defaultValue;
+        }
+        else {
+          return defaultValue;
+        }
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
+    parser.functions.cell = function (table, currentRow, rowRef, colRef, defaultValue) {
+      try {
+        let rowIndex;
+        if (rowRef === 'first') {
+          rowIndex = 0;
+        }
+        else if (rowRef === 'last') {
+          rowIndex = table.rows.length - 1;
+        }
+        else {
+          const currentRowIndex = _.indexOf(table.rows, currentRow);
+          rowIndex = currentRowIndex + rowRef;
+        }
+
+        const targetRow = table.rows[rowIndex];
+        return parser.functions.col(targetRow, colRef, defaultValue);
+      }
+      catch (e) {
+        return defaultValue;
+      }
+    };
+    parser.functions.formattedCell = function (table, currentRow, rowRef, colRef, defaultValue) {
+      try {
+        let rowIndex;
+        if (rowRef === 'first') {
+          rowIndex = 0;
+        }
+        else if (rowRef === 'last') {
+          rowIndex = table.rows.length - 1;
+        }
+        else {
+          const currentRowIndex = _.indexOf(table.rows, currentRow);
+          rowIndex = currentRowIndex + rowRef;
+        }
+
+        const targetRow = table.rows[rowIndex];
+        return parser.functions.formattedCol(targetRow, colRef, defaultValue);
       }
       catch (e) {
         return defaultValue;
@@ -282,9 +331,6 @@ function EnhancedTableVisController ($scope, config) {
       }
       return count;
     };
-    parser.functions.parseDate = function (dateString) {
-      return Date.parse(dateString);
-    };
 
     // add from parser directory
     (parser_rows  ).addParser(parser,EnhancedTableError);
@@ -298,6 +344,7 @@ function EnhancedTableVisController ($scope, config) {
       return {
         expression: parser.parse(realFormula),
         paramsCols: formulaParamsCols,
+        paramsFormattedCols: formulaParamsFormattedCols,
         paramsTotals: formulaParamsTotals,
         totalFunc: totalFunc,
         formulaType: formulaType,
@@ -316,6 +363,11 @@ function EnhancedTableVisController ($scope, config) {
       // inject column value references
       _.forEach(formula.paramsCols, function (formulaParamCol) {
         formulaParams[`col${formulaParamCol}`] = row[formulaParamCol].value;
+      });
+
+      // inject formatted column value references
+      _.forEach(formula.paramsFormattedCols, function (formulaParamCol) {
+        formulaParams[`formattedCol${formulaParamCol}`] = row[formulaParamCol].toString();
       });
 
       // inject column total references
@@ -353,6 +405,9 @@ function EnhancedTableVisController ($scope, config) {
     // convert col['colTitle'] syntax to col0 syntax
     realTemplate = realTemplate.replace(/col\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
 
+    // convert col["colTitle"] syntax to col0 syntax
+    realTemplate = realTemplate.replace(/col\["([^\]]+)"\]\s*\}\}/g, (match, colTitle) => 'col' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
     // set the right column index, depending splitColIndex
     const colRefRegex = /col(\d+)\s*\}\}/g;
     realTemplate = realTemplate.replace(colRefRegex, (match, colIndex) => 'col' + getRealColIndex(parseInt(colIndex), splitColIndex) + '}}');
@@ -365,11 +420,34 @@ function EnhancedTableVisController ($scope, config) {
       templateParamsCols.push(colIndex);
     }
 
+    // convert formattedCol[0] syntax to formattedCol0 syntax
+    realTemplate = realTemplate.replace(/formattedCol\[(\d+)\]\s*\}\}/g, 'formattedCol$1}}');
+
+    // convert formattedCol['colTitle'] syntax to formattedCol0 syntax
+    realTemplate = realTemplate.replace(/formattedCol\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
+    // convert formattedCol["colTitle"] syntax to formattedCol0 syntax
+    realTemplate = realTemplate.replace(/formattedCol\["([^\]]+)"\]\s*\}\}/g, (match, colTitle) => 'formattedCol' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
+    // set the right column index, depending splitColIndex
+    const formattedColRefRegex = /formattedCol(\d+)\s*\}\}/g;
+    realTemplate = realTemplate.replace(formattedColRefRegex, (match, colIndex) => 'formattedCol' + getRealColIndex(parseInt(colIndex), splitColIndex) + '}}');
+
+    // add template param formattedCols
+    const templateParamsFormattedCols = [];
+    while ((regexMatch = formattedColRefRegex.exec(realTemplate)) !== null) {
+      const colIndex = parseInt(regexMatch[1]);
+      templateParamsFormattedCols.push(colIndex);
+    }
+
     // convert total[0] syntax to total0 syntax
     realTemplate = realTemplate.replace(/total\[(\d+)\]\s*\}\}/g, 'total$1}}');
 
     // convert total['colTitle'] syntax to total0 syntax
     realTemplate = realTemplate.replace(/total\['([^\]]+)'\]\s*\}\}/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
+
+    // convert total["colTitle"] syntax to total0 syntax
+    realTemplate = realTemplate.replace(/total\["([^\]]+)"\]\s*\}\}/g, (match, colTitle) => 'total' + findColIndexByTitle(columns, colTitle, computedColumn.template, 'template', splitColIndex) + '}}');
 
     // replace 'total' variable by 'totalHits'
     realTemplate = realTemplate.replace(/\{\{\s*total\s*\}\}/g, '{{totalHits}}');
@@ -389,6 +467,7 @@ function EnhancedTableVisController ($scope, config) {
     return {
       compiledTemplate: handlebars.compile(realTemplate),
       paramsCols: templateParamsCols,
+      paramsFormattedCols: templateParamsFormattedCols,
       paramsTotals: templateParamsTotals,
       totalFunc: totalFunc
     };
@@ -398,6 +477,7 @@ function EnhancedTableVisController ($scope, config) {
     let result = this.column.fieldFormatter.convert(this.value);
     if (this.templateContext !== undefined) {
       this.templateContext.value = result;
+      this.templateContext.rawValue = this.value;
       result = this.column.template.compiledTemplate(this.templateContext);
     }
     if (contentType !== 'html') {
@@ -422,13 +502,26 @@ function EnhancedTableVisController ($scope, config) {
     const fieldFormatParams = fieldFormatParamsByFormat[computedColumn.format];
     const aggSchema = (computedColumn.format === 'number') ? 'metric' : 'bucket';
     const aggType = (computedColumn.format === 'number') ? 'count' : 'filter';
+    const standardFieldFormatter = new FieldFormat(fieldFormatParams, getConfig);
+    let fieldFormatter = standardFieldFormatter;
+    if (computedColumn.format === 'number') {
+      fieldFormatter = {
+        convert: (value) => {
+          let result = standardFieldFormatter.convert(value);
+          if (result.indexOf('e-') !== -1) {
+            result = standardFieldFormatter.convert(0);
+          }
+          return result;
+        }
+      };
+    }
 
     // create new column object
     const newColumn = {
       id: `computed-col-${index}`,
       aggConfig: aggs.createAggConfig({ schema: aggSchema, type: aggType }, { addToAggConfigs: false }),
       title: computedColumn.label,
-      fieldFormatter: new FieldFormat(fieldFormatParams, getConfig),
+      fieldFormatter: fieldFormatter,
       applyTemplateOnTotal: computedColumn.applyTemplate && computedColumn.applyTemplateOnTotal,
       dataAlignmentClass: `text-${computedColumn.alignment}`,
       formula: createFormula(computedColumn.formula, 'computed column', splitColIndex, columns, totalFunc, computedColsPerSplitCol),
@@ -594,8 +687,10 @@ function EnhancedTableVisController ($scope, config) {
     }
   };
 
+  const INTEGER_REGEX = /^\d+$/;
+
   const isInt = (item) => {
-    return /^ *[0-9]+ *$/.test(item);
+    return INTEGER_REGEX.test(item);
   };
 
   const hideColumns = function (tables, hiddenColumns, splitColIndex) {
@@ -610,18 +705,27 @@ function EnhancedTableVisController ($scope, config) {
         table.refRowWithHiddenCols = _.clone(table.rows[0]);
       }
 
+      let hiddenColumnIndices = [];
+
       // retrieve real col indices
-      let hiddenColumnIndices = _.map(hiddenColumns, function (item) {
+      const hiddenColumnsRegex = / *([^"',][^,]*|"[^"]+"|'[^']+') *(,|$)/g;
+      let regexMatch;
+      while ((regexMatch = hiddenColumnsRegex.exec(hiddenColumns)) !== null) {
+        let colRef = regexMatch[1].trim();
         try {
-          if (!isInt(item)) {
-            item = findColIndexByTitle(table.columns, item, item, 'hidden column', splitColIndex);
+          if (!isInt(colRef)) {
+            if (colRef.startsWith('"') || colRef.startsWith('\'')) {
+              colRef = colRef.substring(1, colRef.length - 1);
+            }
+            colRef = findColIndexByTitle(table.columns, colRef, colRef, 'hidden column', splitColIndex);
           }
-          return getRealColIndex(parseInt(item), splitColIndex);
+          colRef = getRealColIndex(parseInt(colRef), splitColIndex);
         }
         catch(e) {
-          return table.columns.length;
+          console.warn(e);
         }
-      });
+        hiddenColumnIndices.push(colRef);
+      }
 
       // sort from higher to lower index and keep uniq indices
       hiddenColumnIndices = _.uniq(hiddenColumnIndices.sort( (a,b) => b - a));
@@ -803,7 +907,7 @@ function EnhancedTableVisController ($scope, config) {
           if (computedColsPerSplitCol && newCol.totalFormula !== undefined) {
             newCol.total = computeFormulaValue(newCol.totalFormula, table, row, totalHits, timeRange, undefined, computedColsPerSplitCol, splitColIndex);
           }
-          if (computedColsPerSplitCol && newCol.template !== undefined) {
+          if (computedColsPerSplitCol && newCol.formula !== undefined) {
             newCol.totalFormatter = createTotalFormatter(_.clone(table), newCol, row, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
           }
           newCols.splice(spliceIndex, 0, newCol);
@@ -814,6 +918,7 @@ function EnhancedTableVisController ($scope, config) {
             newColDefaultMetric = new AggConfigResult(row[i].aggConfig, null, DEFAULT_METRIC_VALUE, DEFAULT_METRIC_VALUE, row[i].filters);
           }
           else {
+            refRowForComputedColumn[splitColIndex] = row[splitColIndex];
             newColDefaultMetric = createComputedCell(table, newCol, refRowForComputedColumn, totalHits, timeRange, computedColsPerSplitCol, splitColIndex);
           }
           newColDefaultMetrics.splice(spliceIndex - splitColIndex, 0, newColDefaultMetric);
@@ -1071,7 +1176,7 @@ function EnhancedTableVisController ($scope, config) {
 
         // remove hidden columns
         if (params.hiddenColumns) {
-          hideColumns(tableGroups.tables, params.hiddenColumns.split(','), splitColIndex);
+          hideColumns(tableGroups.tables, params.hiddenColumns, splitColIndex);
         }
 
         // process 'Split cols' bucket: transform rows to cols

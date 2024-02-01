@@ -158,7 +158,10 @@ function getDayOfWeekNumber(dayOfWeek?: string): number {
   }
 }
 
-function computeDateStructure(date: Date): any {
+/**
+ * Compute and returns a structure containing all informations on a Date
+ */
+export function computeDateStructure(date: Date): any {
   return {
     fullYear: date.getFullYear(),
     month: date.getMonth(),
@@ -180,6 +183,33 @@ function computeDateStructure(date: Date): any {
     utcString: date.toUTCString()
   };
 }
+
+/**
+ * Given a duration in milliseconds, builds and returns a structure that breaks down the duration
+ * in years, months, weeks, days, hours, minutes, seconds and milliseconds
+ */
+export function computeDurationStructureBrokenDownByTimeUnit(durationInMillis: number): any {
+  const milliseconds = durationInMillis % 1000;
+  const durationInSeconds = Math.floor(durationInMillis / 1000);
+  const seconds = durationInSeconds % 60;
+  const durationInMinutes = Math.floor(durationInSeconds / 60);
+  const minutes = durationInMinutes % 60;
+  const durationInHours = Math.floor(durationInMinutes / 60);
+  const hours = durationInHours % 24;
+  const durationInDays = Math.floor(durationInHours / 24);
+
+  let remainingDays = durationInDays;
+  const years = Math.floor(remainingDays / 365);
+  remainingDays = remainingDays % 365;
+  const months = Math.floor(remainingDays / 30);
+  remainingDays = remainingDays % 30;
+  const weeks = Math.floor(remainingDays / 7);
+  remainingDays = remainingDays % 7;
+  const days = remainingDays;
+
+  return { milliseconds, seconds, minutes, hours, days, weeks, months, years };
+}
+
 
 /**
  * compute time range between 'from' and 'to' (in time picker),

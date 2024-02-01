@@ -5,7 +5,8 @@ import { CSV_SEPARATOR_SETTING, CSV_QUOTE_VALUES_SETTING } from '../../../../src
 
 import aggTableTemplate from './agg_table.html';
 import { getFormatService } from '../services';
-import { fieldFormatter } from '../field_formatter';import { computeColumnTotal } from '../column_total_computer';
+import { fieldFormatter } from '../utils/field_formatter';
+import { computeColumnTotal } from '../utils/column_total_computer';
 import { handleCourierRequest } from '../data_load/kibana_cloned_code/courier';
 import { createTable } from '../data_load/document-table-response-handler';
 import { streamSaver } from './stream_saver';
