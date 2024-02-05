@@ -10,6 +10,10 @@ import { formulaFunctions } from './utils/formula_functions';
 import { Parser } from 'expr-eval';
 import handlebars from 'handlebars/dist/handlebars';
 
+import * as parser_rows     from "./parser/rows";
+import * as parser_percents from "./parser/percents";
+import * as parser_strings  from "./parser/strings";
+
 // EnhancedTableVis AngularJS controller
 function EnhancedTableVisController ($scope, config) {
 
@@ -174,8 +178,10 @@ function EnhancedTableVisController ($scope, config) {
     realFormula = realFormula.replace(/(col|formattedCol)\s*\(/g, '$1(row, ');
     realFormula = realFormula.replace(/(sumSplitCols)\s*\(/g, '$1(row');
 
-    // add 'table' & 'row' param for functions that require whole table
-    realFormula = realFormula.replace(/(total|cell|formattedCell)\s*\(/g, '$1(table, row, ');
+    const functionsWithTableRow = ['total', 'cell', 'formattedCell', 'rowValue', 'colShare', 'colChange' ];
+    for ( const functionName of functionsWithTableRow ) {
+      realFormula = realFormula.replace( new RegExp(`(${functionName})\\s*\\(`, 'g'), '$1(table, row, ');
+    }
 
     // replace 'total' variable by 'totalHits'
     realFormula = realFormula.replace(/([^\w]|^)total([^(\w]|$)/g, '$1totalHits$2');
@@ -325,6 +331,13 @@ function EnhancedTableVisController ($scope, config) {
       }
       return count;
     };
+
+    // add from parser directory
+    (parser_rows  ).addParser(parser,EnhancedTableError);
+    (parser_percents).addParser(parser);
+    (parser_strings ).addParser(parser);
+
+
 
     // parse formula and return final formula object
     try {

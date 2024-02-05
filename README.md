@@ -20,6 +20,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to compute column total using formula
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
+  - Support for duration pretty format using Kibana duration format (with same options than Kibana Duration format)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](https://handlebarsjs.com/guide/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
@@ -267,6 +268,32 @@ Helper     | Description
 [encodeURIComponent(str)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)  | Encodes the provided string as a Uniform Resource Identifier (URI) component. Example: `<a href="my-dashboard?param={{{encodeURIComponent rawValue}}}">{{value}}</a>`
 
 
+## Row Functions
+
+Function     | Description
+:----------- | :----------
+rowValue(colName: string, actionName: string, fallback, qFilters: any)  | filter all rows that match `qFilters`, group all values of `colName`, then calc the to single value based `actionName`.  if there are no rows , return `fallback`<br><br> `colName` can be a string or colX where X is the index of the column. <br><br> `actionNmae` can be `first`, `last`, `max`, `min`, `sum`, `avg` <br><br> `qFilters` : a json object in { "key": value } format <br> --- `key` format is the same  `colName`. <br> --- if the value is true, then the row `colName` must match `colName` of the current row <br> ---  if value is `base.colX` or `base[name]` the row must match the column in the current row <br> ---  if value is `row.colX` or `row[name]` the row must match the other column in the row <br> --- otherwise the row must match value
+colShare( colName: string, fallback:unknown = 0, qFilters = {} ) | find the percent of the value of `colName` in current row from the sum of  all values of `colName` in all the rows that match the `qFllter`. If no rows matched return `fallback`
+colChange( colName: string, fallback:unknown = 0, qFilters = {} ) | find the percent of the value of `colName` in current row from the value of `colName` in first row that match the `qFllter`. If no rows matched return `fallback`
+
+## String Functions
+Function     | Description
+:----------- | :----------
+findRe( ss: string , pattern : string, group: number or string, fallback: string ) | search the regular expression `pattern` in `ss`. If found return `group` in the match, otherwise return `fallback`. `group` can be number ( for unnamed groups) or string ( for named groups)
+function findReGroups( ss: string , reStr : string ) : string[] | search the regular expression `pattern` in `ss`. return array of unnamed groups
+function findReNamed( ss: string , reStr : string ) : { [key: string]: string; } |  search the regular expression `pattern` in `ss`. return object of named groups
+strJoin(s1:string, s2: string) | return joining of `s1` and `s2`
+strColor(ss: string, hue? : number, saturation?: number, lightness?:number,  hRange?: number, sRange?: number, lRange?: number) : string | return a css color based on a `ss` 
+strHash(ss: string, algorithm : string = 'sha1') : string | return an hash of `ss` using the `algorithm`
+
+
+## Percent Functions
+Function     | Description
+:----------- | :----------
+percentFrom (num: number, from: number) : number | return how much percent is `num` from `from`
+percentOf(num: number, percent: number) : number  | return `percent%` of `num` 
+percentChange(valNew: number, valOld: number) : number | return the percent change `valNew` from `valOld`
+
 ## Change Log
 
 Versions and Release Notes are listed in [Releases](https://github.com/fbaligand/kibana-enhanced-table/releases) page
@@ -280,36 +307,70 @@ Thanks for their great work !
 
 ## Development
 
-To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
-- execute these commands :
-``` bash
-git clone https://github.com/opensearch-project/OpenSearch-Dashboards
+You can run the enhanced-table plugin in development mode that supports hot code reload. 
+
+Follow those steps:
+
+### Clone OpenSearch-Dashboards & kibina-enhanced-table
+```bash
+git clone https://github.com/opensearch-project/OpenSearch-Dashboards -b 1.0.0
 cd OpenSearch-Dashboards
-git checkout X.Y.Z # replace 'X.Y.Z' by desired OpenSearch-Dashboards version
-cd plugins
-git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
-git checkout osd
+git clone https://github.com/fbaligand/kibana-enhanced-table.git -b osd plugins/enhancedTable
 ```
-- install the version of Node.js noted in `OpenSearch-Dashboards/.node-version` file
-- ensure that node binary directory is in PATH environment variable
-- install the latest version of yarn: `npm install -g yarn`
-- execute these commands:
-``` bash
-cd OpenSearch-Dashboards
-yarn osd bootstrap
+### Update OpenSearch-Dashboards config 
+
+Update `OpenSearch-Dashboards/config/opensearch_dashboards.yml` with opensearch hosts and user credentials.
+
+```yaml
+opensearch.hosts: [""]
+opensearch.username: ""
+opensearch.password: "" 
+```
+
+- - -
+
+If you do not have opensearch server running yet, 
+you can use the `opensearchproject/opensearch` docker image
+
+```bash
+docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:latest
+```
+and update config with the following settings:
+
+```yaml 
+opensearch.hosts: ["https://localhost:9200"]
+opensearch.username: "admin" # Default username on the docker image
+opensearch.password: "admin" # Default password on the docker image
+opensearch.ssl.verificationMode: none
+```
+### Install Node.js and yarn
+install the version of Node.js listed in the .node-version file.
+```bash
+volta install node@$(<.node-version)
+npm install -g yarn
+```
+
+### Build with Hot Reload 
+```bash
 cd plugins/enhancedTable
+yarn osd bootstrap
 yarn install
 yarn start
 ```
-- in your browser, call `http://localhost:5601` and enjoy!
+Now, you can open your browser,
+ 
+ - In your browser, open the generated URL displayed in the console. It is something like: `http://localhost:5601/abc`
+ - Now, each time you change the code, the plugin will be reloaded with the changes.
+ - Happy coding :-)
 
-
-To build a distributable archive, execute this command:
-``` bash
-yarn compile-and-build --opensearch-dashboards-version X.Y.Z # replace 'X.Y.Z' by target OSD version
+### Build a distributable archive
+```bash
+yarn build
 ```
-The zip archive is generated into `build` directory.
 
+The result artifact located at `build/enhancedTable-X.Y.Z_osd-A.B.C.zip` where:
+- X.Y.Z is the `${npm_package_version}`
+- A.B.C is the OpenSearch-Dashboards version
 
 ## Donation
 
