@@ -28,7 +28,7 @@ paginate {
         a {
           text-decoration: none;
           background-color: $euiColorLightestShade;
-          margin-left: $euiSizeXS / 2;
+          margin-left: calc(#{$euiSizeXS} / 2);
           padding: $euiSizeS $euiSizeM;
         }
 
