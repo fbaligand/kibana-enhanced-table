@@ -1092,7 +1092,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
         'hide-export-links': params.hideExportLinks,
         'striped-rows': params.stripedRows
       };
-      $scope.isDarkTheme = getConfig('theme:darkMode');
+      $scope.isDarkTheme = getConfig('theme:darkMode') === true || getConfig('theme:darkMode') === 'enabled';
 
       // update $scope
       $scope.hasSomeRows = hasSomeRows;
