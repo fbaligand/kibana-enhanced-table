@@ -107,7 +107,7 @@ export function getEnhancedTableVisualizationController(
             this.$scope.filter = handlers.event;
             updateScope();
             this.el.find('.visualization').append(this.$compile(enhancedTableVisTemplate)(this.$scope));
-            this.el.find('.visChart__spinner').remove();
+            this.el.find('.visChart__spinner, .euiFlexGroup').remove();
             this.$scope.$apply();
           } else {
             updateScope();
