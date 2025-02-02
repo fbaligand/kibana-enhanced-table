@@ -20,6 +20,7 @@ This project is a Kibana plugin that provides two visualizations:
   - Ability to compute column total using formula
   - Support for numeric pretty format using [Numeral.js](http://numeraljs.com/#format) (ex: `0,0.00`)
   - Support for date pretty format using [Moment.js](http://momentjs.com/docs/#/displaying/format/) (ex: `YYYY-MM-DD`)
+  - Support for duration pretty format using Kibana duration format (with same options than Kibana Duration format)
   - Support for column alignment (ex: `left`, `right`)
   - Support for template rendering using [Handlebars](https://handlebarsjs.com/guide/expressions.html) (ex: `<strong>{{value}}</strong>`)
   - Template can reference other columns (ex: `<span style="color: {{col0}}">{{value}}</span>`)
@@ -57,7 +58,7 @@ This project is a Kibana plugin that provides two visualizations:
 - Add a row number column
 - Ability to add the visualization to a Canvas workpad (Kibana 7.9+)
 - Ability to use dashboard drilldowns (Kibana 7.9+)
-- Kibana supported versions: all versions from 5.5 to 8.12
+- Kibana supported versions: all versions from 5.5 to 8.16
 - OpenSearch Dashboards supported versions : all versions from 1.x to 2.x
 
 ## Demo
@@ -67,11 +68,11 @@ This project is a Kibana plugin that provides two visualizations:
 
 ## Getting Started
 
-### Install
+### Install on Kibana
 
 Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
-- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your Kibana
+- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your Kibana version
 - launch a shell terminal and go to $KIBANA_HOME folder
 - use Kibana CLI to install :
   - directly from Internet URL :
@@ -80,9 +81,22 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 `./bin/kibana-plugin install file:///path/to/enhanced-table-X.Y.Z_A.B.C.zip`
 - restart Kibana
 
+### Install on OpenSearch Dashboards (OSD)
+
+Every release package includes a Plugin version (X.Y.Z) and a OSD version (osd-A.B.C).
+
+- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your OSD version
+- launch a shell terminal and go to $OSD_HOME folder
+- use OSD CLI to install :
+  - directly from Internet URL :
+`./bin/opensearch-dashboards-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/enhanced-table-X.Y.Z_osd-A.B.C.zip`
+  - locally after manual download :
+`./bin/opensearch-dashboards-plugin install file:///path/to/enhanced-table-X.Y.Z_osd-A.B.C.zip`
+- restart OpenSearch Dashboards
+
 ### First Use
 
-- Open Kibana URL in your browser (by default: [http://localhost:5601](http://localhost:5601))
+- Open Kibana/OSD URL in your browser (by default: [http://localhost:5601](http://localhost:5601))
 - Go to "Visualize" app
 - Click on "Create visualization" button
 - If you use Kibana 7.11 or superior, click on "Aggregation based"
@@ -279,6 +293,39 @@ Thanks for their great work !
 
 
 ## Development
+
+### With Kibana
+
+To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
+- execute these commands :
+``` bash
+git clone --depth 1 -b X.Y https://github.com/elastic/kibana.git # replace 'X.Y' by desired Kibana version
+cd kibana/plugins
+git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
+cd ..
+```
+- install the version of Node.js noted in `kibana/.node-version` file (for instance using `nvm use` command)
+- ensure that node binary directory is in PATH environment variable
+- install the latest version of [yarn](https://yarnpkg.com): `npm install -g yarn`
+- execute these commands (starting from 'kibana' directory) :
+``` bash
+yarn kbn bootstrap
+cd plugins/enhancedTable
+export NODE_OPTIONS="--openssl-legacy-provider"
+yarn install
+yarn compile
+yarn start
+```
+- in your browser, call `http://localhost:5601` and enjoy!
+
+
+To build a distributable archive, execute this command :
+``` bash
+yarn compile-and-build --kibana-version X.Y.Z # replace 'X.Y.Z' by target Kibana version
+```
+The zip archive is generated into `build` directory.
+
+### With OpenSearch Dashboards
 
 To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
 - execute these commands :
