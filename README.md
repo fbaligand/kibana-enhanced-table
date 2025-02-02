@@ -68,11 +68,11 @@ This project is a Kibana plugin that provides two visualizations:
 
 ## Getting Started
 
-### Install
+### Install on Kibana
 
 Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.B.C).
 
-- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your Kibana
+- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your Kibana version
 - launch a shell terminal and go to $KIBANA_HOME folder
 - use Kibana CLI to install :
   - directly from Internet URL :
@@ -81,9 +81,22 @@ Every release package includes a Plugin version (X.Y.Z) and a Kibana version (A.
 `./bin/kibana-plugin install file:///path/to/enhanced-table-X.Y.Z_A.B.C.zip`
 - restart Kibana
 
+### Install on OpenSearch Dashboards (OSD)
+
+Every release package includes a Plugin version (X.Y.Z) and a OSD version (osd-A.B.C).
+
+- Go to [releases](https://github.com/fbaligand/kibana-enhanced-table/releases) and choose the right one for your OSD version
+- launch a shell terminal and go to $OSD_HOME folder
+- use OSD CLI to install :
+  - directly from Internet URL :
+`./bin/opensearch-dashboards-plugin install https://github.com/fbaligand/kibana-enhanced-table/releases/download/vX.Y.Z/enhanced-table-X.Y.Z_osd-A.B.C.zip`
+  - locally after manual download :
+`./bin/opensearch-dashboards-plugin install file:///path/to/enhanced-table-X.Y.Z_osd-A.B.C.zip`
+- restart OpenSearch Dashboards
+
 ### First Use
 
-- Open Kibana URL in your browser (by default: [http://localhost:5601](http://localhost:5601))
+- Open Kibana/OSD URL in your browser (by default: [http://localhost:5601](http://localhost:5601))
 - Go to "Visualize" app
 - Click on "Create visualization" button
 - If you use Kibana 7.11 or superior, click on "Aggregation based"
@@ -281,6 +294,8 @@ Thanks for their great work !
 
 ## Development
 
+### With Kibana
+
 To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
 - execute these commands :
 ``` bash
@@ -307,6 +322,38 @@ yarn start
 To build a distributable archive, execute this command :
 ``` bash
 yarn compile-and-build --kibana-version X.Y.Z # replace 'X.Y.Z' by target Kibana version
+```
+The zip archive is generated into `build` directory.
+
+### With OpenSearch Dashboards
+
+To run enhanced-table plugin in development mode (that enables hot code reload), follow these instructions:
+- execute these commands :
+``` bash
+git clone https://github.com/opensearch-project/OpenSearch-Dashboards
+cd OpenSearch-Dashboards
+git checkout X.Y.Z # replace 'X.Y.Z' by desired OpenSearch-Dashboards version
+cd plugins
+git clone https://github.com/fbaligand/kibana-enhanced-table.git enhancedTable
+git checkout osd
+```
+- install the version of Node.js noted in `OpenSearch-Dashboards/.node-version` file
+- ensure that node binary directory is in PATH environment variable
+- install the latest version of yarn: `npm install -g yarn`
+- execute these commands:
+``` bash
+cd OpenSearch-Dashboards
+yarn osd bootstrap
+cd plugins/enhancedTable
+yarn install
+yarn start
+```
+- in your browser, call `http://localhost:5601` and enjoy!
+
+
+To build a distributable archive, execute this command:
+``` bash
+yarn compile-and-build --opensearch-dashboards-version X.Y.Z # replace 'X.Y.Z' by target OSD version
 ```
 The zip archive is generated into `build` directory.
 
