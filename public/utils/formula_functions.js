@@ -20,6 +20,16 @@ export const formulaFunctions = {
     }
   },
 
+  match: function (str, regexp) {
+    const result = str.match(new RegExp(regexp));
+    if (result) {
+      return result[0];
+    }
+    else {
+      return result;
+    }
+  },
+
   replace: function (str, substr, newSubstr) {
     return str.replace(substr, newSubstr);
   },
@@ -59,6 +69,10 @@ export const formulaFunctions = {
     return array.sort(compareFunction);
   },
 
+  split: function (str, separator) {
+    return str.split(separator);
+  },
+
   uniq: function (array) {
     if (!Array.isArray(array)) {
       array = [array];
@@ -72,6 +86,10 @@ export const formulaFunctions = {
 
   parseDate: function (dateString) {
     return Date.parse(dateString);
+  },
+
+  parseInt: function (string, base) {
+    return parseInt(string, base);
   },
 
   dateObject: function (...params) {
