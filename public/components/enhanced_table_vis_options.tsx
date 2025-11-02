@@ -180,7 +180,7 @@ function EnhancedTableOptions({
                 defaultMessage="Rows computed filter"
               />
               &nbsp;(
-              <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
+              <a href="https://github.com/fbaligand/kibana-enhanced-table#computed-settings-documentation" target="_blank">documentation</a>
               )&nbsp;
               <EuiIconTip
                 content="Example: when 'col0 &gt; 10', only table rows having first column value greater than 10 are displayed"
@@ -202,7 +202,7 @@ function EnhancedTableOptions({
                 defaultMessage="Rows computed CSS"
               />
               &nbsp;(
-              <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
+              <a href="https://github.com/fbaligand/kibana-enhanced-table#computed-settings-documentation" target="_blank">documentation</a>
               )&nbsp;
               <EuiIconTip
                 content="This option lets to define dynamically table row CSS (like background-color CSS property), based on its column values"

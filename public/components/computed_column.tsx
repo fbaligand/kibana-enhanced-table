@@ -268,7 +268,7 @@ function ComputedColumnEditor({
                       defaultMessage="Formula"
                     />
                     &nbsp;(
-                      <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
+                      <a href="https://github.com/fbaligand/kibana-enhanced-table#computed-settings-documentation" target="_blank">documentation</a>
                     )
                   </>
                 }
@@ -396,7 +396,7 @@ function ComputedColumnEditor({
                         defaultMessage="Template"
                       />
                       &nbsp;(
-                        <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-column-template-documentation" target="_blank">documentation</a>
+                        <a href="https://github.com/fbaligand/kibana-enhanced-table#computed-column-template-documentation" target="_blank">documentation</a>
                       )
                     </>
                   }
@@ -414,7 +414,7 @@ function ComputedColumnEditor({
                       defaultMessage="Cell computed CSS"
                     />
                     &nbsp;(
-                    <a href="https://github.com/fbaligand/kibana-enhanced-table/blob/master/README.md#computed-settings-documentation" target="_blank">documentation</a>
+                    <a href="https://github.com/fbaligand/kibana-enhanced-table#computed-settings-documentation" target="_blank">documentation</a>
                     )&nbsp;
                     <EuiIconTip
                       content="This option lets to define dynamically table cell CSS (like background-color CSS property), based on this column value and previous column values"
