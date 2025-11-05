@@ -7,6 +7,11 @@ div.visEditor--enhanced-table, div.visEditor--document_table {
 .enhanced-table-vis {
 
   width: 100%;
+  height: 100%;
+
+  .visError {
+    height: 100%;
+  }
 
   .agg-table-group > tbody > tr > td {
     padding: 0px 5px;
