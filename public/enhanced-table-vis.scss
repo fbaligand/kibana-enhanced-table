@@ -1,5 +1,11 @@
 .enhanced-table-vis {
 
+  height: 100%;
+
+  .visError {
+    height: 100%;
+  }
+
   .agg-table-group > tbody > tr > td {
     padding: 0px 5px;
   }
