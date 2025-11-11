@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import { i18n } from '@kbn/i18n';
 import { serializeAggConfig } from './kibana_cloned_code/utils';
 import AggConfigResult from './agg_config_result';
 
@@ -22,6 +23,21 @@ function createColumn(fieldColumn, index, aggConfigs) {
     name: columnTitle,
     title: columnTitle
   };
+
+  if (newColumn.aggConfig.params.field === undefined) {
+    throw new Error(
+      i18n.translate(
+        'data.search.aggs.paramTypes.field.notFoundSavedFieldParameterErrorMessage',
+        {
+          defaultMessage: 'The field "{fieldParameter}" associated with this object no longer exists in the index pattern. Please use another field.',
+          values: {
+            fieldParameter: fieldColumn.field.name
+          }
+        }
+      )
+    );
+  }
+
   newColumn.meta = serializeAggConfig(newColumn.aggConfig);
   newColumn.aggConfig.isFilterable = () => newColumn.aggConfig.params.field.aggregatable;
 
