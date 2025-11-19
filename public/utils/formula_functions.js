@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 import { computeDateStructure, computeDurationStructureBrokenDownByTimeUnit } from './time_utils';
 
 export const formulaFunctions = {
@@ -84,8 +85,17 @@ export const formulaFunctions = {
     return Array.isArray(value);
   },
 
-  parseDate: function (dateString) {
-    return Date.parse(dateString);
+  formatDate(date, dateFormat) {
+    return moment(date).format(dateFormat);
+  },
+
+  parseDate: function (dateString, dateFormat) {
+    if (dateFormat) {
+      return moment(dateString, dateFormat).valueOf();
+    }
+    else {
+      return Date.parse(dateString);
+    }
   },
 
   parseInt: function (string, base) {
