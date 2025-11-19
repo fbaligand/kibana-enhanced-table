@@ -27,7 +27,7 @@
    * @return {HTMLIFrameElement} page to load
    */
   function makeIframe (src) {
-    if (!src) throw new Error('meh');
+    if (!src) throw new Error('CSV export: cannot create iframe');
     const iframe = document.createElement('iframe');
     iframe.hidden = true;
     iframe.src = src;
@@ -171,7 +171,7 @@
           // This transformer & flush method is only used by insecure context.
           transform(chunk, controller) {
             if (!(chunk instanceof Uint8Array)) {
-              throw new TypeError('Can only wirte Uint8Arrays');
+              throw new TypeError('CSV export: can only write Uint8Arrays');
             }
             bytesWritten += chunk.length;
             controller.enqueue(chunk);
@@ -239,7 +239,7 @@
     return (!useBlobFallback && ts && ts.writable) || createWritableStreamStub({
       write (chunk) {
         if (!(chunk instanceof Uint8Array)) {
-          throw new TypeError('Can only wirte Uint8Arrays');
+          throw new TypeError('CSV export: can only write Uint8Arrays');
         }
         if (useBlobFallback) {
           // Safari... The new IE6
