@@ -1,13 +1,12 @@
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
 
-import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
-import { documentTableVisTypeDefinition } from './document-table-vis';
-
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { setFilterManager, setFormatService, setIndexPatterns, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
 import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
 
+import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
+import { documentTableVisTypeDefinition } from './document-table-vis';
 import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } from './vis_legacy_renderer';
 import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
 
@@ -27,7 +26,7 @@ export interface TablePluginStartDependencies {
 }
 
 /** @internal */
-export class EnhancedTablePlugin implements Plugin<void, void> {
+export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupDependencies, TablePluginStartDependencies> {
   initializerContext: PluginInitializerContext;
   createBaseVisualization: any;
 
@@ -36,7 +35,7 @@ export class EnhancedTablePlugin implements Plugin<void, void> {
   }
 
   public setup(
-    core: CoreSetup,
+    core: CoreSetup<TablePluginStartDependencies>,
     { visualizations, expressions }: TablePluginSetupDependencies
   ) {
     expressions.registerFunction(enhancedTableExpressionFunction);
