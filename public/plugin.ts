@@ -1,15 +1,14 @@
-import type { CoreSetup, CoreStart, Plugin } from '@kbn/core/public';
+import type { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '@kbn/core/public';
 import type { Plugin as ExpressionsPublicPlugin } from '@kbn/expressions-plugin/public';
 import type { VisualizationsSetup, VisualizationsStart } from '@kbn/visualizations-plugin/public';
 import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
 import { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
 import { DataPublicPluginStart } from '@kbn/data-plugin/public';
 
+import { setFormatService, setNotifications, setSearchService, setVisualization, setDataViewsStart } from './services';
+
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
-
-import { setDataViewsStart, setFormatService, setNotifications, setSearchService, setVisualization } from './services';
-
 import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } from './vis_legacy_renderer';
 import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
 
@@ -31,12 +30,17 @@ export interface TablePluginStartDependencies {
 }
 
 /** @internal */
-export class EnhancedTablePlugin
-  implements Plugin<void, void, TablePluginSetupDependencies, TablePluginStartDependencies> {
+export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupDependencies, TablePluginStartDependencies> {
+  initializerContext: PluginInitializerContext;
+  createBaseVisualization: any;
+
+  constructor(initializerContext: PluginInitializerContext) {
+    this.initializerContext = initializerContext;
+  }
 
   public setup(
     core: CoreSetup<TablePluginStartDependencies>,
-    { expressions, visualizations }: TablePluginSetupDependencies
+    { visualizations, expressions }: TablePluginSetupDependencies
   ) {
     expressions.registerFunction(enhancedTableExpressionFunction);
     expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core));
