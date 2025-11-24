@@ -4,6 +4,10 @@ import angular from 'angular';
 
 import { initBootstrapPosition } from './position';
 
+import tooltipPopup from './tooltip_popup.html';
+
+import tooltipUnsafePopup from './tooltip_html_unsafe_popup.html';
+
 export function initBootstrapTooltip() {
   initBootstrapPosition();
   /**
@@ -420,4 +424,19 @@ export function initBootstrapTooltip() {
         templateUrl: 'template/tooltip/tooltip-html-unsafe-popup.html',
       };
     });
+
+  angular.module('template/tooltip/tooltip-html-unsafe-popup.html', []).run([
+    '$templateCache',
+    function($templateCache) {
+      $templateCache.put('template/tooltip/tooltip-html-unsafe-popup.html', tooltipUnsafePopup);
+    },
+  ]);
+
+  angular.module('template/tooltip/tooltip-popup.html', []).run([
+    '$templateCache',
+    function($templateCache) {
+      $templateCache.put('template/tooltip/tooltip-popup.html', tooltipPopup);
+    },
+  ]);
+
 }
