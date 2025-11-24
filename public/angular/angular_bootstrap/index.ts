@@ -6,10 +6,6 @@ import { initBindHtml } from './bind_html/bind_html';
 // @ts-ignore
 import { initBootstrapTooltip } from './tooltip/tooltip';
 
-import tooltipPopup from './tooltip/tooltip_popup.html';
-
-import tooltipUnsafePopup from './tooltip/tooltip_html_unsafe_popup.html';
-
 export const initAngularBootstrap = once(() => {
   /*
  * angular-ui-bootstrap
@@ -32,17 +28,4 @@ export const initAngularBootstrap = once(() => {
   initBindHtml();
   initBootstrapTooltip();
 
-  angular.module('template/tooltip/tooltip-html-unsafe-popup.html', []).run([
-    '$templateCache',
-    function($templateCache: any) {
-      $templateCache.put('template/tooltip/tooltip-html-unsafe-popup.html', tooltipUnsafePopup);
-    },
-  ]);
-
-  angular.module('template/tooltip/tooltip-popup.html', []).run([
-    '$templateCache',
-    function($templateCache: any) {
-      $templateCache.put('template/tooltip/tooltip-popup.html', tooltipPopup);
-    },
-  ]);
 });
