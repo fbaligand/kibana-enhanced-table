@@ -66,7 +66,7 @@ function DocumentTableData({
   setValue,
 }: VisEditorOptionsProps<DocumentTableVisDataParams>) {
 
-  const isHitsSizeValid = stateParams.hitsSize > 0;
+  const isHitsSizeValid = typeof stateParams.hitsSize === 'number' && stateParams.hitsSize > 0;
   const fieldColumnsError = undefined;
   const setFieldColumns = (newFieldColumns) => setValue('fieldColumns', newFieldColumns);
 
