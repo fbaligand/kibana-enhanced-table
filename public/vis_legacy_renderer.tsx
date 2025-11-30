@@ -1,5 +1,5 @@
-import { CoreSetup, PluginInitializerContext } from 'kibana/public';
-import { ExpressionRenderDefinition } from '../../../src/plugins/expressions';
+import { CoreSetup, PluginInitializerContext } from '@kbn/core/public';
+import { ExpressionRenderDefinition } from '@kbn/expressions-plugin/common';
 import { CommonVisRenderValue } from './data_load/visualization_fn';
 import { TablePluginStartDependencies } from './plugin';
 import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from './types';

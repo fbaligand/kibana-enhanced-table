@@ -1,7 +1,7 @@
-import { createGetterSetter } from '../../../src/plugins/kibana_utils/public';
-import { NotificationsStart } from '../../../src/core/public';
-import { DataPublicPluginStart, FilterManager, IndexPatternsContract } from '../../../src/plugins/data/public';
-import { VisualizationsStart } from '../../../src/plugins/visualizations/public';
+import { createGetterSetter } from '@kbn/kibana-utils-plugin/public';
+import { NotificationsStart } from '@kbn/core/public';
+import { DataPublicPluginStart, FilterManager, DataViewsContract } from '@kbn/data-plugin/public';
+import { VisualizationsStart } from '@kbn/visualizations-plugin/public';
 
 export const [getFormatService, setFormatService] = createGetterSetter<
   DataPublicPluginStart['fieldFormats']
@@ -19,8 +19,8 @@ export const [getSearchService, setSearchService] = createGetterSetter<
   DataPublicPluginStart['search']
 >('Search');
 
-export const [getIndexPatterns, setIndexPatterns] = createGetterSetter<IndexPatternsContract>(
-  'IndexPatterns'
+export const [getDataViews, setDataViews] = createGetterSetter<DataViewsContract>(
+  'DataViews'
 );
 
 export const [getFilterManager, setFilterManager] = createGetterSetter<FilterManager>(

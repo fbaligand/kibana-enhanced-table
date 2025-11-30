@@ -1,5 +1,5 @@
-import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '../../../src/plugins/expressions/public';
-import { getVisSchemas, VisToExpressionAst } from '../../../src/plugins/visualizations/public';
+import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '@kbn/expressions-plugin/public';
+import { getVisSchemas, VisToExpressionAst } from '@kbn/visualizations-plugin/public';
 import { DocumentTableVisDataParams  } from './components/document_table_vis_data';
 import { CommonExpressionFunctionDefinition } from './data_load/visualization_fn';
 import { DocumentTableVisConfig, EnhancedTableVisConfig, ENH_TABLE_VIS_NAME } from './types';

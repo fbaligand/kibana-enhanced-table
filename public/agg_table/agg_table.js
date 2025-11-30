@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { encode } from 'iconv-lite';
 
-import { CSV_SEPARATOR_SETTING, CSV_QUOTE_VALUES_SETTING } from '../../../../src/plugins/share/public';
+import { CSV_SEPARATOR_SETTING, CSV_QUOTE_VALUES_SETTING } from '@kbn/share-plugin/public';
 
 import aggTableTemplate from './agg_table.html';
 import { getFormatService } from '../services';

@@ -4,8 +4,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { EuiComboBox, EuiComboBoxOptionOption, EuiFormRow } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 
-import { IndexPatternField } from '../../../../src/plugins/data/public';
-import { ComboBoxGroupedOptions } from '../../../../src/plugins/vis_default_editor/public/utils';
+import { DataViewField } from '@kbn/data-views-plugin/common';
+import { ComboBoxGroupedOptions } from '@kbn/vis-default-editor-plugin/public/utils';
 
 const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {
   defaultMessage: 'Field',
@@ -13,15 +13,15 @@ const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {
 
 export interface FieldParamEditorProps {
   customLabel?: string;
-  indexPatternFields: IndexPatternField[];
+  DataViewFields: DataViewField[];
   showValidation: boolean;
-  value: IndexPatternField;
-  setValue(value?: IndexPatternField): void;
+  value: DataViewField;
+  setValue(value?: DataViewField): void;
 }
 
-function createIndexedFields(indexPatternFields: IndexPatternField[]): ComboBoxGroupedOptions<IndexPatternField> {
+function createIndexedFields(DataViewFields: DataViewField[]): ComboBoxGroupedOptions<DataViewField> {
   const indexedFields = [];
-  indexPatternFields.forEach(field => {
+  DataViewFields.forEach(field => {
     let indexedField = indexedFields.find(f => f.label === field.type);
     if (!indexedField) {
       indexedField = { label: field.type, options: [] };
@@ -36,19 +36,19 @@ function createIndexedFields(indexPatternFields: IndexPatternField[]): ComboBoxG
 
 function FieldParamEditor({
   customLabel,
-  indexPatternFields = [],
+  DataViewFields = [],
   showValidation,
   value,
   setValue,
 }: FieldParamEditorProps) {
-  const indexedFields = React.useMemo(() => createIndexedFields(indexPatternFields), [indexPatternFields]);
+  const indexedFields = React.useMemo(() => createIndexedFields(DataViewFields), [DataViewFields]);
   const [isDirty, setIsDirty] = useState(false);
-  const selectedOptions: ComboBoxGroupedOptions<IndexPatternField> = value
+  const selectedOptions: ComboBoxGroupedOptions<DataViewField> = value
     ? [{ label: value.displayName || value.name, target: value }]
     : [];
 
   const onChange = (options: EuiComboBoxOptionOption[]) => {
-    const selectedOption: IndexPatternField = get(options, '0.target');
+    const selectedOption: DataViewField = get(options, '0.target');
     setValue(selectedOption);
   };
 

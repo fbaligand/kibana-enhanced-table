@@ -2,7 +2,7 @@ import { clone } from 'lodash';
 import React, { useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
-import { IndexPatternField } from '../../../../src/plugins/data/public';
+import { DataViewField } from '@kbn/data-views-plugin/common';
 
 import { TextInputOption } from './text_input';
 import { FieldParamEditor } from './field';
@@ -10,7 +10,7 @@ import { FieldParamEditor } from './field';
 
 export interface FieldColumn {
   label: string;
-  field: IndexPatternField;
+  field: DataViewField;
   enabled: boolean;
   brandNew?: boolean;
 }
@@ -191,7 +191,7 @@ function FieldColumnEditor({
               <EuiSpacer size="m" />
 
               <FieldParamEditor
-                indexPatternFields = {aggs.indexPattern.fields}
+                DataViewFields = {aggs.indexPattern.fields}
                 showValidation = { showValidation }
                 value={fieldColumn.field}
                 setValue={ value => setValue('field', value)}

@@ -4,19 +4,20 @@ import { map, switchMap } from 'rxjs/operators';
 import { get } from 'lodash';
 
 
-import type { KibanaExecutionContext } from '../../../../../src/core/public';
-import { Adapters } from '../../../../../src/plugins/inspector/common';
+import { Filter } from '@kbn/es-query';
+import type { KibanaExecutionContext } from '@kbn/core/public';
+import { Adapters } from '@kbn/inspector-plugin/common';
 
 import {
   calculateBounds,
-  Filter,
-  IndexPattern,
+  DataView,
   Query,
   TimeRange,
   IAggConfigs,
   ISearchStartSearchSource,
   tabifyAggResponse,
-} from '../../../../../src/plugins/data/common';
+} from '@kbn/data-plugin/common';
+
 
 /**
  * Clone of: ../../../../../src/plugins/data/common/search/expressions/esaggs/request_handler.ts
@@ -31,7 +32,7 @@ export interface RequestHandlerParams {
   abortSignal?: AbortSignal;
   aggs: IAggConfigs;
   filters?: Filter[];
-  indexPattern?: IndexPattern;
+  indexPattern?: DataView;
   inspectorAdapters: Adapters;
   metricsAtAllLevels?: boolean;
   partialRows?: boolean;

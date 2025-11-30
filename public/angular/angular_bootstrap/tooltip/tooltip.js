@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 
 import angular from 'angular';
 
@@ -65,7 +65,7 @@ export function initBootstrapTooltip() {
       /**
        * This is a helper function for translating camel-case to snake-case.
        */
-      function snake_case(name) {
+      function snakeCase(name) {
         const regexp = /[A-Z]/g;
         const separator = '-';
         return name.replace(regexp, function(letter, pos) {
@@ -111,7 +111,7 @@ export function initBootstrapTooltip() {
               };
             }
 
-            const directiveName = snake_case(type);
+            const directiveName = snakeCase(type);
 
             const startSym = $interpolate.startSymbol();
             const endSym = $interpolate.endSymbol();
@@ -141,7 +141,7 @@ export function initBootstrapTooltip() {
 
             return {
               restrict: 'EA',
-              compile: function(tElem, tAttrs) {
+              compile: function() {
                 const tooltipLinker = $compile(template);
 
                 return function link(scope, element, attrs) {

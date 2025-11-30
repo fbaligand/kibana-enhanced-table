@@ -1,7 +1,7 @@
 import { IModule } from 'angular';
 
 // @ts-ignore
-import { EnhancedTableVisController } from './enhanced-table-vis-controller.js';
+import { EnhancedTableVisController } from './enhanced-table-vis-controller';
 // @ts-ignore
 import { KbnEnhancedAggTable } from './agg_table/agg_table';
 // @ts-ignore

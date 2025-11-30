@@ -1,9 +1,9 @@
-import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import { VisualizationsSetup, VisualizationsStart } from '../../../src/plugins/visualizations/public';
+import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '@kbn/core/public';
+import { VisualizationsSetup, VisualizationsStart } from '@kbn/visualizations-plugin/public';
 
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFilterManager, setFormatService, setIndexPatterns, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
-import { Plugin as ExpressionsPublicPlugin } from '../../../src/plugins/expressions/public';
+import { DataPublicPluginStart } from '@kbn/data-plugin/public';
+import { Plugin as ExpressionsPublicPlugin } from '@kbn/expressions-plugin/public';
+import { setFilterManager, setFormatService, setDataViews, setNotifications, setQueryService, setSearchService, setVisualization } from './services';
 
 import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
@@ -56,7 +56,7 @@ export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupD
     setNotifications(core.notifications);
     setQueryService(deps.data.query);
     setSearchService(deps.data.search);
-    setIndexPatterns(deps.data.indexPatterns);
+    setDataViews(deps.data.dataViews);
     setFilterManager(deps.data.query.filterManager);
     setVisualization(deps.visualizations);
   }

@@ -1,9 +1,9 @@
 import { i18n } from '@kbn/i18n';
-import { AggGroupNames } from '../../../src/plugins/data/public';
+import { AggGroupNames } from '@kbn/data-plugin/public';
 
 import tableVisTemplate from './enhanced-table-vis.html';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
-import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
+import { VIS_EVENT_TO_TRIGGER } from '@kbn/visualizations-plugin/public';
 
 import { ENH_TABLE_VIS_NAME } from './types';
 import { enhancedTableToExpressionAst } from './to_ast';

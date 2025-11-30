@@ -4,9 +4,9 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiIconTip, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
-import { IAggConfigs } from '../../../../src/plugins/data/public';
-import { VisEditorOptionsProps } from '../../../../src/plugins/visualizations/public';
-import { NumberInputOption, SelectOption } from '../../../../src/plugins/vis_default_editor/public';
+import { IAggConfigs } from '@kbn/data-plugin/public';
+import { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
+import { NumberInputOption, SelectOption } from '@kbn/vis-default-editor-plugin/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 import { totalAggregations, AggTypes } from './utils';
