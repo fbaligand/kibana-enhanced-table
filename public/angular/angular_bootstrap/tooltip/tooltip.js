@@ -139,8 +139,7 @@ export function initBootstrapTooltip() {
 
             return {
               restrict: 'EA',
-              /* eslint-disable no-unused-vars */
-              compile: function(tElem, tAttrs) {
+              compile: function() {
                 const tooltipLinker = $compile(template);
 
                 return function link(scope, element, attrs) {

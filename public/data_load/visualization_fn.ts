@@ -91,12 +91,12 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
   async fn(input, args, { inspectorAdapters, abortSignal, getSearchSessionId, getExecutionContext }) {
     const visConfigParams = args.visConfig ? JSON.parse(args.visConfig) : {};
     const schemas = args.schemas ? JSON.parse(args.schemas) : {};
-    const indexPattern = args.index ? await getDataViewsStart().get(args.index) : null;
+    const dataView = args.index ? await getDataViewsStart().get(args.index) : null;
 
     const aggConfigsState = args.aggConfigs ? JSON.parse(args.aggConfigs) : [];
     const aggOptions = { hierarchical: args.metricsAtAllLevels };
-    const aggs = indexPattern
-      ? getSearchService().aggs.createAggConfigs(indexPattern, aggConfigsState, aggOptions)
+    const aggs = dataView
+      ? getSearchService().aggs.createAggConfigs(dataView, aggConfigsState, aggOptions)
       : undefined;
     const visType = getVisualization().get(visName);
 
@@ -104,7 +104,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
         abortSignal,
         aggs,
         filters: get(input, 'filters', null),
-        indexPattern,
+        indexPattern: dataView,
         inspectorAdapters,
         partialRows: args.partialRows,
         query: get(input, 'query', null),

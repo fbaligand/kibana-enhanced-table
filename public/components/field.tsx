@@ -14,15 +14,15 @@ const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {
 
 export interface FieldParamEditorProps {
   customLabel?: string;
-  indexPatternFields: DataViewField[];
+  DataViewFields: DataViewField[];
   showValidation: boolean;
   value: DataViewField;
   setValue(value?: DataViewField): void;
 }
 
-function createIndexedFields(indexPatternFields: DataViewField[]): ComboBoxGroupedOptions<DataViewField> {
-  const indexedFields: any[] = [];
-  indexPatternFields.forEach(field => {
+function createIndexedFields(DataViewFields: DataViewField[]): ComboBoxGroupedOptions<DataViewField> {
+  const indexedFields = [];
+  DataViewFields.forEach(field => {
     let indexedField = indexedFields.find(f => f.label === field.type);
     if (!indexedField) {
       indexedField = { label: field.type, options: [] };
@@ -37,12 +37,12 @@ function createIndexedFields(indexPatternFields: DataViewField[]): ComboBoxGroup
 
 function FieldParamEditor({
   customLabel,
-  indexPatternFields = [],
+  DataViewFields = [],
   showValidation,
   value,
   setValue,
 }: FieldParamEditorProps) {
-  const indexedFields = React.useMemo(() => createIndexedFields(indexPatternFields), [indexPatternFields]);
+  const indexedFields = React.useMemo(() => createIndexedFields(DataViewFields), [DataViewFields]);
   const [isDirty, setIsDirty] = useState(false);
   const selectedOptions: ComboBoxGroupedOptions<DataViewField> = value
     ? [{ label: value.displayName || value.name, target: value }]
