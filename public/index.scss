@@ -12,6 +12,20 @@ visualization.enhanced-table {
   @import 'agg_table/index';
 }
 
+.enhanced-table-vis {
+  $defaultAppFillColor: rgb(52, 55, 65);
+  $defaultAppFillSecondaryColor: rgb(0, 120, 113);
+  $subduedColor: rgb(100, 106, 119);
+  @import 'icons';
+}
+
+.theme-dark.enhanced-table-vis {
+  $defaultAppFillColor: rgb(223, 229, 239);
+  $defaultAppFillSecondaryColor: rgb(125, 222, 216);
+  $subduedColor: rgb(129, 133, 143);
+  @import 'icons';
+}
+
 @import 'paginated_table/index';
 @import 'enhanced-table-vis';
 @import 'enhanced-table-vis-params';
