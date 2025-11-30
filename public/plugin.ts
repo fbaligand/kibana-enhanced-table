@@ -13,8 +13,6 @@ import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } 
 import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
 
 
-
-
 /** @internal */
 export interface TablePluginSetupDependencies {
   expressions: ReturnType<ExpressionsPublicPlugin['setup']>;
@@ -40,7 +38,7 @@ export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupD
 
   public setup(
     core: CoreSetup<TablePluginStartDependencies>,
-    { visualizations, expressions }: TablePluginSetupDependencies
+    { expressions, visualizations }: TablePluginSetupDependencies
   ) {
     expressions.registerFunction(enhancedTableExpressionFunction);
     expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core));

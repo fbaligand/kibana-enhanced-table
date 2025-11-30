@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import type { Filter, TimeRange } from '@kbn/es-query';
 
 import type { KibanaExecutionContext } from '@kbn/core/public';
-import { Adapters } from '@kbn/inspector-plugin/public';
+import { Adapters } from '@kbn/inspector-plugin/common';
 
 import {
   calculateBounds,
@@ -14,7 +14,7 @@ import {
   Query,
   IAggConfigs,
   ISearchStartSearchSource,
-  tabifyAggResponse
+  tabifyAggResponse,
 } from '@kbn/data-plugin/common';
 
 
