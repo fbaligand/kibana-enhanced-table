@@ -50,7 +50,8 @@ export function KbnEnhancedRows($compile) {
           const field = contents.aggConfig.getField();
           const isCellContentFilterable =
             contents.aggConfig.isFilterable()
-            && (!field || field.filterable);
+            && contents.type === 'bucket'
+            && field && field.filterable;
 
           if (isCellContentFilterable) {
             $cell = createFilterableCell(contents);
