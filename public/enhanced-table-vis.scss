@@ -95,4 +95,15 @@ div.visEditor--enhanced-table, div.visEditor--document_table {
     cursor: pointer;
   }
 
+  .kbnTableCellFilter .fa {
+    cursor: pointer;
+  }
+
+  .pagination-other-pages .euiPaginationButton-isActive {
+    cursor: default;
+    text-decoration: underline;
+    font-weight: 700;
+    color: #07C;
+  }
+
 }
