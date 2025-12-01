@@ -72,6 +72,7 @@ export function documentTableVisTypeDefinition (core, context) {
       template: tableVisTemplate
     },
     editorConfig: {
+      enableDataViewChange: true,
       optionTabs: [
         {
           name: 'fieldColumns',
@@ -89,6 +90,7 @@ export function documentTableVisTypeDefinition (core, context) {
         }
       ]
     },
+    hasPartialRows: (vis) => vis.params.showPartialRows,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     }

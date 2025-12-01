@@ -57,6 +57,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
       template: tableVisTemplate
     },
     editorConfig: {
+      enableDataViewChange: true,
       optionsTemplate: EnhancedTableOptions,
       schemas: [
         {
@@ -104,6 +105,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
         }
       ]
     },
+    hasPartialRows: (vis) => vis.params.showPartialRows,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
     }
