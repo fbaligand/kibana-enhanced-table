@@ -2,12 +2,12 @@
 
   <div ng-show="visState.params.showFilterBar && hasSomeData" class="filterBar">
     <div ng-hide="showFilterInput()" class="filterTextContainer">
-      <a ng-click="enableFilterInput()" class="filterText" i18n-id="visTypeTable.vis.filterLink" i18n-default-message="Filter"></a>
+      <a ng-click="enableFilterInput()" class="filterText" i18n-id="enhancedTable.vis.filterLink" i18n-default-message="Filter"></a>
     </div>
 
     <div class="kuiLocalSearch" ng-show="showFilterInput()" ng-style="{ width: visState.params.filterBarWidth }">
       <div class="kuiLocalSearchAssistedInput">
-        <input type="text" ng-model="vis.filterInput" ng-keyup="(visState.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="{{ ::'visTypeTable.vis.filterPlaceholder' | i18n: {defaultMessage: 'Filter...'} }}" class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="{{ ::'visTypeTable.vis.filterAriaLabel' | i18n: {defaultMessage: 'Filter input'} }}">
+        <input type="text" ng-model="vis.filterInput" ng-keyup="(visState.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="{{ ::'enhancedTable.vis.filterPlaceholder' | i18n: {defaultMessage: 'Filter...'} }}" class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="{{ ::'enhancedTable.vis.filterAriaLabel' | i18n: {defaultMessage: 'Filter input'} }}">
       </div>
       <button ng-click="doFilter()" aria-label="Filter" class="kuiButton kuiLocalSearchButton filterButton" ng-disabled="visState.params.filterAsYouType">
         <span class="fa fa-search" aria-hidden="true"></span>
@@ -41,7 +41,7 @@
       <span class="euiTextColor euiTextColor--subdued">
         <div class="euiText euiText--medium">
           <i class="fa fa-exclamation-triangle fa-6" style="font-size: 3em;" aria-hidden="true"></i>
-          <div class="euiText euiText--extraSmall" i18n-id="visTypeDocumentTable.errorText" i18n-default-message="Error"></div>
+          <div class="euiText euiText--extraSmall" i18n-id="enhancedTable.vis.errorText" i18n-default-message="Error"></div>
         </div>
       </span>
     </div>

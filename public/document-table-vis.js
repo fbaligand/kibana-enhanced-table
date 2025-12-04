@@ -15,12 +15,12 @@ export function documentTableVisTypeDefinition (core, context) {
     requiresSearch: true,
     type: 'table',
     name: DOC_TABLE_VIS_NAME,
-    title: i18n.translate('visTypeDocumentTable.visTitle', {
+    title: i18n.translate('enhancedTable.visTypeDocumentTable.visTitle', {
       defaultMessage: 'Document Table'
     }),
     icon: 'visTable',
-    description: i18n.translate('visTypeDocumentTable.visDescription', {
-      defaultMessage: 'Same functionality than Data Table, but for single documents (not aggregations) and with enhanced features like computed columns, filter bar and pivot table.'
+    description: i18n.translate('enhancedTable.visTypeDocumentTable.visDescription', {
+      defaultMessage: 'Same functionality than Data Table, but for single documents (not aggregations) and with enhanced features like computed columns and filter bar.'
     }),
     toExpressionAst: documentTableToExpressionAst,
     getSupportedTriggers: () => {
@@ -76,14 +76,14 @@ export function documentTableVisTypeDefinition (core, context) {
       optionTabs: [
         {
           name: 'fieldColumns',
-          title: i18n.translate('visTypeDocumentTable.tabs.dataText', {
+          title: i18n.translate('visDefaultEditor.sidebar.tabs.dataLabel', {
             defaultMessage: 'Data',
           }),
           editor: DocumentTableData
         },
         {
           name: 'options',
-          title: i18n.translate('visTypeDocumentTable.tabs.optionsText', {
+          title: i18n.translate('visDefaultEditor.sidebar.tabs.optionsLabel', {
             defaultMessage: 'Options',
           }),
           editor: EnhancedTableOptions
