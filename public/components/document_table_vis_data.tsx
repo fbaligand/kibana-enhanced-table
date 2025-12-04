@@ -23,13 +23,13 @@ function sortOrderOptions() {
   return [
     {
       value: 'desc',
-      text: i18n.translate('visTypeDocumentTable.params.sortOrderOptions.desc', {
+      text: i18n.translate('xpack.lens.indexPattern.terms.orderDescending', {
         defaultMessage: 'Descending',
       }),
     },
     {
       value: 'asc',
-      text: i18n.translate('visTypeDocumentTable.params.sortOrderOptions.asc', {
+      text: i18n.translate('xpack.lens.indexPattern.terms.orderAscending', {
         defaultMessage: 'Ascending',
       }),
     }
@@ -83,7 +83,7 @@ function DocumentTableData({
           <EuiTitle size="xs">
             <h3>
               <FormattedMessage
-                id="visTypeDocumentTable.params.fieldColumnsSection"
+                id="enhancedTable.params.fieldColumnsSection"
                 defaultMessage="Columns"
               />
             </h3>
@@ -118,7 +118,7 @@ function DocumentTableData({
                 iconType="plusInCircleFilled"
                 onClick={ () => addFieldColumn(stateParams.fieldColumns, setFieldColumns)}
               >
-                <FormattedMessage id="visTypeDocumentTable.params.fieldColumns.addFieldColumnLabel" defaultMessage="Add field column" />
+                <FormattedMessage id="enhancedTable.params.fieldColumns.addFieldColumnLabel" defaultMessage="Add field column" />
               </EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -134,7 +134,7 @@ function DocumentTableData({
         <EuiTitle size="xs">
           <h3>
             <FormattedMessage
-              id="visTypeDocumentTable.params.queryParametersSection"
+              id="enhancedTable.params.queryParametersSection"
               defaultMessage="Query Parameters"
             />
           </h3>
@@ -142,7 +142,7 @@ function DocumentTableData({
         <EuiSpacer size="m" />
 
         <NumberInputOption
-          label={i18n.translate('visTypeDocumentTable.params.hitsSize', {
+          label={i18n.translate('enhancedTable.params.hitsSize', {
             defaultMessage: 'Hits size',
           })}
           isInvalid={!isHitsSizeValid}
@@ -153,7 +153,7 @@ function DocumentTableData({
         />
 
         <FieldParamEditor
-          customLabel={i18n.translate('visTypeDocumentTable.params.sortField', {
+          customLabel={i18n.translate('enhancedTable.params.sortField', {
             defaultMessage: 'Sort Field'
           })}
           DataViewFields={getSortableFields(aggs)}
@@ -163,7 +163,7 @@ function DocumentTableData({
         />
 
         <SelectOption
-          label={i18n.translate('visTypeDocumentTable.params.sortOrder', {
+          label={i18n.translate('enhancedTable.params.sortOrder', {
             defaultMessage: 'Sort Order',
           })}
           options={sortOrderOptions()}

@@ -16,11 +16,11 @@ export function enhancedTableVisTypeDefinition (core, context) {
     requiresSearch: true,
     type: 'table',
     name: ENH_TABLE_VIS_NAME,
-    title: i18n.translate('visTypeEnhancedTable.visTitle', {
+    title: i18n.translate('enhancedTable.visTypeEnhancedTable.visTitle', {
       defaultMessage: 'Enhanced Table'
     }),
     icon: 'visTable',
-    description: i18n.translate('visTypeEnhancedTable.visDescription', {
+    description: i18n.translate('enhancedTable.visTypeEnhancedTable.visDescription', {
       defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
     }),
     toExpressionAst: enhancedTableToExpressionAst,
@@ -96,7 +96,7 @@ export function enhancedTableVisTypeDefinition (core, context) {
         {
           group: AggGroupNames.Buckets,
           name: 'splitcols',
-          title: i18n.translate('visTypeTable.tableVisEditorConfig.schemas.splitcolsTitle', {
+          title: i18n.translate('enhancedTable.visEditorConfig.schemas.splitcolsTitle', {
             defaultMessage: 'Split cols'
           }),
           aggFilter: ['!filter'],

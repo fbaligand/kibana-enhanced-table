@@ -50,7 +50,7 @@ function renderButtons (fieldColumn, fieldColumns, showError, setValue, setField
       id: 'hasErrors',
       color: 'danger',
       type: 'alert',
-      tooltip: i18n.translate('visTypeDocumentTable.params.fieldColumns.errorsAriaLabel', {
+      tooltip: i18n.translate('enhancedTable.params.fieldColumns.errorsAriaLabel', {
         defaultMessage: 'Field column has errors',
       })
     });
@@ -63,7 +63,7 @@ function renderButtons (fieldColumn, fieldColumns, showError, setValue, setField
       disabled: false,
       type: 'eye',
       onClick: () => setValue('enabled', false),
-      tooltip: i18n.translate('visTypeDocumentTable.params.fieldColumns.disableColumnButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.fieldColumns.disableColumnButtonTooltip', {
         defaultMessage: 'Disable column',
       })
     });
@@ -74,7 +74,7 @@ function renderButtons (fieldColumn, fieldColumns, showError, setValue, setField
       color: 'text',
       type: 'eyeClosed',
       onClick: () => setValue('enabled', true),
-      tooltip: i18n.translate('visTypeDocumentTable.params.fieldColumns.enableColumnButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.fieldColumns.enableColumnButtonTooltip', {
         defaultMessage: 'Enable column',
       })
     });
@@ -83,7 +83,7 @@ function renderButtons (fieldColumn, fieldColumns, showError, setValue, setField
     actionIcons.push({
       id: 'dragHandle',
       type: 'grab',
-      tooltip: i18n.translate('visTypeDocumentTable.params.fieldColumns.modifyPriorityButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.fieldColumns.modifyPriorityButtonTooltip', {
         defaultMessage: 'Modify order by dragging',
       })
     });
@@ -94,7 +94,7 @@ function renderButtons (fieldColumn, fieldColumns, showError, setValue, setField
       color: 'danger',
       type: 'cross',
       onClick: () => removeFieldColumn(fieldColumns, fieldColumn, setFieldColumns),
-      tooltip: i18n.translate('visTypeDocumentTable.params.fieldColumns.removeColumnButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.fieldColumns.removeColumnButtonTooltip', {
         defaultMessage: 'Remove column',
       })
     });
@@ -189,7 +189,7 @@ function FieldColumnEditor({
             buttonClassName="eui-textTruncate"
             buttonContentClassName="visEditorSidebar__aggGroupAccordionButtonContent eui-textTruncate"
             className="visEditorSidebar__section visEditorSidebar__collapsible visEditorSidebar__collapsible--marginBottom"
-            aria-label={i18n.translate('visTypeDocumentTable.params.fieldColumns.toggleEditorButtonAriaLabel', {
+            aria-label={i18n.translate('enhancedTable.params.fieldColumns.toggleEditorButtonAriaLabel', {
               defaultMessage: 'Toggle field column editor'
             })}
             extraAction={renderButtons(fieldColumn, fieldColumns, showError, setValue, setFieldColumns, provided.dragHandleProps)}
@@ -206,7 +206,7 @@ function FieldColumnEditor({
               />
 
               <TextInputOption
-                label={i18n.translate('visTypeDocumentTable.params.fieldColumns.label', {
+                label={i18n.translate('enhancedTable.params.fieldColumns.label', {
                   defaultMessage: 'Label',
                 })}
                 paramName="label"
