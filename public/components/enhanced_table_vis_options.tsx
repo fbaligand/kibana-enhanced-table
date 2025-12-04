@@ -121,7 +121,7 @@ function EnhancedTableOptions({
           <EuiTitle size="xs">
             <h3>
               <FormattedMessage
-                id="visTypeEnhancedTable.params.computedColumnsSection"
+                id="enhancedTable.params.computedColumnsSection"
                 defaultMessage="Computed Columns"
               />
             </h3>
@@ -155,7 +155,7 @@ function EnhancedTableOptions({
                 iconType="plusInCircleFilled"
                 onClick={ () => addComputedColumn(stateParams.computedColumns, setComputedColumns)}
               >
-                <FormattedMessage id="visTypeEnhancedTable.params.computedColumns.addComputedColumnLabel" defaultMessage="Add computed column" />
+                <FormattedMessage id="enhancedTable.params.computedColumns.addComputedColumnLabel" defaultMessage="Add computed column" />
               </EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -171,7 +171,7 @@ function EnhancedTableOptions({
         <EuiTitle size="xs">
           <h3>
             <FormattedMessage
-              id="visTypeEnhancedTable.params.enhancedSettingsSection"
+              id="enhancedTable.params.enhancedSettingsSection"
               defaultMessage="Enhanced Settings"
             />
           </h3>
@@ -182,7 +182,7 @@ function EnhancedTableOptions({
           label={
             <>
               <FormattedMessage
-                id="visTypeEnhancedTable.params.linesComputedFilter"
+                id="enhancedTable.params.linesComputedFilter"
                 defaultMessage="Rows computed filter"
               />
               &nbsp;(
@@ -204,7 +204,7 @@ function EnhancedTableOptions({
           label={
             <>
               <FormattedMessage
-                id="visTypeEnhancedTable.params.rowsComputedCss"
+                id="enhancedTable.params.rowsComputedCss"
                 defaultMessage="Rows computed CSS"
               />
               &nbsp;(
@@ -226,7 +226,7 @@ function EnhancedTableOptions({
           label={
             <>
               <FormattedMessage
-                id="visTypeEnhancedTable.params.hiddenColumns"
+                id="enhancedTable.params.hiddenColumns"
                 defaultMessage="Hidden columns"
               />
               &nbsp;
@@ -244,10 +244,10 @@ function EnhancedTableOptions({
 
         { hasSplitColsBucket(aggs) &&
           <SwitchOption
-            label={i18n.translate('visTypeEnhancedTable.params.computedColsPerSplitCol', {
+            label={i18n.translate('enhancedTable.params.computedColsPerSplitCol', {
               defaultMessage: 'Computed/Hidden cols per split col',
             })}
-            icontip={i18n.translate('visTypeEnhancedTable.params.computedColsPerSplitColIconTip', {
+            icontip={i18n.translate('enhancedTable.params.computedColsPerSplitColIconTip', {
               defaultMessage: 'Example: when enabled, if there is one \'Split cols\' bucket that implies two columns (term1 and term2), one Count metric, and one computed column configured, then in the result table, there will be a computed column for term1 and another computed column for term2 (each displayed after count column)',
             })}
             paramName="computedColsPerSplitCol"
@@ -258,10 +258,10 @@ function EnhancedTableOptions({
 
         { hasSplitColsBucket(aggs) &&
           <SwitchOption
-            label={i18n.translate('visTypeEnhancedTable.params.sortSplitCols', {
+            label={i18n.translate('enhancedTable.params.sortSplitCols', {
               defaultMessage: 'Sort split cols',
             })}
-            icontip={i18n.translate('visTypeEnhancedTable.params.sortSplitColsIconTip', {
+            icontip={i18n.translate('enhancedTable.params.sortSplitColsIconTip', {
               defaultMessage: 'By default, split cols are displayed in the order they come from Elasticsearch response. If this option is checked, the columns are sorted by split col value (ascending order). This is especially useful when "Split Cols" bucket aggregation is "Date Histogram" or "Terms" to have a natural and stable columns order.',
             })}
             paramName="sortSplitCols"
@@ -271,7 +271,7 @@ function EnhancedTableOptions({
         }
 
         <SwitchOption
-          label={i18n.translate('visTypeEnhancedTable.params.hideExportLinks', {
+          label={i18n.translate('enhancedTable.params.hideExportLinks', {
             defaultMessage: 'Hide CSV export links',
           })}
           paramName="hideExportLinks"
@@ -280,7 +280,7 @@ function EnhancedTableOptions({
         />
 
         <SwitchOption
-          label={i18n.translate('visTypeEnhancedTable.params.csvExportWithTotal', {
+          label={i18n.translate('enhancedTable.params.csvExportWithTotal', {
             defaultMessage: 'CSV export with total row',
           })}
           paramName="csvExportWithTotal"
@@ -291,10 +291,10 @@ function EnhancedTableOptions({
 
         { stateParams.fieldColumns &&
           <SwitchOption
-            label={i18n.translate('visTypeEnhancedTable.params.csvFullExport', {
+            label={i18n.translate('enhancedTable.params.csvFullExport', {
               defaultMessage: 'Full CSV export',
             })}
-            icontip={i18n.translate('visTypeEnhancedTable.params.csvFullExportTooltip', {
+            icontip={i18n.translate('enhancedTable.params.csvFullExportTooltip', {
               defaultMessage: 'If enabled, CSV export will download all data stored in Elasticsearch (not only displayed documents in table). This option is not compatible with \'Computed columns\', \'Rows computed filter\', \'Hidden columns\', \'CSV export with total row\' and \'Add row number column\' options.',
             })}
             paramName="csvFullExport"
@@ -305,7 +305,7 @@ function EnhancedTableOptions({
         }
 
         <SwitchOption
-          label={i18n.translate('visTypeEnhancedTable.params.stripedRows', {
+          label={i18n.translate('enhancedTable.params.stripedRows', {
             defaultMessage: 'Striped rows',
           })}
           paramName="stripedRows"
@@ -314,7 +314,7 @@ function EnhancedTableOptions({
         />
 
         <SwitchOption
-          label={i18n.translate('visTypeEnhancedTable.params.addRowNumberColumn', {
+          label={i18n.translate('enhancedTable.params.addRowNumberColumn', {
             defaultMessage: 'Add row number column',
           })}
           paramName="addRowNumberColumn"
@@ -326,7 +326,7 @@ function EnhancedTableOptions({
           label={
             <>
               <FormattedMessage
-                id="visTypeEnhancedTable.params.csvEncoding"
+                id="enhancedTable.params.csvEncoding"
                 defaultMessage="CSV export encoding"
               />
               &nbsp;(
@@ -353,7 +353,7 @@ function EnhancedTableOptions({
         <EuiTitle size="xs">
           <h3>
             <FormattedMessage
-              id="visTypeEnhancedTable.params.basicSettingsSection"
+              id="enhancedTable.params.basicSettingsSection"
               defaultMessage="Basic Settings"
             />
           </h3>
@@ -429,7 +429,7 @@ function EnhancedTableOptions({
         />
 
         <TextInputOption
-          label={i18n.translate('visTypeEnhancedTable.params.totalLabel', {
+          label={i18n.translate('enhancedTable.params.totalLabel', {
             defaultMessage: 'Total label',
           })}
           disabled={!stateParams.showTotal}
@@ -448,7 +448,7 @@ function EnhancedTableOptions({
         <EuiTitle size="xs">
           <h3>
             <FormattedMessage
-              id="visTypeEnhancedTable.params.filterBarSection"
+              id="enhancedTable.params.filterBarSection"
               defaultMessage="Filter Bar"
             />
           </h3>
@@ -456,7 +456,7 @@ function EnhancedTableOptions({
         <EuiSpacer size="m" />
 
         <SwitchOption
-          label={i18n.translate('visTypeEnhancedTable.params.showFilterBar', {
+          label={i18n.translate('enhancedTable.params.showFilterBar', {
             defaultMessage: 'Show filter bar',
           })}
           paramName="showFilterBar"
@@ -467,7 +467,7 @@ function EnhancedTableOptions({
         { stateParams.showFilterBar && (
           <>
             <SwitchOption
-              label={i18n.translate('visTypeEnhancedTable.params.filterCaseSensitive', {
+              label={i18n.translate('enhancedTable.params.filterCaseSensitive', {
                 defaultMessage: 'Case sensitive filter',
               })}
               paramName="filterCaseSensitive"
@@ -476,7 +476,7 @@ function EnhancedTableOptions({
             />
 
             <SwitchOption
-              label={i18n.translate('visTypeEnhancedTable.params.filterBarHideable', {
+              label={i18n.translate('enhancedTable.params.filterBarHideable', {
                 defaultMessage: 'Filter bar hideable',
               })}
               paramName="filterBarHideable"
@@ -485,7 +485,7 @@ function EnhancedTableOptions({
             />
 
             <SwitchOption
-              label={i18n.translate('visTypeEnhancedTable.params.filterAsYouType', {
+              label={i18n.translate('enhancedTable.params.filterAsYouType', {
                 defaultMessage: 'Filter as you type',
               })}
               paramName="filterAsYouType"
@@ -494,10 +494,10 @@ function EnhancedTableOptions({
             />
 
             <SwitchOption
-              label={i18n.translate('visTypeEnhancedTable.params.filterTermsSeparately', {
+              label={i18n.translate('enhancedTable.params.filterTermsSeparately', {
                 defaultMessage: 'Filter each term separately',
               })}
-              icontip={i18n.translate('visTypeEnhancedTable.params.filterTermsSeparatelyTooltip', {
+              icontip={i18n.translate('enhancedTable.params.filterTermsSeparatelyTooltip', {
                 defaultMessage: 'Example with filter set to \'term1 term2\': when this option is enabled, rows with one column containing \'term1\' and another column containing \'term2\' will be displayed. If disabled, only rows with one column containing \'term1 term2\' will be displayed.',
               })}
               paramName="filterTermsSeparately"
@@ -506,7 +506,7 @@ function EnhancedTableOptions({
             />
 
             <SwitchOption
-              label={i18n.translate('visTypeEnhancedTable.params.filterHighlightResults', {
+              label={i18n.translate('enhancedTable.params.filterHighlightResults', {
                 defaultMessage: 'Highlight results',
               })}
               paramName="filterHighlightResults"
@@ -515,7 +515,7 @@ function EnhancedTableOptions({
             />
 
             <TextInputOption
-              label={i18n.translate('visTypeEnhancedTable.params.filterBarWidth', {
+              label={i18n.translate('enhancedTable.params.filterBarWidth', {
                 defaultMessage: 'Filter bar width',
               })}
               paramName="filterBarWidth"

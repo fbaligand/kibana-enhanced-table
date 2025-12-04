@@ -55,7 +55,7 @@ export function PaginateDirectiveProvider($parse, $compile) {
 function PaginateDirectiveProviderController($scope, $document){
   const self = this;
   const ALL = 0;
-  const allSizeTitle = i18n.translate('kibana_legacy.paginate.size.allDropDownOptionLabel', {
+  const allSizeTitle = i18n.translate('enhancedTable.vis.paginate.size.allDropDownOptionLabel', {
     defaultMessage: 'All',
   });
 

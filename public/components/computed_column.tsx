@@ -61,7 +61,7 @@ function renderButtons (computedColumn, computedColumns, showError, setValue, se
       id: 'hasErrors',
       color: 'danger',
       type: 'alert',
-      tooltip: i18n.translate('visTypeEnhancedTable.params.computedColumns.errorsAriaLabel', {
+      tooltip: i18n.translate('enhancedTable.params.computedColumns.errorsAriaLabel', {
         defaultMessage: 'Computed column has errors',
       })
     });
@@ -74,7 +74,7 @@ function renderButtons (computedColumn, computedColumns, showError, setValue, se
       disabled: false,
       type: 'eye',
       onClick: () => setValue('enabled', false),
-      tooltip: i18n.translate('visTypeEnhancedTable.params.computedColumns.disableColumnButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.computedColumns.disableColumnButtonTooltip', {
         defaultMessage: 'Disable column',
       })
     });
@@ -85,7 +85,7 @@ function renderButtons (computedColumn, computedColumns, showError, setValue, se
       color: 'text',
       type: 'eyeClosed',
       onClick: () => setValue('enabled', true),
-      tooltip: i18n.translate('visTypeEnhancedTable.params.computedColumns.enableColumnButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.computedColumns.enableColumnButtonTooltip', {
         defaultMessage: 'Enable column',
       })
     });
@@ -94,7 +94,7 @@ function renderButtons (computedColumn, computedColumns, showError, setValue, se
     actionIcons.push({
       id: 'dragHandle',
       type: 'grab',
-      tooltip: i18n.translate('visTypeEnhancedTable.params.computedColumns.modifyPriorityButtonTooltip', {
+      tooltip: i18n.translate('enhancedTable.params.computedColumns.modifyPriorityButtonTooltip', {
         defaultMessage: 'Modify order by dragging',
       })
     });
@@ -104,7 +104,7 @@ function renderButtons (computedColumn, computedColumns, showError, setValue, se
     color: 'danger',
     type: 'cross',
     onClick: () => removeComputedColumn(computedColumns, computedColumn, setComputedColumns),
-    tooltip: i18n.translate('visTypeEnhancedTable.params.computedColumns.removeColumnButtonTooltip', {
+    tooltip: i18n.translate('enhancedTable.params.computedColumns.removeColumnButtonTooltip', {
       defaultMessage: 'Remove column',
     })
   });
@@ -146,25 +146,25 @@ function formatOptions() {
   return [
     {
       value: 'number',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.formatOptions.number', {
+      text: i18n.translate('fieldFormats.number.title', {
         defaultMessage: 'Number',
       }),
     },
     {
       value: 'string',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.formatOptions.string', {
+      text: i18n.translate('fieldFormats.string.title', {
         defaultMessage: 'String',
       }),
     },
     {
       value: 'date',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.formatOptions.date', {
+      text: i18n.translate('fieldFormats.date.title', {
         defaultMessage: 'Date',
       }),
     },
     {
       value: 'duration',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.formatOptions.duration', {
+      text: i18n.translate('fieldFormats.duration.title', {
         defaultMessage: 'Duration',
       }),
     }
@@ -175,49 +175,49 @@ function durationInputFormatOptions() {
   return [
     {
       value: 'milliseconds',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.milliseconds', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.milliseconds', {
         defaultMessage: 'Milliseconds',
       }),
     },
     {
       value: 'seconds',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.seconds', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.seconds', {
         defaultMessage: 'Seconds',
       }),
     },
     {
       value: 'minutes',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.minutes', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.minutes', {
         defaultMessage: 'Minutes',
       }),
     },
     {
       value: 'hours',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.hours', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.hours', {
         defaultMessage: 'Hours',
       }),
     },
     {
       value: 'days',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.days', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.days', {
         defaultMessage: 'Days',
       }),
     },
     {
       value: 'weeks',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.weeks', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.weeks', {
         defaultMessage: 'Weeks',
       }),
     },
     {
       value: 'months',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.months', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.months', {
         defaultMessage: 'Months',
       }),
     },
     {
       value: 'years',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationInputFormatOptions.years', {
+      text: i18n.translate('fieldFormats.duration.inputFormats.years', {
         defaultMessage: 'Years',
       }),
     }
@@ -228,67 +228,67 @@ function durationOutputFormatOptions() {
   return [
     {
       value: 'humanize',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.humanize', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.humanize.approximate', {
         defaultMessage: 'Human-readable (approximate)',
       }),
     },
     {
       value: 'humanizePrecise',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.humanizePrecise', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.humanize.precise', {
         defaultMessage: 'Human-readable (precise)',
       }),
     },
     {
       value: 'humanizeVeryPrecise',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.humanizeVeryPrecise', {
+      text: i18n.translate('enhancedTable.params.computedColumns.durationOutputFormatOptions.humanizeVeryPrecise', {
         defaultMessage: 'Human-readable (very precise)',
       }),
     },
     {
       value: 'asMilliseconds',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.milliseconds', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asMilliseconds', {
         defaultMessage: 'Milliseconds',
       }),
     },
     {
       value: 'asSeconds',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.seconds', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asSeconds', {
         defaultMessage: 'Seconds',
       }),
     },
     {
       value: 'asMinutes',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.minutes', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asMinutes', {
         defaultMessage: 'Minutes',
       }),
     },
     {
       value: 'asHours',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.hours', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asHours', {
         defaultMessage: 'Hours',
       }),
     },
     {
       value: 'asDays',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.days', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asDays', {
         defaultMessage: 'Days',
       }),
     },
     {
       value: 'asWeeks',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.weeks', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asWeeks', {
         defaultMessage: 'Weeks',
       }),
     },
     {
       value: 'asMonths',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.months', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asMonths', {
         defaultMessage: 'Months',
       }),
     },
     {
       value: 'asYears',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputFormatOptions.years', {
+      text: i18n.translate('fieldFormats.duration.outputFormats.asYears', {
         defaultMessage: 'Years',
       }),
     }
@@ -299,25 +299,25 @@ function alignmentOptions() {
   return [
     {
       value: 'left',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.alignmentOptions.left', {
+      text: i18n.translate('xpack.lens.table.alignment.left', {
         defaultMessage: 'left',
       }),
     },
     {
       value: 'right',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.alignmentOptions.right', {
+      text: i18n.translate('xpack.lens.table.alignment.right', {
         defaultMessage: 'right',
       }),
     },
     {
       value: 'center',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.alignmentOptions.center', {
+      text: i18n.translate('xpack.lens.table.alignment.center', {
         defaultMessage: 'center',
       }),
     },
     {
       value: 'justify',
-      text: i18n.translate('visTypeEnhancedTable.params.computedColumns.alignmentOptions.justify', {
+      text: i18n.translate('enhancedTable.params.computedColumns.alignmentOptions.justify', {
         defaultMessage: 'justify',
       }),
     },
@@ -379,7 +379,7 @@ function ComputedColumnEditor({
             buttonClassName="eui-textTruncate"
             buttonContentClassName="visEditorSidebar__aggGroupAccordionButtonContent eui-textTruncate"
             className="visEditorSidebar__section visEditorSidebar__collapsible visEditorSidebar__collapsible--marginBottom"
-            aria-label={i18n.translate('visTypeEnhancedTable.params.computedColumns.toggleEditorButtonAriaLabel', {
+            aria-label={i18n.translate('enhancedTable.params.computedColumns.toggleEditorButtonAriaLabel', {
               defaultMessage: 'Toggle computed column editor'
             })}
             extraAction={renderButtons(computedColumn, computedColumns, showError, setValue, setComputedColumns, provided.dragHandleProps)}
@@ -389,7 +389,7 @@ function ComputedColumnEditor({
               <EuiSpacer size="m" />
 
               <TextInputOption
-                label={i18n.translate('visTypeEnhancedTable.params.computedColumns.label', {
+                label={i18n.translate('enhancedTable.params.computedColumns.label', {
                   defaultMessage: 'Label',
                 })}
                 paramName="label"
@@ -401,7 +401,7 @@ function ComputedColumnEditor({
                 label={
                   <>
                     <FormattedMessage
-                      id="visTypeEnhancedTable.params.computedColumns.formula"
+                      id="enhancedTable.params.computedColumns.formula"
                       defaultMessage="Formula"
                     />
                     &nbsp;(
@@ -416,7 +416,7 @@ function ComputedColumnEditor({
               />
 
               <SwitchOption
-                label={i18n.translate('visTypeEnhancedTable.params.computedColumns.computeTotalUsingFormula', {
+                label={i18n.translate('enhancedTable.params.computedColumns.computeTotalUsingFormula', {
                   defaultMessage: 'Compute total using formula',
                 })}
                 paramName="computeTotalUsingFormula"
@@ -439,7 +439,7 @@ function ComputedColumnEditor({
                   label={
                     <>
                       <FormattedMessage
-                        id="visTypeEnhancedTable.params.computedColumns.pattern"
+                        id="enhancedTable.params.computedColumns.pattern"
                         defaultMessage="Pattern"
                       />
                       &nbsp;(
@@ -458,7 +458,7 @@ function ComputedColumnEditor({
                   label={
                     <>
                       <FormattedMessage
-                        id="visTypeEnhancedTable.params.computedColumns.datePattern"
+                        id="enhancedTable.params.computedColumns.datePattern"
                         defaultMessage="Pattern"
                       />
                       &nbsp;(
@@ -474,7 +474,7 @@ function ComputedColumnEditor({
 
               {computedColumn.format === 'duration' &&
                 <SelectOption
-                  label={i18n.translate('visTypeTable.params.computedColumns.durationInputFormat', {
+                  label={i18n.translate('indexPatternFieldEditor.duration.inputFormatLabel', {
                     defaultMessage: 'Input format',
                   })}
                   options={durationInputFormatOptions()}
@@ -486,7 +486,7 @@ function ComputedColumnEditor({
 
               {computedColumn.format === 'duration' &&
                 <SelectOption
-                  label={i18n.translate('visTypeTable.params.computedColumns.durationOutputFormat', {
+                  label={i18n.translate('indexPatternFieldEditor.duration.outputFormatLabel', {
                     defaultMessage: 'Output format',
                   })}
                   options={durationOutputFormatOptions()}
@@ -498,7 +498,7 @@ function ComputedColumnEditor({
 
               {computedColumn.format === 'duration' && computedColumn.durationOutputFormat !== 'humanize' && computedColumn.durationOutputFormat !== 'humanizeVeryPrecise' &&
                 <NumberInputOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationOutputPrecision', {
+                  label={i18n.translate('indexPatternFieldEditor.duration.decimalPlacesLabel', {
                     defaultMessage: 'Decimal places',
                   })}
                   isInvalid={!isDurationOutputPrecisionValid}
@@ -511,7 +511,7 @@ function ComputedColumnEditor({
 
               {computedColumn.format === 'duration' && !computedColumn.durationOutputFormat?.startsWith('humanize') &&
                 <SwitchOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationShowSuffix', {
+                  label={i18n.translate('indexPatternFieldEditor.duration.showSuffixLabel', {
                     defaultMessage: 'Show suffix',
                   })}
                   paramName="durationShowSuffix"
@@ -522,7 +522,7 @@ function ComputedColumnEditor({
 
               {computedColumn.format === 'duration' && computedColumn.durationOutputFormat !== 'humanize' &&
                 <SwitchOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationUseShortSuffix', {
+                  label={i18n.translate('indexPatternFieldEditor.duration.showSuffixLabel.short', {
                     defaultMessage: 'Use short suffix',
                   })}
                   paramName="durationUseShortSuffix"
@@ -534,7 +534,7 @@ function ComputedColumnEditor({
 
               {computedColumn.format === 'duration' && computedColumn.durationOutputFormat !== 'humanize' &&
                 <SwitchOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.durationIncludeSpaceWithSuffix', {
+                  label={i18n.translate('indexPatternFieldEditor.duration.includeSpace', {
                     defaultMessage: 'Include space between suffix and value',
                   })}
                   paramName="durationIncludeSpaceWithSuffix"
@@ -545,8 +545,8 @@ function ComputedColumnEditor({
               }
 
               <SelectOption
-                label={i18n.translate('visTypeTable.params.computedColumns.alignment', {
-                  defaultMessage: 'Alignment',
+                label={i18n.translate('xpack.lens.table.alignment.label', {
+                  defaultMessage: 'Text alignment',
                 })}
                 options={alignmentOptions()}
                 paramName="alignment"
@@ -556,7 +556,7 @@ function ComputedColumnEditor({
 
               {computedColumn.alignment !== 'left' &&
                 <SwitchOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.applyAlignmentOnTitle', {
+                  label={i18n.translate('enhancedTable.params.computedColumns.applyAlignmentOnTitle', {
                     defaultMessage: 'Apply alignment on title',
                   })}
                   paramName="applyAlignmentOnTitle"
@@ -567,7 +567,7 @@ function ComputedColumnEditor({
 
               {computedColumn.alignment !== 'left' &&
                 <SwitchOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.applyAlignmentOnTotal', {
+                  label={i18n.translate('enhancedTable.params.computedColumns.applyAlignmentOnTotal', {
                     defaultMessage: 'Apply alignment on total',
                   })}
                   paramName="applyAlignmentOnTotal"
@@ -577,7 +577,7 @@ function ComputedColumnEditor({
               }
 
               <SwitchOption
-                label={i18n.translate('visTypeEnhancedTable.params.computedColumns.applyTemplate', {
+                label={i18n.translate('enhancedTable.params.computedColumns.applyTemplate', {
                   defaultMessage: 'Apply template',
                 })}
                 paramName="applyTemplate"
@@ -587,7 +587,7 @@ function ComputedColumnEditor({
 
               {computedColumn.applyTemplate &&
                 <SwitchOption
-                  label={i18n.translate('visTypeEnhancedTable.params.computedColumns.applyTemplateOnTotal', {
+                  label={i18n.translate('enhancedTable.params.computedColumns.applyTemplateOnTotal', {
                     defaultMessage: 'Apply template on total',
                   })}
                   paramName="applyTemplateOnTotal"
@@ -601,7 +601,7 @@ function ComputedColumnEditor({
                   label={
                     <>
                       <FormattedMessage
-                        id="visTypeEnhancedTable.params.computedColumns.template"
+                        id="enhancedTable.params.computedColumns.template"
                         defaultMessage="Template"
                       />
                       &nbsp;(
@@ -619,7 +619,7 @@ function ComputedColumnEditor({
                 label={
                   <>
                     <FormattedMessage
-                      id="visTypeEnhancedTable.params.computedColumns.cellComputedCss"
+                      id="enhancedTable.params.computedColumns.cellComputedCss"
                       defaultMessage="Cell computed CSS"
                     />
                     &nbsp;(
@@ -641,7 +641,7 @@ function ComputedColumnEditor({
                 label={
                   <>
                     <FormattedMessage
-                      id="visTypeEnhancedTable.params.computedColumns.customColumnPosition"
+                      id="enhancedTable.params.computedColumns.customColumnPosition"
                       defaultMessage="Custom column position"
                     />{' '}
                     <EuiIconTip

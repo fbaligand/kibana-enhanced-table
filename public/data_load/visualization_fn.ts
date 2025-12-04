@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { i18n } from '@kbn/i18n';
 import { ExpressionFunctionDefinition, Render } from '@kbn/expressions-plugin/public';
 import { getDataViews, getSearchService, getVisualization } from '../services';
 import { enhancedTableRequestHandler } from './enhanced-table-request-handler';
@@ -45,14 +44,9 @@ export const enhancedTableExpressionFunction = (): CommonExpressionFunctionDefin
 const expressionFunction = (visName: VisName, responseHandler: ResponseHandler): CommonExpressionFunctionDefinition => ({
   name: visName,
   type: 'render',
-  help: i18n.translate('visualizations.functions.visualization.help', {
-    defaultMessage: 'A simple visualization',
-  }),
+  help: 'Enhanced Table visualization expression function',
   args: {
-    // TODO: Below `help` keys should be internationalized once this function
-    // TODO: is moved to visualizations plugin.
     index: {
-      // types: ['string', 'null'],
       types: ['string'],
       default: '',
       help: 'Index',
