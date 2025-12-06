@@ -1,0 +1,8 @@
+{
+  "paths": {
+    "enhancedTable": "public"
+  },
+  "translations": [
+    "translations/fr-FR.json"
+  ]
+}

@@ -425,7 +425,7 @@ function ComputedColumnEditor({
               />
 
               <SelectOption
-                label={i18n.translate('visTypeTable.params.computedColumns.format', {
+                label={i18n.translate('enhancedTable.params.computedColumns.format', {
                   defaultMessage: 'Format',
                 })}
                 options={formatOptions()}
