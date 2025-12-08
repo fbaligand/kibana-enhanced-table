@@ -1,12 +1,4 @@
-/*
- * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
- * or more contributor license agreements. Licensed under the Elastic License
- * 2.0 and the Server Side Public License, v 1; you may not use this file except
- * in compliance with, at your election, the Elastic License 2.0 or the Server
- * Side Public License, v 1.
- */
-
-import { accessibleClickKeys, keys } from '@elastic/eui';
+import { keys } from '@elastic/eui';
 
 export function KbnAccessibleClickProvider() {
   KbnAccessibleClickProviderController.$inject = ['$element'];
@@ -44,7 +36,7 @@ export function KbnAccessibleClickProvider() {
 
       element.on('keyup', (e) => {
         // Support keyboard accessibility by emulating mouse click on ENTER or SPACE keypress.
-        if (accessibleClickKeys[e.key]) {
+        if (e.key === keys.SPACE || e.key === keys.ENTER) {
           // Delegate to the click handler on the element (assumed to be ng-click).
           element.click();
         }

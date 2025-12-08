@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { EuiComboBox, EuiComboBoxOptionOption, EuiFormRow } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 
-import { ComboBoxGroupedOptions } from '@kbn/vis-default-editor-plugin/public';
+import { ComboBoxGroupedOptions } from '@kbn/vis-default-editor-plugin/public/utils';
 import { DataViewField } from '@kbn/data-views-plugin/public';
 
 

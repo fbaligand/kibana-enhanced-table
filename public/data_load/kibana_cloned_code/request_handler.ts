@@ -1,6 +1,5 @@
 import { i18n } from '@kbn/i18n';
-import { defer } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { defer, map, switchMap } from 'rxjs';
 import { get } from 'lodash';
 
 import type { Filter, TimeRange } from '@kbn/es-query';
