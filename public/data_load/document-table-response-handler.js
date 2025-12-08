@@ -27,11 +27,13 @@ function createColumn(fieldColumn, index, aggConfigs) {
   if (newColumn.aggConfig.params.field === undefined) {
     throw new Error(
       i18n.translate(
-        'data.search.aggs.paramTypes.field.notFoundSavedFieldParameterErrorMessage',
+        'data.search.aggs.paramTypes.field.invalidSavedFieldParameterErrorMessage',
         {
-          defaultMessage: 'The field "{fieldParameter}" associated with this object no longer exists in the index pattern. Please use another field.',
+          defaultMessage: 'Saved field "{fieldParameter}" of data view "{indexPatternTitle}" is invalid for use with the "{aggType}" aggregation. Please select a new field.',
           values: {
-            fieldParameter: fieldColumn.field.name
+            fieldParameter: fieldColumn.field.name,
+            aggType: newColumn.aggConfig?.type?.title,
+            indexPatternTitle: aggConfigs.indexPattern.title
           }
         }
       )
