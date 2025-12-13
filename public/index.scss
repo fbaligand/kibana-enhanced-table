@@ -4,32 +4,30 @@ visualization.enhanced-table {
 
 // LIGHT THEME
 .enhanced-table-vis {
-  $euiColorLightestShade: #F5F7FA;
-  @import 'agg_table/index';
-
-  $euiColorBackground: #fbfcfd;
+  $euiColorLightestShade: #1750ba0a;
+  $euiColorBackground: #ffffff;
   $euiColorBorder: #d3dae6;
-  $euiColorFont: #343741;
+  $euiColorFont: #1d2a3e;
+  @import 'agg_table/index';
   @import 'enhanced-table-vis-kui';
 
   $defaultAppFillColor: rgb(52, 55, 65);
-  $defaultAppFillSecondaryColor: rgb(0, 119, 204);
+  $defaultAppFillSecondaryColor: rgb(9, 114, 77);
   $subduedColor: rgb(100, 106, 119);
   @import 'icons';
 }
 
 // DARK THEME
 .theme-dark.enhanced-table-vis {
-  $euiColorLightestShade: #25262E;
+  $euiColorLightestShade: #1E2839;
+  $euiColorBackground: #0B1628;
+  $euiColorBorder: #2B394F;
+  $euiColorFont: #cad3e2;
   @import 'agg_table/index';
-
-  $euiColorBackground: #16171c;
-  $euiColorBorder: #343741;
-  $euiColorFont: #dfe5ef;
   @import 'enhanced-table-vis-kui';
 
   $defaultAppFillColor: rgb(223, 229, 239);
-  $defaultAppFillSecondaryColor: rgb(54, 162, 239);
+  $defaultAppFillSecondaryColor: rgb(36, 194, 146);
   $subduedColor: rgb(129, 133, 143);
   @import 'icons';
 }

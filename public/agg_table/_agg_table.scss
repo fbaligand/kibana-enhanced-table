@@ -51,10 +51,25 @@ kbn-enhanced-agg-table-group {
   }
 }
 
+.table>thead>tr>th {
+  border-bottom: 1px solid $euiColorBorder;
+}
+
+.table>tbody>tr>td {
+  border-top: 1px solid $euiColorBorder;
+}
+
+.table>tfoot>tr>th {
+  border-top: 2px solid $euiColorBorder;
+}
+
+.table {
+  background-color: $euiColorBackground;
+}
 
 .striped-rows .kbnAggTable__paginated {
   tr:nth-child(odd) td {
-    background-color: lighten($euiColorLightestShade, 2%);
+    background-color: darken($euiColorBackground, 1%);
   }
 
   tr:hover td {
