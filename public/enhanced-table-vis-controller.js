@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { computeColumnTotal } from './utils/column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
-import { getNotifications, getFormatService } from './services';
+import { getNotifications, getFormatService, getThemeService } from './services';
 import { computeTimeRange, DurationHumanVeryPreciseFormat } from './utils/time_utils';
 import { formulaFunctions } from './utils/formula_functions';
 
@@ -1154,7 +1154,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
     try {
 
       // set dark mode
-      $scope.isDarkTheme = getConfig('theme:darkMode') === true || getConfig('theme:darkMode') === 'enabled';
+      $scope.isDarkTheme = getThemeService().getTheme().darkMode;
 
       if ($scope.esResponse && $scope.esResponse.newResponse) {
 

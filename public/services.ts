@@ -1,6 +1,6 @@
 import { createGetterSetter } from '@kbn/kibana-utils-plugin/public';
 import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
-import type { NotificationsStart } from '@kbn/core/public';
+import type { NotificationsStart, ThemeServiceStart } from '@kbn/core/public';
 import type { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
 import type { DataPublicPluginStart } from '@kbn/data-plugin/public';
 import type { VisualizationsStart } from '@kbn/visualizations-plugin/public';
@@ -19,3 +19,6 @@ export const [getSearchService, setSearchService] =
 
 export const [getVisualization, setVisualization] =
   createGetterSetter<VisualizationsStart>('Visualization');
+
+export const [getThemeService, setThemeService] =
+  createGetterSetter<ThemeServiceStart>('ThemeServiceStart');
