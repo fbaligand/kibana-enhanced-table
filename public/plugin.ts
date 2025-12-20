@@ -43,13 +43,13 @@ export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupD
     expressions.registerFunction(enhancedTableExpressionFunction);
     expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core));
     visualizations.createBaseVisualization(
-      enhancedTableVisTypeDefinition(core)
+      enhancedTableVisTypeDefinition()
     );
 
     expressions.registerFunction(documentTableExpressionFunction);
     expressions.registerRenderer(getDocumentTableVisLegacyRenderer(core));
     visualizations.createBaseVisualization(
-      documentTableVisTypeDefinition(core)
+      documentTableVisTypeDefinition()
     );
   }
 

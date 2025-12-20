@@ -3,17 +3,15 @@ import { AggGroupNames } from '@kbn/data-plugin/public';
 
 import tableVisTemplate from './enhanced-table-vis.html';
 import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
-import { VIS_EVENT_TO_TRIGGER } from '@kbn/visualizations-plugin/public';
+import { VIS_EVENT_TO_TRIGGER, VisGroups } from '@kbn/visualizations-plugin/public';
 
 import { ENH_TABLE_VIS_NAME } from './types';
 import { enhancedTableToExpressionAst } from './to_ast';
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
-// eslint-disable-next-line no-unused-vars
-export function enhancedTableVisTypeDefinition (core, context) {
+export function enhancedTableVisTypeDefinition () {
   return {
-    requiresSearch: true,
     type: 'table',
     name: ENH_TABLE_VIS_NAME,
     title: i18n.translate('enhancedTable.visTypeEnhancedTable.visTitle', {
@@ -105,6 +103,9 @@ export function enhancedTableVisTypeDefinition (core, context) {
         }
       ]
     },
+    requiresSearch: true,
+    isDeprecated: false,
+    group: VisGroups.PROMOTED,
     hasPartialRows: (vis) => vis.params.showPartialRows,
     hierarchicalData: (vis) => {
       return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
