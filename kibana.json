@@ -8,6 +8,8 @@
   "server": false,
   "requiredPlugins": [
     "data",
+    "embeddable",
+    "uiActions",
     "visualizations",
     "share",
     "dataViews",

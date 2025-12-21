@@ -4,6 +4,8 @@ import type { VisualizationsSetup, VisualizationsStart } from '@kbn/visualizatio
 import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
 import { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
 import { DataPublicPluginStart } from '@kbn/data-plugin/public';
+import { EmbeddableStart } from '@kbn/embeddable-plugin/public';
+import { UiActionsStart } from '@kbn/ui-actions-plugin/public';
 
 import { setFormatService, setNotifications, setSearchService, setVisualization, setDataViewsStart, setThemeService } from './services';
 
@@ -11,6 +13,7 @@ import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
 import { documentTableVisTypeDefinition } from './document-table-vis';
 import { getEnhancedTableVisLegacyRenderer, getDocumentTableVisLegacyRenderer } from './vis_legacy_renderer';
 import { enhancedTableExpressionFunction, documentTableExpressionFunction } from './data_load/visualization_fn';
+import { registerUIActions } from './add_ui_actions';
 
 
 /** @internal */
@@ -25,12 +28,13 @@ export interface TablePluginStartDependencies {
   dataViews: DataViewsPublicPluginStart;
   data: DataPublicPluginStart;
   visualizations: VisualizationsStart;
+  embeddable: EmbeddableStart;
+  uiActions: UiActionsStart;
 }
 
 /** @internal */
 export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupDependencies, TablePluginStartDependencies> {
   initializerContext: PluginInitializerContext;
-  createBaseVisualization: any;
 
   constructor(initializerContext: PluginInitializerContext) {
     this.initializerContext = initializerContext;
@@ -42,26 +46,26 @@ export class EnhancedTablePlugin implements Plugin<void, void, TablePluginSetupD
   ) {
     expressions.registerFunction(enhancedTableExpressionFunction);
     expressions.registerRenderer(getEnhancedTableVisLegacyRenderer(core));
-    visualizations.createBaseVisualization(
-      enhancedTableVisTypeDefinition()
-    );
+    visualizations.createBaseVisualization(enhancedTableVisTypeDefinition());
 
     expressions.registerFunction(documentTableExpressionFunction);
     expressions.registerRenderer(getDocumentTableVisLegacyRenderer(core));
-    visualizations.createBaseVisualization(
-      documentTableVisTypeDefinition()
-    );
+    visualizations.createBaseVisualization(documentTableVisTypeDefinition());
   }
 
   public start(
     core: CoreStart,
-    { data, dataViews, fieldFormats, visualizations }: TablePluginStartDependencies
+    deps: TablePluginStartDependencies
   ) {
-    setFormatService(fieldFormats);
+    setFormatService(deps.fieldFormats);
     setNotifications(core.notifications);
-    setSearchService(data.search);
-    setDataViewsStart(dataViews);
-    setVisualization(visualizations);
+    setSearchService(deps.data.search);
+    setDataViewsStart(deps.dataViews);
+    setVisualization(deps.visualizations);
     setThemeService(core.theme);
+
+    registerUIActions(deps, enhancedTableVisTypeDefinition, 'EnhancedTable');
+    registerUIActions(deps, documentTableVisTypeDefinition, 'DocumentTable');
   }
+
 }
