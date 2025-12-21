@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { i18n } from '@kbn/i18n';
+import { i18n } from '@osd/i18n';
 import { serializeAggConfig } from './kibana_cloned_code/utils';
 import AggConfigResult from './agg_config_result';
 
