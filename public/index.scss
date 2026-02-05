@@ -1,7 +1,3 @@
-visualization.enhanced-table {
-  padding: 0px 5px;
-}
-
 // LIGHT THEME
 .enhanced-table-vis {
   $euiColorLightestShade: #1750ba0a;
@@ -12,7 +8,7 @@ visualization.enhanced-table {
   @import 'enhanced-table-vis-kui';
 
   $defaultAppFillColor: rgb(52, 55, 65);
-  $defaultAppFillSecondaryColor: rgb(9, 114, 77);
+  $defaultAppFillSecondaryColor: rgb(0, 119, 204);
   $subduedColor: rgb(100, 106, 119);
   @import 'icons';
 }
@@ -27,7 +23,7 @@ visualization.enhanced-table {
   @import 'enhanced-table-vis-kui';
 
   $defaultAppFillColor: rgb(223, 229, 239);
-  $defaultAppFillSecondaryColor: rgb(36, 194, 146);
+  $defaultAppFillSecondaryColor: rgb(54, 162, 239);
   $subduedColor: rgb(129, 133, 143);
   @import 'icons';
 }

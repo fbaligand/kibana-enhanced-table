@@ -1,6 +1,13 @@
-div.visEditor--enhanced-table, div.visEditor--document_table {
-  div.visualization {
-    width: 100%
+div.visualization {
+  &:has(> .enhanced-table-vis) {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+    padding: 8px;
+    flex: 1 1 100%;
+    flex-direction: column;
   }
 }
 
@@ -11,6 +18,13 @@ div.visEditor--enhanced-table, div.visEditor--document_table {
 
   .visError {
     height: 100%;
+    display: flex;
+    flex: 1 1 auto;
+    -moz-box-pack: center;
+    justify-content: center;
+    -moz-box-align: center;
+    align-items: center;
+    text-align: center;
   }
 
   .agg-table-group > tbody > tr > td {
