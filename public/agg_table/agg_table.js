@@ -40,7 +40,7 @@ export function KbnEnhancedAggTable(config, RecursionHelper) {
     controller: function ($scope) {
       const self = this;
 
-      self._saveAs = require('@elastic/filesaver').saveAs;
+      self._saveAs = require('file-saver').saveAs;
       self.csv = {
         separator: config.get(CSV_SEPARATOR_SETTING),
         quoteValues: config.get(CSV_QUOTE_VALUES_SETTING),
