@@ -1,6 +1,6 @@
 import { EmbeddableApiContext, apiHasAppContext } from '@kbn/presentation-publishing';
 import { ADD_PANEL_VISUALIZATION_GROUP } from '@kbn/embeddable-plugin/public';
-import { ADD_PANEL_TRIGGER } from '@kbn/ui-actions-plugin/public';
+import { ADD_PANEL_TRIGGER } from '@kbn/ui-actions-plugin/common/trigger_ids';
 import { VisTypeDefinition } from '@kbn/visualizations-plugin/public';
 
 import { TablePluginStartDependencies } from './plugin';
