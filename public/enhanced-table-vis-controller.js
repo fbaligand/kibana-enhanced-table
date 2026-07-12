@@ -8,7 +8,7 @@ import { formulaFunctions } from './utils/formula_functions';
 
 // third-party dependencies
 import { Parser } from 'expr-eval';
-import handlebars from 'handlebars/dist/handlebars';
+import Handlebars from 'kbn-handlebars';
 
 // EnhancedTableVis AngularJS controller
 function EnhancedTableVisController ($scope, config) {
@@ -26,7 +26,7 @@ function EnhancedTableVisController ($scope, config) {
 
   const getConfig = (...args) => config.get(...args);
 
-  handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
+  Handlebars.registerHelper('encodeURIComponent', encodeURIComponent);
 
   // controller methods
 
@@ -466,7 +466,7 @@ function EnhancedTableVisController ($scope, config) {
 
     // return final template object
     return {
-      compiledTemplate: handlebars.compile(realTemplate),
+      compiledTemplate: Handlebars.compileAST(realTemplate),
       paramsCols: templateParamsCols,
       paramsFormattedCols: templateParamsFormattedCols,
       paramsTotals: templateParamsTotals,
