@@ -1,4 +1,4 @@
-import { IModule } from 'angular';
+import type { IModule } from 'angular';
 
 // @ts-ignore
 import { EnhancedTableVisController } from './enhanced-table-vis-controller';

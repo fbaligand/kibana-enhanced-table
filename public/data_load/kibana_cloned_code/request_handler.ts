@@ -5,14 +5,15 @@ import { get } from 'lodash';
 import type { Filter, TimeRange } from '@kbn/es-query';
 
 import type { KibanaExecutionContext } from '@kbn/core/public';
-import { Adapters } from '@kbn/inspector-plugin/common';
+import type { Adapters } from '@kbn/inspector-plugin/common';
 
-import {
-  calculateBounds,
+import type {
   DataView,
   Query,
   IAggConfigs,
-  ISearchStartSearchSource,
+  ISearchStartSearchSource} from '@kbn/data-plugin/common';
+import {
+  calculateBounds,
   tabifyAggResponse,
 } from '@kbn/data-plugin/common';
 

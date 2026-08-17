@@ -1,9 +1,10 @@
-import { EmbeddableApiContext, apiHasAppContext } from '@kbn/presentation-publishing';
+import type { EmbeddableApiContext} from '@kbn/presentation-publishing';
+import { apiHasAppContext } from '@kbn/presentation-publishing';
 import { ADD_PANEL_VISUALIZATION_GROUP } from '@kbn/embeddable-plugin/public';
 import { ADD_PANEL_TRIGGER } from '@kbn/ui-actions-plugin/common/trigger_ids';
-import { VisTypeDefinition } from '@kbn/visualizations-plugin/public';
+import type { VisTypeDefinition } from '@kbn/visualizations-plugin/public';
 
-import { TablePluginStartDependencies } from './plugin';
+import type { TablePluginStartDependencies } from './plugin';
 
   export function registerUIActions(deps: TablePluginStartDependencies, visTypeDefinition: () => VisTypeDefinition<any>, visCapitalizedName: string) {
 

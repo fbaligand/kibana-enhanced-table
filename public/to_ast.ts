@@ -1,10 +1,13 @@
-import { buildExpression, buildExpressionFunction, ExpressionAstExpression } from '@kbn/expressions-plugin/public';
-import { getVisSchemas, VisToExpressionAst } from '@kbn/visualizations-plugin/public';
-import { DocumentTableVisDataParams  } from './components/document_table_vis_data';
-import { CommonExpressionFunctionDefinition } from './data_load/visualization_fn';
-import { DocumentTableVisConfig, EnhancedTableVisConfig, ENH_TABLE_VIS_NAME } from './types';
+import type { ExpressionAstExpression } from '@kbn/expressions-plugin/public';
+import { buildExpression, buildExpressionFunction } from '@kbn/expressions-plugin/public';
+import type { VisToExpressionAst } from '@kbn/visualizations-plugin/public';
+import { getVisSchemas } from '@kbn/visualizations-plugin/public';
+import type { DocumentTableVisDataParams  } from './components/document_table_vis_data';
+import type { CommonExpressionFunctionDefinition } from './data_load/visualization_fn';
+import type { DocumentTableVisConfig, EnhancedTableVisConfig} from './types';
+import { ENH_TABLE_VIS_NAME } from './types';
 import { DOC_TABLE_VIS_NAME } from './types';
-import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
+import type { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
 
 export type CommonVisDataParams = DocumentTableVisDataParams | EnhancedTableVisParams
 export type CommonVisConfig = DocumentTableVisConfig | EnhancedTableVisConfig

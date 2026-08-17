@@ -1,6 +1,6 @@
-import { IDirective, IRootElementService, IScope } from 'angular';
+import type { IDirective, IRootElementService, IScope } from 'angular';
 
-import { I18nServiceType } from './provider';
+import type { I18nServiceType } from './provider';
 
 interface I18nScope extends IScope {
   values?: Record<string, any>;

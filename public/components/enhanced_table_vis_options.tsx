@@ -4,13 +4,15 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiIconTip, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
-import { IAggConfigs } from '@kbn/data-plugin/public';
-import { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
+import type { IAggConfigs } from '@kbn/data-plugin/public';
+import type { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
 import { NumberInputOption, SelectOption } from '@kbn/vis-default-editor-plugin/public';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
-import { totalAggregations, AggTypes } from './utils';
-import { ComputedColumn, ComputedColumnEditor } from './computed_column';
+import type { AggTypes } from './utils';
+import { totalAggregations } from './utils';
+import type { ComputedColumn} from './computed_column';
+import { ComputedColumnEditor } from './computed_column';
 
 
 export interface EnhancedTableVisParams {

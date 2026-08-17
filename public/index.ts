@@ -1,5 +1,5 @@
 import './index.scss';
-import { PluginInitializerContext } from '@kbn/core/public';
+import type { PluginInitializerContext } from '@kbn/core/public';
 import { EnhancedTablePlugin as Plugin } from './plugin';
 
 export function plugin(initializerContext: PluginInitializerContext) {

@@ -1,7 +1,7 @@
-import { IFieldFormat } from '@kbn/field-formats-plugin/common';
-import { DatatableColumn, DatatableRow } from '@kbn/expressions-plugin/public';
-import { DocumentTableVisDataParams } from './components/document_table_vis_data';
-import { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
+import type { IFieldFormat } from '@kbn/field-formats-plugin/common';
+import type { DatatableColumn, DatatableRow } from '@kbn/expressions-plugin/public';
+import type { DocumentTableVisDataParams } from './components/document_table_vis_data';
+import type { EnhancedTableVisParams } from './components/enhanced_table_vis_options';
 
 export const ENH_TABLE_VIS_NAME:VisName = 'enhanced-table';
 export const DOC_TABLE_VIS_NAME:VisName = 'document_table';

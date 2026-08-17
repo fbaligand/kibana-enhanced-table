@@ -1,4 +1,4 @@
-import { I18nServiceType } from './provider';
+import type { I18nServiceType } from './provider';
 
 export const i18nFilter: [string, typeof i18nFilterFn] = ['i18n', i18nFilterFn];
 

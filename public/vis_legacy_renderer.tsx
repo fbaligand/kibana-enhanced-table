@@ -1,8 +1,9 @@
-import { CoreSetup } from '@kbn/core/public';
-import { ExpressionRenderDefinition } from '@kbn/expressions-plugin/public';
-import { CommonVisRenderValue } from './data_load/visualization_fn';
-import { TablePluginStartDependencies } from './plugin';
-import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from './types';
+import type { CoreSetup } from '@kbn/core/public';
+import type { ExpressionRenderDefinition } from '@kbn/expressions-plugin/public';
+import type { CommonVisRenderValue } from './data_load/visualization_fn';
+import type { TablePluginStartDependencies } from './plugin';
+import type { VisName } from './types';
+import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME } from './types';
 
 const tableVisRegistry = new Map<HTMLElement, any>();
 

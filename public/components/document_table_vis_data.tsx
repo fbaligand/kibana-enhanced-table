@@ -3,11 +3,11 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
 import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
 
-import { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
+import type { VisEditorOptionsProps } from '@kbn/visualizations-plugin/public';
 import { NumberInputOption, SelectOption } from '@kbn/vis-default-editor-plugin/public';
 import { FieldColumnEditor } from './field_column';
 import { FieldParamEditor } from './field';
-import { EnhancedTableVisParams } from './enhanced_table_vis_options';
+import type { EnhancedTableVisParams } from './enhanced_table_vis_options';
 
 export interface DocumentTableVisDataParams extends EnhancedTableVisParams {
   type: 'table';

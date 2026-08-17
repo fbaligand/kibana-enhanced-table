@@ -1,11 +1,12 @@
 /* global JQuery */
-import angular, { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
+import type { IModule, auto, IRootScopeService, IScope, ICompileService } from 'angular';
+import angular from 'angular';
 import $ from 'jquery';
 
-import { CoreSetup } from '@kbn/core/public';
-import { VisParams } from '@kbn/visualizations-plugin/public';
-import { BaseVisType } from '@kbn/visualizations-plugin/public';
-import { IInterpreterRenderHandlers } from '@kbn/expressions-plugin/public';
+import type { CoreSetup } from '@kbn/core/public';
+import type { VisParams } from '@kbn/visualizations-common';
+import type { BaseVisType } from '@kbn/visualizations-plugin/public';
+import type { IInterpreterRenderHandlers } from '@kbn/expressions-plugin/public';
 
 import { getAngularModule } from './get_inner_angular';
 import { getVisualization } from './services';
@@ -27,7 +28,7 @@ export function getEnhancedTableVisualizationController(
     $compile: ICompileService | undefined;
     params: object;
     handlers: any;
-    vis: BaseVisType | undefined;
+    vis: Promise<BaseVisType> | undefined;
 
     constructor(domeElement: Element, visName: string) {
       this.el = $(domeElement);

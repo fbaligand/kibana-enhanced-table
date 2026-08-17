@@ -1,10 +1,11 @@
 import { get } from 'lodash';
-import { ExpressionFunctionDefinition, Render } from '@kbn/expressions-plugin/public';
+import type { ExpressionFunctionDefinition, Render } from '@kbn/expressions-plugin/public';
 import { getDataViewsStart, getSearchService, getVisualization } from '../services';
 import { enhancedTableRequestHandler } from './enhanced-table-request-handler';
 import { enhancedTableResponseHandler } from './enhanced-table-response-handler';
 import { documentTableResponseHandler } from './document-table-response-handler';
-import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME, VisName } from '../types';
+import type { VisName } from '../types';
+import { DOC_TABLE_VIS_NAME, ENH_TABLE_VIS_NAME } from '../types';
 
 interface Arguments {
   index?: string | null;
@@ -92,7 +93,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
     const aggs = dataView
       ? getSearchService().aggs.createAggConfigs(dataView, aggConfigsState, aggOptions)
       : undefined;
-    const visType = getVisualization().get(visName);
+    const visType = await getVisualization().get(visName);
 
     input = await enhancedTableRequestHandler({
         abortSignal,
@@ -114,7 +115,7 @@ const expressionFunction = (visName: VisName, responseHandler: ResponseHandler):
         // assign schemas to aggConfigs
         input.columns.forEach((column: any) => {
             if (column.aggConfig && visType) {
-                column.aggConfig.aggConfigs.schemas = visType.schemas.all;
+              column.aggConfig.aggConfigs.schemas = visType.schemas.all;
             }
         });
 

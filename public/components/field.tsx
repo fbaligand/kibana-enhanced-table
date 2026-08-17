@@ -1,11 +1,12 @@
 import { get } from 'lodash';
 import React, { useEffect, useState, useCallback } from 'react';
 
-import { EuiComboBox, EuiComboBoxOptionOption, EuiFormRow } from '@elastic/eui';
+import type { EuiComboBoxOptionOption} from '@elastic/eui';
+import { EuiComboBox, EuiFormRow } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 
-import { ComboBoxGroupedOptions } from '@kbn/vis-default-editor-plugin/public/utils';
-import { DataViewField } from '@kbn/data-views-plugin/public';
+import type { ComboBoxGroupedOptions } from '@kbn/vis-default-editor-plugin/public/utils';
+import type { DataViewField } from '@kbn/data-views-plugin/public';
 
 
 const label = i18n.translate('visDefaultEditor.controls.field.fieldLabel', {

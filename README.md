@@ -60,7 +60,7 @@ This project is a Kibana plugin that provides two visualizations:
 - Ability to use dashboard drilldowns (Kibana 7.9+)
 - Ability to change data view (Kibana 8.4+)
 - Support for French translations (Kibana 8.4+)
-- Kibana supported versions: all versions from 5.5 to 9.2
+- Kibana supported versions: all versions from 5.5 to 9.5
 - OpenSearch Dashboards supported versions : all versions from 1.x to 3.x
 
 ## Demo

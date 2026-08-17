@@ -1,3 +1,3 @@
-import { IServiceProvider } from 'angular';
+import type { IServiceProvider } from 'angular';
 
 export function PrivateProvider(): IServiceProvider;

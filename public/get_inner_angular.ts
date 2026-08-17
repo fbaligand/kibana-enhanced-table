@@ -5,7 +5,7 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-import { CoreStart, IUiSettingsClient } from '@kbn/core/public';
+import type { CoreStart, IUiSettingsClient } from '@kbn/core/public';
 import { i18nDirective, i18nFilter, I18nProvider } from './angular/i18n';
 import { watchMultiDecorator } from './angular/watch_multi';
 import { PaginateDirectiveProvider, PaginateControlsDirectiveProvider} from './paginate/paginate';

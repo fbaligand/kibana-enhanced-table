@@ -1,6 +1,6 @@
 
 import { i18n } from '@kbn/i18n';
-import { IServiceProvider } from 'angular';
+import type { IServiceProvider } from 'angular';
 
 export type I18nServiceType = typeof i18n.translate;
 

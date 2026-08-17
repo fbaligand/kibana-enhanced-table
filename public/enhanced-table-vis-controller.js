@@ -480,7 +480,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
   };
 
   const renderCell = function (contentType) {
-    let result = this.column.fieldFormatter.convert(this.value);
+    let result = this.column.fieldFormatter.convertToText(this.value);
     if (this.templateContext !== undefined) {
       this.templateContext.value = result;
       this.templateContext.rawValue = this.value;
@@ -517,20 +517,20 @@ function EnhancedTableVisController ($scope, tableConfig) {
 
     if (computedColumn.format === 'number') {
       fieldFormatter = {
-        convert: (value) => {
-          let result = standardFieldFormatter.convert(value);
+        convertToText: (value) => {
+          let result = standardFieldFormatter.convertToText(value);
           if (result.indexOf('e-') !== -1) {
-            result = standardFieldFormatter.convert(0);
+            result = standardFieldFormatter.convertToText(0);
           }
           return result;
         }
       };
     }
 
-    if (computedColumn.format === 'duration') {
+    else if (computedColumn.format === 'duration') {
       fieldFormatter = {
-        convert: (value) => {
-          let result = standardFieldFormatter.convert(value);
+        convertToText: (value) => {
+          let result = standardFieldFormatter.convertToText(value);
           if (numeralLanguage !== undefined) {
             result = result.replace('.', numeralLanguage.lang.delimiters.decimal);
           }
@@ -982,6 +982,7 @@ function EnhancedTableVisController ($scope, tableConfig) {
     const title = `${$scope.vis.title} Error`;
     getNotifications().toasts.addError(error, {title, toastMessage: error.message});
     $scope.hasErrorMessage = true;
+    console.error(error);
   };
 
   const colToStringWithHighlightResults = function(initialToString, scope, contentType) {

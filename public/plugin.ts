@@ -2,10 +2,10 @@ import type { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '@kb
 import type { Plugin as ExpressionsPublicPlugin } from '@kbn/expressions-plugin/public';
 import type { VisualizationsSetup, VisualizationsStart } from '@kbn/visualizations-plugin/public';
 import type { FieldFormatsStart } from '@kbn/field-formats-plugin/public';
-import { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
-import { DataPublicPluginStart } from '@kbn/data-plugin/public';
-import { EmbeddableStart } from '@kbn/embeddable-plugin/public';
-import { UiActionsStart } from '@kbn/ui-actions-plugin/public';
+import type { DataViewsPublicPluginStart } from '@kbn/data-views-plugin/public';
+import type { DataPublicPluginStart } from '@kbn/data-plugin/public';
+import type { EmbeddableStart } from '@kbn/embeddable-plugin/public';
+import type { UiActionsStart } from '@kbn/ui-actions-plugin/public';
 
 import { setFormatService, setNotifications, setSearchService, setVisualization, setDataViewsStart, setThemeService } from './services';
 

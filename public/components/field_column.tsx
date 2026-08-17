@@ -1,8 +1,9 @@
 import { clone } from 'lodash';
 import React, { useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
-import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
-import { DataViewField } from '@kbn/data-views-plugin/common';
+import type { EuiButtonIconProps } from '@elastic/eui';
+import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon } from '@elastic/eui';
+import type { DataViewField } from '@kbn/data-views-plugin/common';
 
 import { TextInputOption } from './text_input';
 import { FieldParamEditor } from './field';
@@ -118,7 +119,7 @@ function renderButtons (fieldColumn, fieldColumns, showError, setValue, setField
         }
 
         return (
-          <EuiToolTip key={icon.id} position="bottom" content={icon.tooltip}>
+          <EuiToolTip key={icon.id} position="bottom" content={icon.tooltip} disableScreenReaderOutput>
             <EuiButtonIcon
               disabled={icon.disabled}
               iconType={icon.type}

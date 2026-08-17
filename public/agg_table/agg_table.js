@@ -41,7 +41,8 @@ export function KbnEnhancedAggTable(tableConfig, RecursionHelper) {
 
 function KbnEnhancedAggTableController($scope, tableConfig){
   const fieldFormats = getFormatService();
-  const numberFormatter = fieldFormats.getDefaultInstance('number').getConverterFor('text');
+  const numberFieldFormat = fieldFormats.getDefaultInstance('number');
+  const numberFormatter = numberFieldFormat.convertToText.bind(numberFieldFormat);
   const self = this;
 
   self._saveAs = require('@elastic/filesaver').saveAs;
