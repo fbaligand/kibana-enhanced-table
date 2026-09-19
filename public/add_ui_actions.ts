@@ -1,29 +1,19 @@
 import type { EmbeddableApiContext} from '@kbn/presentation-publishing';
 import { apiHasAppContext } from '@kbn/presentation-publishing';
 import { ADD_PANEL_VISUALIZATION_GROUP } from '@kbn/embeddable-plugin/public';
-import { ADD_PANEL_TRIGGER } from '@kbn/ui-actions-plugin/common/trigger_ids';
 import type { VisTypeDefinition } from '@kbn/visualizations-plugin/public';
 
 import type { TablePluginStartDependencies } from './plugin';
 
-  export function registerUIActions(deps: TablePluginStartDependencies, visTypeDefinition: () => VisTypeDefinition<any>, visCapitalizedName: string) {
+export function registerUIActions(deps: TablePluginStartDependencies, visTypeDefinition: () => VisTypeDefinition<any>, visCapitalizedName: string) {
 
-    const panelActionId = `add${visCapitalizedName}PanelAction`;
-    deps.uiActions.registerActionAsync(panelActionId, async () => {
-      return getAddPanelAction(deps, visTypeDefinition, visCapitalizedName);
-    });
+  const panelActionId = `add${visCapitalizedName}PanelAction`;
+  deps.uiActions.registerActionAsync(panelActionId, async () => {
+    return getAddPanelAction(deps, visTypeDefinition, visCapitalizedName);
+  });
 
-    deps.uiActions.attachAction(ADD_PANEL_TRIGGER, panelActionId);
-
-    // Add UI actions to Kibana Canvas (commented until it works fine)
-    /*
-    if (deps.uiActions.hasTrigger('ADD_CANVAS_ELEMENT_TRIGGER')) {
-      // Because Canvas is not enabled in Serverless, this trigger might not be registered - only attach
-      // the create action if the Canvas-specific trigger does indeed exist.
-      deps.uiActions.attachAction('ADD_CANVAS_ELEMENT_TRIGGER', panelActionId);
-    }
-    */
-  }
+  deps.uiActions.attachAction('ADD_PANEL_TRIGGER', panelActionId);
+}
 
 
 export function getAddPanelAction(deps: TablePluginStartDependencies, visTypeDefinition: () => VisTypeDefinition<any>, panelActionId: string) {
