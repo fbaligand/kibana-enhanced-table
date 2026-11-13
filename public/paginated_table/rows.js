@@ -40,7 +40,7 @@ export function KbnEnhancedRows($compile) {
             });
           };
 
-          return $compile($template)(scope);
+          return $($compile($template)(scope));
         }
 
         let $cell;
